@@ -24,9 +24,9 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 
 ## Highlights
 
-*  NTSC-Progressive, NTSC-Interlaced, PAL-Progressive, PAL-Interlaced, PAL-M-Progressive, PAL-M-Interlaced
+* Coverage: NTSC-Progressive, NTSC-Interlaced, PAL-Progressive, PAL-Interlaced, PAL-M-Progressive, PAL-M-Interlaced
 * Quick Reference Conversion Lookup Table, exact fractional refresh rates, line frequencies, interlaced/progressive timing, and conversion multipliers
-* **Precision:** Fractional forms carried until the last conversion to minimize rounding errors 
+* Fractional forms carried until last conversion to minimize error 
 
 ## Notes
 
