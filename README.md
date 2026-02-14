@@ -1,4 +1,4 @@
-### N64 Refresh Rate Reference 
+# N64 Refresh Rate Reference 
 
 ## README.md
 
