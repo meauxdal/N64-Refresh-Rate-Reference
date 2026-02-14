@@ -1,11 +1,65 @@
 {
   "signals": {
-    "NTSC-P": { "f": { "numerator": 2250000, "denominator": 37609 } },
-    "NTSC-I": { "f": { "numerator": 4500000, "denominator": 75075 } },
-    "PAL-P":  { "f": { "numerator": 15625, "denominator": 313 } },
-    "PAL-I":  { "f": { "numerator": 50, "denominator": 1 } },
-    "PAL-M-P": { "f": { "numerator": 243141548, "denominator": 4064665 } },
-    "PAL-M-I": { "f": { "numerator": 486283096, "denominator": 8113875 } }
+    "NTSC-P": {
+      "f": { "numerator": 2250000, "denominator": 37609 },
+      "f_int": { "numerator": 4500000, "denominator": 75075 },
+      "f_line": { "numerator": 591750000, "denominator": 37609 },
+      "lines_per_frame": 525,
+      "prog_lines": 263,
+      "int_lines": 262,
+      "mul_prog_to_int": { "numerator": 75218, "denominator": 75075 },
+      "mul_int_to_prog": { "numerator": 75075, "denominator": 75218 }
+    },
+    "NTSC-I": {
+      "f": { "numerator": 4500000, "denominator": 75075 },
+      "f_int": { "numerator": 4500000, "denominator": 75075 },
+      "f_line": { "numerator": 591750000, "denominator": 37609 },
+      "lines_per_frame": 525,
+      "prog_lines": 263,
+      "int_lines": 262,
+      "mul_prog_to_int": { "numerator": 75218, "denominator": 75075 },
+      "mul_int_to_prog": { "numerator": 75075, "denominator": 75218 }
+    },
+    "PAL-P": {
+      "f": { "numerator": 15625, "denominator": 313 },
+      "f_int": { "numerator": 50, "denominator": 1 },
+      "f_line": { "numerator": 4890625, "denominator": 313 },
+      "lines_per_frame": 625,
+      "prog_lines": 313,
+      "int_lines": 312,
+      "mul_prog_to_int": { "numerator": 626, "denominator": 625 },
+      "mul_int_to_prog": { "numerator": 625, "denominator": 626 }
+    },
+    "PAL-I": {
+      "f": { "numerator": 50, "denominator": 1 },
+      "f_int": { "numerator": 50, "denominator": 1 },
+      "f_line": { "numerator": 4890625, "denominator": 313 },
+      "lines_per_frame": 625,
+      "prog_lines": 313,
+      "int_lines": 312,
+      "mul_prog_to_int": { "numerator": 626, "denominator": 625 },
+      "mul_int_to_prog": { "numerator": 625, "denominator": 626 }
+    },
+    "PAL-M-P": {
+      "f": { "numerator": 243141548, "denominator": 4064665 },
+      "f_int": { "numerator": 486283096, "denominator": 8113875 },
+      "f_line": { "numerator": 63946227124, "denominator": 4064665 },
+      "lines_per_frame": 525,
+      "prog_lines": 263,
+      "int_lines": 262,
+      "mul_prog_to_int": { "numerator": 8128332, "denominator": 8113875 },
+      "mul_int_to_prog": { "numerator": 8113875, "denominator": 8128332 }
+    },
+    "PAL-M-I": {
+      "f": { "numerator": 486283096, "denominator": 8113875 },
+      "f_int": { "numerator": 486283096, "denominator": 8113875 },
+      "f_line": { "numerator": 63946227124, "denominator": 4064665 },
+      "lines_per_frame": 525,
+      "prog_lines": 263,
+      "int_lines": 262,
+      "mul_prog_to_int": { "numerator": 8128332, "denominator": 8113875 },
+      "mul_int_to_prog": { "numerator": 8113875, "denominator": 8128332 }
+    }
   },
   "conversions": {
     "NTSC-P_to_NTSC-I": { "from": "NTSC-P", "to": "NTSC-I", "numerator": 75218, "denominator": 75075 },

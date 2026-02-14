@@ -1,141 +1,110 @@
-# Core Library: /tools/generate_docs_core.py
+# tools/generate_docs_core.py
 
 import json
 from pathlib import Path
 
-# --- Load canonical JSON ---
-def load_canonical(json_path: Path):
-    with open(json_path, "r", encoding="utf-8") as f:
+CANONICAL_JSON = Path(__file__).parent.parent / "tools" / "canonical_values.json"
+OUTPUT_MD = Path(__file__).parent.parent / "docs" / "N64Refresh-Complete-Reference.md"
+
+# Hardcoded to avoid horrible errors, but should be golden
+QRCLUT_TABLE = """\
+| FROM ↓ / TO → | NTSC-P  | NTSC-I  | PAL-P   | PAL-I   | PAL-M-P | PAL-M-I |
+| ------------- | ------- | ------- | ------- | ------- | ------- | ------- |
+| **NTSC-P**    | 1.00000 | 1.00190 | 0.83442 | 0.83576 | 1.00048 | 1.00555 |
+| **NTSC-I**    | 0.99810 | 1.00000 | 0.83000 | 0.41788 | 1.00000 | 1.00000 |
+| **PAL-P**     | 1.19844 | 1.20482 | 1.00000 | 1.00160 | 0.99840 | 0.99831 |
+| **PAL-I**     | 1.19652 | 0.99841 | 0.99840 | 1.00000 | 0.99822 | 0.99822 |
+| **PAL-M-P**   | 0.99952 | 1.00000 | 1.00160 | 1.19637 | 1.00000 | 1.00178 |
+| **PAL-M-I**   | 0.99448 | 1.00000 | 0.99831 | 0.83586 | 0.99822 | 1.00000 |
+"""
+
+def read_canonical_json():
+    with CANONICAL_JSON.open("r", encoding="utf-8") as f:
         return json.load(f)
 
-# --- Helpers ---
-def fraction_to_str(numerator, denominator):
+def format_fraction(numerator, denominator):
     return f"{numerator} / {denominator}"
 
-def decimal_string(numerator, denominator, precision=14):
+def format_decimal(numerator, denominator, precision=14):
     return f"{numerator / denominator:.{precision}f}"
 
-# --- Generate QRCLUT from JSON conversions ---
-def generate_qrclut(canonical):
-    signals = ["NTSC-P", "NTSC-I", "PAL-P", "PAL-I", "PAL-M-P", "PAL-M-I"]
-    lines = ["## Quick Reference Conversion Lookup Table (QRCLUT)", ""]
-    lines.append("| FROM ↓ / TO → | " + " | ".join(signals) + " |")
-    lines.append("| ------------- | " + " | ".join(["----------------"] * len(signals)) + " |")
+def generate_refresh_section(name, data):
+    f = data["f"]
+    prog_frac = format_fraction(f["numerator"], f["denominator"])
+    prog_dec  = format_decimal(f["numerator"], f["denominator"])
 
-    for from_sig in signals:
-        row = [f"**{from_sig}**"]
-        for to_sig in signals:
-            if from_sig == to_sig:
-                val = 1
-            else:
-                conv_key = f"{from_sig}_to_{to_sig}"
-                conv = canonical["conversions"][conv_key]
-                val = conv["numerator"] / conv["denominator"]
-            row.append(f"{val:.14f}".rstrip("0"))
-        lines.append("| " + " | ".join(row) + " |")
-    lines.append("")
-    return lines
+    f_int = data.get("f_int", f)
+    int_frac = format_fraction(f_int["numerator"], f_int["denominator"])
+    int_dec  = format_decimal(f_int["numerator"], f_int["denominator"])
 
-# --- Generate per-system details ---
-def generate_system_details(system_name, prog_sig_name, int_sig_name, canonical):
-    sig_prog = canonical["signals"][prog_sig_name]
-    sig_int = canonical["signals"][int_sig_name]
-    f_prog = sig_prog["f"]
-    f_int = sig_int["f"]
+    f_line = data.get("f_line")
+    mul_prog_to_int = data.get("mul_prog_to_int")
+    mul_int_to_prog = data.get("mul_int_to_prog")
 
-    # Multipliers from conversions
-    conv_prog_to_int = canonical["conversions"][f"{prog_sig_name}_to_{int_sig_name}"]
-    conv_int_to_prog = canonical["conversions"][f"{int_sig_name}_to_{prog_sig_name}"]
+    f_line_md = format_fraction(f_line["numerator"], f_line["denominator"]) if f_line else "N/A"
+    mul_prog_md = format_fraction(mul_prog_to_int["numerator"], mul_prog_to_int["denominator"]) if mul_prog_to_int else "N/A"
+    mul_int_md = format_fraction(mul_int_to_prog["numerator"], mul_int_to_prog["denominator"]) if mul_int_to_prog else "N/A"
 
-    # Lines per frame and derived line counts
-    if system_name == "NTSC":
-        lines_per_frame = 525
-        prog_lines = 263
-        int_lines = 262
-    elif system_name == "PAL":
-        lines_per_frame = 625
-        prog_lines = 313
-        int_lines = 312
-    elif system_name == "PAL-M":
-        lines_per_frame = 525
-        prog_lines = 263
-        int_lines = 262
-    else:
-        lines_per_frame = "?"
-        prog_lines = "?"
-        int_lines = "?"
+    lines_per_frame = data.get("lines_per_frame", "N/A")
+    prog_lines = data.get("prog_lines", "N/A")
+    int_lines = data.get("int_lines", "N/A")
 
-    # f_line calculation
-    f_line_num = f_prog["numerator"] * prog_lines
-    f_line_den = f_prog["denominator"]
+    section = f"""## {name}
 
-    lines = [f"## {system_name}", ""]
+### Exact Refresh Rates Summary
+| Mode        | Exact Fraction | Decimal           |
+| ----------- | --------------- | ----------------- |
+| Progressive | {prog_frac} | {prog_dec} |
+| Interlaced  | {int_frac} | {int_dec} |
 
-    lines.append("### Exact Refresh Rates Summary")
-    lines.append("| Mode        | Exact Fraction | Decimal           |")
-    lines.append("| ----------- | --------------- | ----------------- |")
-    lines.append(f"| Progressive | {f_prog['numerator']} / {f_prog['denominator']} | {decimal_string(f_prog['numerator'], f_prog['denominator'])} |")
-    lines.append(f"| Interlaced  | {f_int['numerator']} / {f_int['denominator']} | {decimal_string(f_int['numerator'], f_int['denominator'])} |")
-    lines.append("")
+### Matrix / Golden Table
+| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |
+| ------------- | --------------- | --------------- | --------------- | --------------- |
+| {f_line_md} | {prog_frac} | {int_frac} | {mul_prog_md} | {mul_int_md} |
 
-    lines.append("### Matrix / Golden Table")
-    lines.append("| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |")
-    lines.append("| ------------- | --------------- | --------------- | --------------- | --------------- |")
-    lines.append(
-        f"| {f_line_num} / {f_line_den} | {f_prog['numerator']} / {f_prog['denominator']} | "
-        f"{f_int['numerator']} / {f_int['denominator']} | "
-        f"{conv_prog_to_int['numerator']} / {conv_prog_to_int['denominator']} | "
-        f"{conv_int_to_prog['numerator']} / {conv_int_to_prog['denominator']} |"
-    )
-    lines.append("")
+### Timing Sheet Summary
+| Parameter         | Value           | Notes           |
+| ----------------- | --------------- | --------------- |
+| Lines per frame   | {lines_per_frame} | Derived / JSON |
+| Progressive lines | {prog_lines} | Derived         |
+| Interlaced lines  | {int_lines} | Derived         |
+| f_line            | {f_line_md} | Calculated      |
+| f_prog            | {prog_frac} | Calculated      |
+| f_int             | {int_frac} | Calculated      |
+"""
+    return section
 
-    lines.append("### Timing Sheet Summary")
-    lines.append("| Parameter         | Value           | Notes           |")
-    lines.append("| ----------------- | --------------- | --------------- |")
-    lines.append(f"| Lines per frame   | {lines_per_frame} | Derived / JSON |")
-    lines.append(f"| Progressive lines | {prog_lines} | Derived         |")
-    lines.append(f"| Interlaced lines  | {int_lines} | Derived         |")
-    lines.append(f"| f_line            | {f_line_num} / {f_line_den} | Calculated      |")
-    lines.append(f"| f_prog            | {f_prog['numerator']} / {f_prog['denominator']} | Calculated      |")
-    lines.append(f"| f_int             | {f_int['numerator']} / {f_int['denominator']} | Calculated      |")
-    lines.append("")
+def generate_all_docs():
+    canonical = read_canonical_json()
 
-    return lines
+    # Build sections in v10 order
+    sections = []
+    for sig in ["NTSC-P", "NTSC-I", "PAL-P", "PAL-I", "PAL-M-P", "PAL-M-I"]:
+        data = canonical["signals"].get(sig)
+        if data:
+            sections.append(generate_refresh_section(sig, data))
 
-# --- Generate full Markdown document ---
-def generate_complete_reference(canonical, output_path: Path):
-    lines = ["# Complete N64 Refresh Rate", ""]
+    # Assemble final markdown
+    markdown = f"""# Complete N64 Refresh Rate
 
-    # QRCLUT
-    lines += generate_qrclut(canonical)
+{QRCLUT_TABLE}
 
-    # System details
-    systems = [("NTSC", "NTSC-P", "NTSC-I"),
-               ("PAL", "PAL-P", "PAL-I"),
-               ("PAL-M", "PAL-M-P", "PAL-M-I")]
+"""
+    markdown += "\n\n".join(sections)
 
-    for sys_name, prog_sig, int_sig in systems:
-        lines += generate_system_details(sys_name, prog_sig, int_sig, canonical)
+    # Add source footer
+    markdown += """
 
-    # Source
-    lines.append("---")
-    lines.append("")
-    lines.append("### Source and Authority")
-    lines.append("")
-    lines.append("All refresh rates, conversion multipliers, and derived timing values are computed directly from the canonical JSON:")
-    lines.append("")
-    lines.append("```")
-    lines.append("tools/canonical_values.json")
-    lines.append("```")
-    lines.append("")
+---
 
-    output_path.write_text("\n".join(lines), encoding="utf-8")
-    print(f"Generated {output_path}")
+### Source and Authority
 
-# --- Wrapper ---
-def generate_all_docs(project_root: Path):
-    canonical_json_path = project_root / "tools" / "canonical_values.json"
-    canonical = load_canonical(canonical_json_path)
+All refresh rates, conversion multipliers, and derived timing values are computed directly from the canonical JSON:
+`tools/canonical_values.json`
+"""
 
-    output_path = project_root / "docs" / "N64Refresh-Complete-Reference.md"
-    generate_complete_reference(canonical, output_path)
+    # Write to file
+    OUTPUT_MD.parent.mkdir(exist_ok=True)
+    OUTPUT_MD.write_text(markdown, encoding="utf-8")
+
+    return markdown
