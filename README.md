@@ -13,13 +13,7 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 | PAL-M-P | Progressive | 243,141,548 / 4,064,665 | 59.8179      |
 | PAL-M-I | Interlaced  | 486,283,096 / 8,113,875 | 59.9323      |
 
-## Quick Links
-
 * [Complete Reference](docs/N64Refresh-Complete-Reference.md) – All rates, conversions, and tables.
-* [NTSC / PAL / PAL-M Derivations](docs/N64Refresh-DerivationNTSC.md) – Step-by-step calculations.
-* [PAL Derivation](docs/N64Refresh-DerivationPAL.md)
-* [PAL-M Derivation](docs/N64Refresh-DerivationPAL-M.md)
-* [Sources](docs/N64Refresh-SourceList.md) – Standards, datasheets, SDKs, and community docs.
 
 ## Highlights
 
@@ -30,16 +24,9 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 ## Usage
 
 1. Check the **Complete Reference** for conversions.
-2. Dive into derivations for calculations or verification.
-3. Reference sources for official standards and hardware specs.
+2. See derivations and source list for verification.
 
 ### Source and Authority
-
-All refresh rates, conversion multipliers, and derived timing values are computed directly from the canonical JSON:
-
-```
-/tools/canonical_values.json
-```
 
 For detailed derivations and references, see:
 
@@ -47,3 +34,6 @@ For detailed derivations and references, see:
 * [PAL Derivation](docs/N64Refresh-DerivationPAL.md)
 * [PAL-M Derivation](docs/N64Refresh-DerivationPAL-M.md)
 * [Sources](docs/N64Refresh-SourceList.md)
+* [Internal canonical values JSON](tools/canonical_values.json)
+
+All refresh rates, conversion multipliers, and derived timing values are computed directly from the reduced fractional forms in the canonical_values.json. These canonical values were derived from primary sources and form the basis for all rates and multipliers in this repository.
