@@ -1,4 +1,4 @@
-### PAL-M First-Principles Derivation
+### PAL-M Derivation
 
 **Constants:**
 

@@ -1,4 +1,4 @@
-### NTSC First-Principles Derivation
+### NTSC Derivation
 
 **Constants:**
 
