@@ -2,6 +2,8 @@
 
 ## README.md
 
+**Note: This repository is still a work in progress. Math should be correct, however
+
 Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, and PAL-M modes.
 
 | System  | Mode        | Exact Fraction    | Decimal (Hz) |
@@ -15,7 +17,6 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 
 ## Navigation Links
 
-* Document naming and layout is WIP, but math should all be correct
 * [Complete Reference](docs/N64Refresh-Complete-Reference.md)
 * [Timing Sheet](docs/N64Refresh-TimingSheet.md)
 * [Derivations](docs/N64Refresh-Derivation.md)
