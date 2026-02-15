@@ -155,3 +155,4 @@ def generate_all(data, lut):
                 lut[a][b] = Fraction(lut[a][b]['numerator'], lut[a][b]['denominator'])
     generate_complete_reference(data, lut)
     generate_timing_sheet(data, lut)
+    

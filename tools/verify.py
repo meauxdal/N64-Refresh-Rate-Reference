@@ -64,3 +64,4 @@ def validate(data, lut, canonical):
         raise ValueError("Validation failed. See above for details.")
 
     print("All validations passed.")
+    
