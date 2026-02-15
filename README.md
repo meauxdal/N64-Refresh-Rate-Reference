@@ -2,7 +2,7 @@
 
 ## README.md
 
-**Note: This repository is still a work in progress. Math should be correct, however
+**Note: this repository is still a work in progress, but all math should be correct.**
 
 Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, and PAL-M modes.
 
