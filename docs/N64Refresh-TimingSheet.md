@@ -55,17 +55,17 @@
 
 ## System Constants / Notes
 
-| Parameter | NTSC-P | NTSC-I | PAL-P | PAL-I | PAL-M-P | PAL-M-I | Notes / Source |
-|---|---|---|---|---|---|---|---||
-| Lines per frame | 526 | 525 | 626 | 625 | 526 | 525 | BT.470-6 |
-| Pixel clock (typical DAC) | ~13.5 MHz | ~13.5 MHz | ~13.5 MHz | ~13.5 MHz | ~13.5 MHz | ~13.5 MHz | MX8350 datasheet |
-| Horizontal active video | ~52.7 μs | ~52.7 μs | ~52.7 μs | ~52.7 μs | ~52.7 μs | ~52.7 μs | Derived from VI addendums |
-| Horizontal sync pulse | 4.7 μs | 4.7 μs | 4.7 μs | 4.7 μs | 4.7 μs | 4.7 μs | BT.1700/1701 & Addendums |
-| Front porch | ~1.5 μs | ~1.5 μs | ~1.5 μs | ~1.5 μs | ~1.5 μs | ~1.5 μs | VI timing register mapping |
-| Back porch | ~5.5 μs | ~5.5 μs | ~6 μs | ~6 μs | ~6 μs | ~6 μs | Includes color burst |
-| Vertical sync pulse | 2 lines | 2 lines | 2 lines | 2 lines | 2 lines | 2 lines | VI_V_SYNC register |
-| Vertical back porch | 18 lines | 18 lines | 20 lines | 20 lines | 20 lines | 20 lines | BT.470-6 / Addendums |
-| Vertical front porch | 1 line | 1 line | 1 line | 1 line | 1 line | 1 line | Addendum tables |
-| Color subcarrier | 3.579545 MHz | 3.579545 MHz | 4.43361875 MHz | 4.43361875 MHz | 4.43361875 MHz | 4.43361875 MHz | BT.470-6 |
-| VI registers mapping | VI_WIDTH, VI_H_SYNC, VI_V_SYNC, VI_BURST | VI_WIDTH, VI_H_SYNC, VI_V_SYNC, VI_BURST | Same | Same | Same | Same | Ultra64 Addendum |
-| Active pixels per line | 320–640 | 320–640 | 320–640 | 320–640 | 320–640 | 320–640 | VI allows horizontal scaling |
+| Parameter                 | NTSC-P                                   | NTSC-I                                   | PAL-P          | PAL-I          | PAL-M-P        | PAL-M-I        | Notes / Source               |
+| ------------------------- | ---------------------------------------- | ---------------------------------------- | -------------- | -------------- | -------------- | -------------- | ---------------------------- |
+| Lines per frame           | 526                                      | 525                                      | 626            | 625            | 526            | 525            | BT.470-6                     |
+| Pixel clock (typical DAC) | ~13.5 MHz                                | ~13.5 MHz                                | ~13.5 MHz      | ~13.5 MHz      | ~13.5 MHz      | ~13.5 MHz      | MX8350 datasheet             |
+| Horizontal active video   | ~52.7 μs                                 | ~52.7 μs                                 | ~52.7 μs       | ~52.7 μs       | ~52.7 μs       | ~52.7 μs       | Derived from VI addendums    |
+| Horizontal sync pulse     | 4.7 μs                                   | 4.7 μs                                   | 4.7 μs         | 4.7 μs         | 4.7 μs         | 4.7 μs         | BT.1700/1701 & Addendums     |
+| Front porch               | ~1.5 μs                                  | ~1.5 μs                                  | ~1.5 μs        | ~1.5 μs        | ~1.5 μs        | ~1.5 μs        | VI timing register mapping   |
+| Back porch                | ~5.5 μs                                  | ~5.5 μs                                  | ~6 μs          | ~6 μs          | ~6 μs          | ~6 μs          | Includes color burst         |
+| Vertical sync pulse       | 2 lines                                  | 2 lines                                  | 2 lines        | 2 lines        | 2 lines        | 2 lines        | VI_V_SYNC register           |
+| Vertical back porch       | 18 lines                                 | 18 lines                                 | 20 lines       | 20 lines       | 20 lines       | 20 lines       | BT.470-6 / Addendums         |
+| Vertical front porch      | 1 line                                   | 1 line                                   | 1 line         | 1 line         | 1 line         | 1 line         | Addendum tables              |
+| Color subcarrier          | 3.579545 MHz                             | 3.579545 MHz                             | 4.43361875 MHz | 4.43361875 MHz | 4.43361875 MHz | 4.43361875 MHz | BT.470-6                     |
+| VI registers mapping      | VI_WIDTH, VI_H_SYNC, VI_V_SYNC, VI_BURST | VI_WIDTH, VI_H_SYNC, VI_V_SYNC, VI_BURST | Same           | Same           | Same           | Same           | Ultra64 Addendum             |
+| Active pixels per line    | 320–640                                  | 320–640                                  | 320–640        | 320–640        | 320–640        | 320–640        | VI allows horizontal scaling |
