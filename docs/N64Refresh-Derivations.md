@@ -5,8 +5,9 @@
 **Constants:**
 
 ```
-Crystal frequency: f_xtal = 4 × f_colorburst_NTSC = 4 × (315/88 MHz) = 315/22 MHz
-VI clock multiplier: M = 17 / 5 = 3.4
+Color burst frequency: f_colorburst = 315/88 MHz  (≈ 3.5795454545 MHz)
+Crystal frequency: f_xtal = 4 × f_colorburst = 315/22 MHz  (≈ 14.3181818182 MHz)
+VI clock multiplier: M = 17 / 5
 VI clocks per scanline: L = 3,094
 Progressive scanlines: S_prog = 526
 Interlaced scanlines: S_int = 525
@@ -30,7 +31,7 @@ f_line = f_vi / L
        = 5,355,000,000 / (110 × 3,094) Hz
        = 5,355,000,000 / 340,340 Hz
        = 591,750,000 / 37,609 Hz (reduced)
-       ≈ 15,734.2657 Hz
+       ≈ 15,734.2657342657 Hz
 ```
 
 **Refresh rate (Progressive):**
@@ -68,8 +69,9 @@ refresh_rate = f_line / (S_int / 2)
 **Constants:**
 
 ```
-Crystal frequency: f_xtal = 4 × f_colorburst_PAL = 4 × (4.43361875 MHz) = 17.734475 MHz
-VI clock multiplier: M = 14 / 5 = 2.8
+Color burst frequency: f_colorburst = 17,734,475 / 4 Hz  (≈ 4.4336187500 MHz)
+Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (≈ 17.7344750000 MHz)
+VI clock multiplier: M = 14 / 5
 VI clocks per scanline: L = 3,178
 Progressive scanlines: S_prog = 626
 Interlaced scanlines: S_int = 625
@@ -79,15 +81,28 @@ Interlaced scanlines: S_int = 625
 
 ```
 f_vi = f_xtal × M
-     = 17.734475 MHz × 2.8
-     ≈ 49.6565300000 MHz
+     = 17,734,475 Hz × (14/5)
+     = (17,734,475 × 14) / 5 Hz
+     = 248,282,650 / 5 Hz
+     = 49,656,530 Hz
+     = 49.6565300000 MHz  (exact decimal)
 ```
 
 **Horizontal scan frequency:**
 
+Without LEAP compensation, the theoretical line frequency would be:
+
+```
+f_line (theoretical) = f_vi / L
+                     = 49,656,530 / 3,178 Hz
+                     ≈ 15,625.0881057269 Hz
+```					 
+
+The LEAP register compensates for this ~5.6 ppm error by adding fractional VI clocks during vsync, achieving:
+
 ```
 f_line = 4,890,625 / 313 Hz  (exact fraction)
-       = 15,625 Hz
+       = 15,625 Hz  (exact decimal)
 ```
 
 **Refresh rate (Progressive):**
@@ -126,8 +141,9 @@ refresh_rate = f_line / (S_int / 2)
 **Constants:**
 
 ```
-Crystal frequency: f_xtal = 4 × f_colorburst_MPAL = 4 × (3.575611 MHz)
-VI clock multiplier: M = 17 / 5 = 3.4
+Color burst frequency: f_colorburst = 3,575,611 Hz
+Crystal frequency: f_xtal = 4 × f_colorburst = 14,302,444 Hz
+VI clock multiplier: M = 17 / 5
 VI clocks per scanline: L = 3,091
 Progressive scanlines: S_prog = 526
 Interlaced scanlines: S_int = 525
@@ -137,16 +153,18 @@ Interlaced scanlines: S_int = 525
 
 ```
 f_vi = f_xtal × M
-     = 14.302444 MHz × 3.4
+     = 14,302,444 Hz × 3.4
+     = 48,628,309.6 Hz
      = 243,141,548 / 5 Hz
-     ≈ 48.6283096000 MHz
+     = 48,628,309.6 Hz
+     = 48.6283096000 MHz  (exact decimal)
 ```
 
 **Horizontal scan frequency:**
 
 ```
 f_line = 243,141,548 / 15,455 Hz  (exact fraction)
-       ≈ 15,732.2260 Hz
+       ≈ 15,732.2256874798 Hz
 ```
 
 **Refresh rate (Progressive):**
@@ -167,7 +185,7 @@ refresh_rate = f_line / (S_int / 2)
              = (243,141,548 / 15,455) / (525 / 2)
              = (243,141,548 × 2) / (15,455 × 525)
              = 486,283,096 / 8,113,875  (exact fraction)
-             ≈ 59.9322883333 Hz
+             ≈ 59.9323738480 Hz
 ```
 
 **Notes:**
@@ -185,8 +203,8 @@ refresh_rate = f_line / (S_int / 2)
 | NTSC-I  | 4x NTSC × 3.4     | 3,094     | 525       | 15,734.265734  | 59.9400599401     | 591,750,000 / 37,609 | 60,000 / 1,001          |
 | PAL-P   | 4x PAL × 2.8      | 3,178     | 626       | 15,625.000000  | 49.9201277955     | 4,890,625 / 313      | 15,625 / 313            |
 | PAL-I   | 4x PAL × 2.8      | 3,178     | 625       | 15,625.000000  | 50.0000000000     | 4,890,625 / 313      | 50 / 1                  |
-| PAL-M-P | 4x MPAL × 3.4     | 3,091     | 526       | 15,732.225960  | 59.8183486216     | 243,141,548 / 15,455 | 243,141,548 / 4,064,665 |
-| PAL-M-I | 4x MPAL × 3.4     | 3,091     | 525       | 15,732.225960  | 59.9322883333     | 243,141,548 / 15,455 | 486,283,096 / 8,113,875 |
+| PAL-M-P | 4x MPAL × 3.4     | 3,091     | 526       | 15,732.225687  | 59.8183486216     | 243,141,548 / 15,455 | 243,141,548 / 4,064,665 |
+| PAL-M-I | 4x MPAL × 3.4     | 3,091     | 525       | 15,732.225687  | 59.9322883333     | 243,141,548 / 15,455 | 486,283,096 / 8,113,875 |
 
 ---
 
@@ -226,5 +244,6 @@ PAL modes use the LEAP register to alternate scanline lengths during vsync:
 
 ## **Annotations**
 
-**(exact fraction)** - Validated final result; stored in `canonical_values.json` for reference and verification
-**(reduced)** - Lowest terms
+- **(exact fraction)** - Final result expressed as a fraction in lowest terms; stored in canonical_values.json for verification.
+- **(exact decimal)** - Decimal representation with no rounding.
+- **(reduced)** - Fraction reduced to lowest terms.
