@@ -19,7 +19,7 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 
 * [Complete Reference](docs/N64Refresh-Complete-Reference.md)
 * [Timing Sheet](docs/N64Refresh-TimingSheet.md)
-* [Derivations](docs/N64Refresh-Derivation.md)
+* [Derivations](docs/N64Refresh-Derivations.md)
 * [Sources](docs/N64Refresh-SourceList.md)
 * [Internal canonical values JSON](tools/canonical_values.json)
 
