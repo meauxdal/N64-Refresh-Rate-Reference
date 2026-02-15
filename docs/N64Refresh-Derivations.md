@@ -125,7 +125,7 @@ refresh_rate = f_line / (S_int / 2)
              = (4,890,625 × 2) / (313 × 625)
              = 9,781,250 / 195,625
              = 50 / 1  (exact fraction)
-             = 50.0000000000 Hz
+             = 50.0000000000 Hz  (exact decimal)
 ```
 
 **Notes on LEAP pattern:**
