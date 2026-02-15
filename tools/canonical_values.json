@@ -1,38 +1,65 @@
 {
-  "NTSC-P": {
-    "refresh_prog": { "numerator": 2250000, "denominator": 37609 },
-    "line_freq_prog": { "numerator": 591750000, "denominator": 37609 },
-    "lines_per_frame": 526,
-    "vi_clock_divider": 3094
+  "NTSC": {
+    "line_frequency": {
+      "numerator": 591750000,
+      "denominator": 37609
+    },
+    "vi_clock_divider": 3094,
+    "progressive": {
+      "scanlines": 526,
+      "refresh_rate": {
+        "numerator": 2250000,
+        "denominator": 37609
+      }
+    },
+    "interlaced": {
+      "scanlines": 525,
+      "refresh_rate": {
+        "numerator": 60000,
+        "denominator": 1001
+      }
+    }
   },
-  "NTSC-I": {
-    "refresh_int": { "numerator": 60000, "denominator": 1001 },
-    "line_freq_int": { "numerator": 591750000, "denominator": 188045 },
-    "lines_per_frame": 525,
-    "vi_clock_divider": 3094
+  "PAL": {
+    "line_frequency": {
+      "numerator": 4890625,
+      "denominator": 313
+    },
+    "vi_clock_divider": 3178,
+    "progressive": {
+      "scanlines": 626,
+      "refresh_rate": {
+        "numerator": 15625,
+        "denominator": 313
+      }
+    },
+    "interlaced": {
+      "scanlines": 625,
+      "refresh_rate": {
+        "numerator": 50,
+        "denominator": 1
+      }
+    }
   },
-  "PAL-P": {
-    "refresh_prog": { "numerator": 15625, "denominator": 313 },
-    "line_freq_prog": { "numerator": 4890625, "denominator": 313 },
-    "lines_per_frame": 626,
-    "vi_clock_divider": 3178
-  },
-  "PAL-I": {
-    "refresh_int": { "numerator": 50, "denominator": 1 },
-    "line_freq_int": { "numerator": 4890625, "denominator": 625 },
-    "lines_per_frame": 625,
-    "vi_clock_divider": 3178
-  },
-  "PAL-M-P": {
-    "refresh_prog": { "numerator": 243141548, "denominator": 4064665 },
-    "line_freq_prog": { "numerator": 243141548, "denominator": 15455 },
-    "lines_per_frame": 526,
-    "vi_clock_divider": 3091
-  },
-  "PAL-M-I": {
-    "refresh_int": { "numerator": 486283096, "denominator": 8113875 },
-    "line_freq_int": { "numerator": 243141548, "denominator": 15455 },
-    "lines_per_frame": 525,
-    "vi_clock_divider": 3091
+  "PAL-M": {
+    "line_frequency": {
+      "numerator": 243141548,
+      "denominator": 15455
+    },
+    "vi_clock_divider": 3091,
+    "progressive": {
+      "scanlines": 526,
+      "refresh_rate": {
+        "numerator": 243141548,
+        "denominator": 4064665
+      }
+    },
+    "interlaced": {
+      "scanlines": 525,
+      "refresh_rate": {
+        "numerator": 486283096,
+        "denominator": 8113875
+      }
+    }
   }
 }

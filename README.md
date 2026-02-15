@@ -17,8 +17,6 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 
 ## Navigation Links
 
-* [Complete Reference](docs/N64Refresh-Complete-Reference.md)
-* [Timing Sheet](docs/N64Refresh-TimingSheet.md)
 * [Derivations](docs/N64Refresh-Derivations.md)
 * [Sources](docs/N64Refresh-SourceList.md)
 * [Internal canonical values JSON](tools/canonical_values.json)
@@ -30,7 +28,5 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 
 ## Notes
 
-1. See [Complete Reference](docs/N64Refresh-Complete-Reference.md) and [Timing Sheet](docs/N64Refresh-TimingSheet.md) for conversions, rates, tables, etc.
-2. See [Derivations](docs/N64Refresh-Derivations.md) and [Sources](docs/N64Refresh-SourceList.md) for verification and data provenance.
-3. See [Internal canonical values JSON](tools/canonical_values.json) for canonical derived values.
-4. The [Timing Sheet](docs/N64Refresh-TimingSheet.md) file will be merged with the Reference file in a future version.
+1. See [Derivations](docs/N64Refresh-Derivations.md) and [Sources](docs/N64Refresh-SourceList.md) for verification and data provenance.
+2. See [Internal canonical values JSON](tools/canonical_values.json) for canonical derived values.
