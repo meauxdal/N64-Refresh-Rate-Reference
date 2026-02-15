@@ -19,7 +19,7 @@ f_vi = f_xtal × M
      = (315/22 MHz) × (17/5)
      = (315 × 17)/(22 × 5) MHz
      = 5,355/110 MHz
-     = 48.681818... MHz (exact)
+     ≈ 48.6818181818 MHz
 ```
 
 **Horizontal scan frequency:**
@@ -33,7 +33,7 @@ f_line = f_vi / L
        ≈ 15,734.2657 Hz
 ```
 
-**Refresh Rate (Progressive):**
+**Refresh rate (Progressive):**
 
 Progressive mode: 526 scanlines per vertical scan cycle, scanned sequentially.
 
@@ -47,7 +47,7 @@ refresh_rate = f_line / (S_prog / 2)
              ≈ 59.8261054535 Hz
 ```
 
-**Refresh Rate (Interlaced):**
+**Refresh rate (Interlaced):**
 
 Interlaced mode: 525 scanlines per vertical scan cycle, alternating between odd and even fields (262.5 scanlines each).
 
@@ -80,17 +80,17 @@ Interlaced scanlines: S_int = 625
 ```
 f_vi = f_xtal × M
      = 17.734475 MHz × 2.8
-     = 49.6565 MHz
+     ≈ 49.6565300000 MHz
 ```
 
 **Horizontal scan frequency:**
 
 ```
-f_line = 4,890,625 / 313 Hz  (exact)
+f_line = 4,890,625 / 313 Hz  (exact fraction)
        = 15,625 Hz
 ```
 
-**Refresh Rate (Progressive):**
+**Refresh rate (Progressive):**
 
 ```
 refresh_rate = f_line / (S_prog / 2)
@@ -102,7 +102,7 @@ refresh_rate = f_line / (S_prog / 2)
              ≈ 49.9201277955 Hz
 ```
 
-**Refresh Rate (Interlaced):**
+**Refresh rate (Interlaced):**
 
 ```
 refresh_rate = f_line / (S_int / 2)
@@ -116,7 +116,7 @@ refresh_rate = f_line / (S_int / 2)
 **Notes on LEAP pattern:**
 
 * PAL modes use the VI LEAP register to alternate between two scanline lengths during vsync
-* The 5-field repeating pattern (LEAP_B, LEAP_A, LEAP_B, LEAP_A, LEAP_B) adds fractional VI clocks per field to maintain exact PAL broadcast timing
+* A 5-field repeating pattern alternates between LEAP_A and LEAP_B to add fractional VI clocks and maintain exact PAL broadcast timing (B-A-B-A-B)
 * NTSC and PAL-M do not use LEAP (LEAP = 0x00, always uses LEAP_A)
 
 ---
@@ -137,9 +137,9 @@ Interlaced scanlines: S_int = 525
 
 ```
 f_vi = f_xtal × M
-        = 14,302,444 Hz × 3.4
-        = 243,141,548 / 5 Hz (exact)
-        = 48,628,309.6 Hz
+     = 14.302444 MHz × 3.4
+     = 243,141,548 / 5 Hz
+     ≈ 48.6283096000 MHz
 ```
 
 **Horizontal scan frequency:**
@@ -149,24 +149,24 @@ f_line = 243,141,548 / 15,455 Hz  (exact fraction)
        ≈ 15,732.2260 Hz
 ```
 
-**Refresh Rate (Progressive):**
+**Refresh rate (Progressive):**
 
 ```
 refresh_rate = f_line / (S_prog / 2)
              = (243,141,548 / 15,455) / (526 / 2)
              = (243,141,548 / 15,455) / 263
              = 243,141,548 / (15,455 × 263)
-             = 243,141,548 / 4,064,665
+             = 243,141,548 / 4,064,665  (exact fraction)
              ≈ 59.8183486216 Hz
 ```
 
-**Refresh Rate (Interlaced):**
+**Refresh rate (Interlaced):**
 
 ```
 refresh_rate = f_line / (S_int / 2)
              = (243,141,548 / 15,455) / (525 / 2)
              = (243,141,548 × 2) / (15,455 × 525)
-             = 486,283,096 / 8,113,875
+             = 486,283,096 / 8,113,875  (exact fraction)
              ≈ 59.9322883333 Hz
 ```
 
@@ -221,3 +221,10 @@ PAL modes use the LEAP register to alternate scanline lengths during vsync:
 - Compensates for PAL's non-integer chroma period to VI clock ratio
 - Adds fractional scanline lengths during vsync to achieve exact broadcast timing
 - NTSC and PAL-M use LEAP = 0 (no alternation)
+
+---
+
+## **Annotations**
+
+**(exact fraction)** - Validated final result; stored in `canonical_values.json` for reference and verification
+**(reduced)** - Lowest terms
