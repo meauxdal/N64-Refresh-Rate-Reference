@@ -10,7 +10,7 @@ Exhaustive reference for **Nintendo 64 video refresh rates** across NTSC, PAL, a
 | NTSC-I  | Interlaced  | 4,500,000 / 75,075      | 59.9401      |
 | PAL-P   | Progressive | 15,625 / 313            | 49.9201      |
 | PAL-I   | Interlaced  | 50 / 1                  | 50.0000      |
-| PAL-M-P | Progressive | 243,141,548 / 4,064,665 | 59.8179      |
+| PAL-M-P | Progressive | 243,141,548 / 4,064,665 | 59.8183      |
 | PAL-M-I | Interlaced  | 486,283,096 / 8,113,875 | 59.9323      |
 
 ## Navigation Links

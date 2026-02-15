@@ -1,65 +1,66 @@
 # tools/verify.py
 
-import json
-from pathlib import Path
+from math import gcd
 from fractions import Fraction
 
-CANONICAL_JSON = Path(__file__).parent / "canonical_values.json"
-
-# Signals to verify
-SIGNALS = ["NTSC-P", "NTSC-I", "PAL-P", "PAL-I", "PAL-M-P", "PAL-M-I"]
-
-def load_json():
-    with CANONICAL_JSON.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-def verify():
-    canonical = load_json()
+def validate(data, lut, canonical):
     errors = []
 
-    for sig in SIGNALS:
-        data = canonical["signals"].get(sig)
-        if not data:
-            errors.append(f"Missing signal in JSON: {sig}")
-            continue
+    for mode, values in data.items():
+        canon = canonical[mode]
 
-        # Progressive fraction
-        f_prog = Fraction(data["f"]["numerator"], data["f"]["denominator"])
-        expected_prog = Fraction(data["f"]["numerator"], data["f"]["denominator"])  # self-check
-        if f_prog != expected_prog:
-            errors.append(f"{sig} progressive fraction mismatch: {f_prog} != {expected_prog}")
+        # Determine mode type
+        is_prog = "refresh_prog" in canon
+        is_int = "refresh_int" in canon
 
-        # Interlaced fraction
-        f_int = data.get("f_int", data["f"])
-        f_int_frac = Fraction(f_int["numerator"], f_int["denominator"])
-        expected_int = Fraction(f_int["numerator"], f_int["denominator"])
-        if f_int_frac != expected_int:
-            errors.append(f"{sig} interlaced fraction mismatch: {f_int_frac} != {expected_int}")
+        # 1. Fraction checks
+        if is_prog:
+            rf = canon["refresh_prog"]
+            lf = canon.get("line_freq_prog", rf)  # fallback to refresh fraction if line_freq missing
+            prog_refresh = Fraction(rf["numerator"], rf["denominator"])
+            prog_line = Fraction(lf["numerator"], lf["denominator"])
+            if values.get("refresh_prog") != prog_refresh:
+                errors.append(f"{mode} refresh_prog mismatch: {values.get('refresh_prog')} != {prog_refresh}")
+            if values.get("line_freq_prog") != prog_line:
+                errors.append(f"{mode} line_freq_prog mismatch: {values.get('line_freq_prog')} != {prog_line}")
 
-        # Lines per frame, prog_lines, int_lines
-        if data.get("lines_per_frame") is None:
-            errors.append(f"{sig} missing lines_per_frame")
-        if data.get("prog_lines") is None:
-            errors.append(f"{sig} missing prog_lines")
-        if data.get("int_lines") is None:
-            errors.append(f"{sig} missing int_lines")
+        if is_int:
+            rf = canon["refresh_int"]
+            lf = canon.get("line_freq_int", rf)
+            int_refresh = Fraction(rf["numerator"], rf["denominator"])
+            int_line = Fraction(lf["numerator"], lf["denominator"])
+            if values.get("refresh_int") != int_refresh:
+                errors.append(f"{mode} refresh_int mismatch: {values.get('refresh_int')} != {int_refresh}")
+            if values.get("line_freq_int") != int_line:
+                errors.append(f"{mode} line_freq_int mismatch: {values.get('line_freq_int')} != {int_line}")
 
-        # Multipliers
-        mul_prog = data.get("mul_prog_to_int")
-        mul_int = data.get("mul_int_to_prog")
-        if mul_prog:
-            if Fraction(mul_prog["numerator"], mul_prog["denominator"]) != Fraction(mul_prog["numerator"], mul_prog["denominator"]):
-                errors.append(f"{sig} mul_prog_to_int mismatch")
-        if mul_int:
-            if Fraction(mul_int["numerator"], mul_int["denominator"]) != Fraction(mul_int["numerator"], mul_int["denominator"]):
-                errors.append(f"{sig} mul_int_to_prog mismatch")
+        # 2. Reduced fractions
+        for key in ["refresh_prog", "refresh_int"]:
+            f = values.get(key)
+            if isinstance(f, Fraction) and gcd(f.numerator, f.denominator) != 1:
+                errors.append(f"{mode} {key} not reduced")
+
+        # 3. PAL-M rules
+        if mode.startswith("PAL-M"):
+            if values.get("leap", False):
+                errors.append(f"{mode} must not use LEAP")
+            if values.get("vi_clock_divider", 3091) != 3091:
+                errors.append(f"{mode} divisor must be 3091")
+
+    # 4. LUT checks
+    for a in lut:
+        if lut[a].get(a) not in [1, None]:
+            errors.append(f"LUT identity fail: {a}")
+        for b in lut:
+            ab = lut[a].get(b)
+            ba = lut[b].get(a)
+            if ab is not None and ba is not None and ab * ba != 1:
+                errors.append(f"LUT reciprocity fail: {a} {b}")
 
     if errors:
-        print("Verification FAILED")
+        print("VALIDATION ERRORS FOUND:")
         for e in errors:
-            print(e)
-    else:
-        print("Verification PASSED for all signals")
+            print(f" - {e}")
+        raise ValueError("Validation failed. See above for details.")
 
-if __name__ == "__main__":
-    verify()
+    print("All validations passed.")

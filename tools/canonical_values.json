@@ -1,101 +1,38 @@
 {
-  "signals": {
-    "NTSC-P": {
-      "f": { "numerator": 2250000, "denominator": 37609 },
-      "f_int": { "numerator": 4500000, "denominator": 75075 },
-      "f_line": { "numerator": 591750000, "denominator": 37609 },
-      "lines_per_frame": 525,
-      "prog_lines": 263,
-      "int_lines": 262,
-      "mul_prog_to_int": { "numerator": 75218, "denominator": 75075 },
-      "mul_int_to_prog": { "numerator": 75075, "denominator": 75218 }
-    },
-    "NTSC-I": {
-      "f": { "numerator": 4500000, "denominator": 75075 },
-      "f_int": { "numerator": 4500000, "denominator": 75075 },
-      "f_line": { "numerator": 591750000, "denominator": 37609 },
-      "lines_per_frame": 525,
-      "prog_lines": 263,
-      "int_lines": 262,
-      "mul_prog_to_int": { "numerator": 75218, "denominator": 75075 },
-      "mul_int_to_prog": { "numerator": 75075, "denominator": 75218 }
-    },
-    "PAL-P": {
-      "f": { "numerator": 15625, "denominator": 313 },
-      "f_int": { "numerator": 50, "denominator": 1 },
-      "f_line": { "numerator": 4890625, "denominator": 313 },
-      "lines_per_frame": 625,
-      "prog_lines": 313,
-      "int_lines": 312,
-      "mul_prog_to_int": { "numerator": 626, "denominator": 625 },
-      "mul_int_to_prog": { "numerator": 625, "denominator": 626 }
-    },
-    "PAL-I": {
-      "f": { "numerator": 50, "denominator": 1 },
-      "f_int": { "numerator": 50, "denominator": 1 },
-      "f_line": { "numerator": 4890625, "denominator": 313 },
-      "lines_per_frame": 625,
-      "prog_lines": 313,
-      "int_lines": 312,
-      "mul_prog_to_int": { "numerator": 626, "denominator": 625 },
-      "mul_int_to_prog": { "numerator": 625, "denominator": 626 }
-    },
-    "PAL-M-P": {
-      "f": { "numerator": 243141548, "denominator": 4064665 },
-      "f_int": { "numerator": 486283096, "denominator": 8113875 },
-      "f_line": { "numerator": 63946227124, "denominator": 4064665 },
-      "lines_per_frame": 525,
-      "prog_lines": 263,
-      "int_lines": 262,
-      "mul_prog_to_int": { "numerator": 8128332, "denominator": 8113875 },
-      "mul_int_to_prog": { "numerator": 8113875, "denominator": 8128332 }
-    },
-    "PAL-M-I": {
-      "f": { "numerator": 486283096, "denominator": 8113875 },
-      "f_int": { "numerator": 486283096, "denominator": 8113875 },
-      "f_line": { "numerator": 63946227124, "denominator": 4064665 },
-      "lines_per_frame": 525,
-      "prog_lines": 263,
-      "int_lines": 262,
-      "mul_prog_to_int": { "numerator": 8128332, "denominator": 8113875 },
-      "mul_int_to_prog": { "numerator": 8113875, "denominator": 8128332 }
-    }
+  "NTSC-P": {
+    "refresh_prog": { "numerator": 2250000, "denominator": 37609 },
+    "line_freq_prog": { "numerator": 591750000, "denominator": 37609 },
+    "lines_per_frame": 526,
+    "vi_clock_divider": 3094
   },
-  "conversions": {
-    "NTSC-P_to_NTSC-I": { "from": "NTSC-P", "to": "NTSC-I", "numerator": 75218, "denominator": 75075 },
-    "NTSC-P_to_PAL-P": { "from": "NTSC-P", "to": "PAL-P", "numerator": 587640625, "denominator": 704250000 },
-    "NTSC-P_to_PAL-I": { "from": "NTSC-P", "to": "PAL-I", "numerator": 37609, "denominator": 45000 },
-    "NTSC-P_to_PAL-M-P": { "from": "NTSC-P", "to": "PAL-M-P", "numerator": 9143017541420, "denominator": 9138600000000 },
-    "NTSC-P_to_PAL-M-I": { "from": "NTSC-P", "to": "PAL-M-I", "numerator": 18286030964340, "denominator": 18185040000000 },
-
-    "NTSC-I_to_NTSC-P": { "from": "NTSC-I", "to": "NTSC-P", "numerator": 75075, "denominator": 75218 },
-    "NTSC-I_to_PAL-P":  { "from": "NTSC-I", "to": "PAL-P", "numerator": 587640625, "denominator": 708000000 },
-    "NTSC-I_to_PAL-I":  { "from": "NTSC-I", "to": "PAL-I", "numerator": 37609, "denominator": 90000 },
-    "NTSC-I_to_PAL-M-P": { "from": "NTSC-I", "to": "PAL-M-P", "numerator": 9143017541420, "denominator": 9143017541420 },
-    "NTSC-I_to_PAL-M-I": { "from": "NTSC-I", "to": "PAL-M-I", "numerator": 18286030964340, "denominator": 18286030964340 },
-
-    "PAL-P_to_NTSC-P": { "from": "PAL-P", "to": "NTSC-P", "numerator": 704250000, "denominator": 587640625 },
-    "PAL-P_to_NTSC-I": { "from": "PAL-P", "to": "NTSC-I", "numerator": 708000000, "denominator": 587640625 },
-    "PAL-P_to_PAL-I":  { "from": "PAL-P", "to": "PAL-I", "numerator": 626, "denominator": 625 },
-    "PAL-P_to_PAL-M-P": { "from": "PAL-P", "to": "PAL-M-P", "numerator": 76068664524, "denominator": 63496875 },
-    "PAL-P_to_PAL-M-I": { "from": "PAL-P", "to": "PAL-M-I", "numerator": 152137329048, "denominator": 126843750 },
-
-    "PAL-I_to_NTSC-P": { "from": "PAL-I", "to": "NTSC-P", "numerator": 45000, "denominator": 37609 },
-    "PAL-I_to_NTSC-I": { "from": "PAL-I", "to": "NTSC-I", "numerator": 90000, "denominator": 37609 },
-    "PAL-I_to_PAL-P":  { "from": "PAL-I", "to": "PAL-P", "numerator": 625, "denominator": 626 },
-    "PAL-I_to_PAL-M-P": { "from": "PAL-I", "to": "PAL-M-P", "numerator": 63496875, "denominator": 76068664524 },
-    "PAL-I_to_PAL-M-I": { "from": "PAL-I", "to": "PAL-M-I", "numerator": 126843750, "denominator": 152137329048 },
-
-    "PAL-M-P_to_NTSC-P": { "from": "PAL-M-P", "to": "NTSC-P", "numerator": 9138600000000, "denominator": 9143017541420 },
-    "PAL-M-P_to_NTSC-I": { "from": "PAL-M-P", "to": "NTSC-I", "numerator": 9143017541420, "denominator": 9143017541420 },
-    "PAL-M-P_to_PAL-P":  { "from": "PAL-M-P", "to": "PAL-P", "numerator": 63496875, "denominator": 76068664524 },
-    "PAL-M-P_to_PAL-I":  { "from": "PAL-M-P", "to": "PAL-I", "numerator": 243141548, "denominator": 203233250 },
-    "PAL-M-P_to_PAL-M-I": { "from": "PAL-M-P", "to": "PAL-M-I", "numerator": 8128332, "denominator": 8113875 },
-
-    "PAL-M-I_to_NTSC-P": { "from": "PAL-M-I", "to": "NTSC-P", "numerator": 18185040000000, "denominator": 18286030964340 },
-    "PAL-M-I_to_NTSC-I": { "from": "PAL-M-I", "to": "NTSC-I", "numerator": 18286030964340, "denominator": 18286030964340 },
-    "PAL-M-I_to_PAL-P":  { "from": "PAL-M-I", "to": "PAL-P", "numerator": 126843750, "denominator": 152137329048 },
-    "PAL-M-I_to_PAL-I":  { "from": "PAL-M-I", "to": "PAL-I", "numerator": 203233250, "denominator": 243141548 },
-    "PAL-M-I_to_PAL-M-P": { "from": "PAL-M-I", "to": "PAL-M-P", "numerator": 8113875, "denominator": 8128332 }
+  "NTSC-I": {
+    "refresh_int": { "numerator": 60000, "denominator": 1001 },
+    "line_freq_int": { "numerator": 591750000, "denominator": 188045 },
+    "lines_per_frame": 525,
+    "vi_clock_divider": 3094
+  },
+  "PAL-P": {
+    "refresh_prog": { "numerator": 15625, "denominator": 313 },
+    "line_freq_prog": { "numerator": 4890625, "denominator": 313 },
+    "lines_per_frame": 626,
+    "vi_clock_divider": 3178
+  },
+  "PAL-I": {
+    "refresh_int": { "numerator": 50, "denominator": 1 },
+    "line_freq_int": { "numerator": 4890625, "denominator": 625 },
+    "lines_per_frame": 625,
+    "vi_clock_divider": 3178
+  },
+  "PAL-M-P": {
+    "refresh_prog": { "numerator": 243141548, "denominator": 4064665 },
+    "line_freq_prog": { "numerator": 243141548, "denominator": 15455 },
+    "lines_per_frame": 526,
+    "vi_clock_divider": 3091
+  },
+  "PAL-M-I": {
+    "refresh_int": { "numerator": 486283096, "denominator": 8113875 },
+    "line_freq_int": { "numerator": 243141548, "denominator": 15455 },
+    "lines_per_frame": 525,
+    "vi_clock_divider": 3091
   }
 }

@@ -1,162 +1,72 @@
-# Complete N64 Refresh Rate
+# N64 Refresh Rate – Complete Reference
 
-| FROM ↓ / TO → | NTSC-P  | NTSC-I  | PAL-P   | PAL-I   | PAL-M-P | PAL-M-I |
-| ------------- | ------- | ------- | ------- | ------- | ------- | ------- |
-| **NTSC-P**    | 1.00000 | 1.00190 | 0.83442 | 0.83576 | 1.00048 | 1.00555 |
-| **NTSC-I**    | 0.99810 | 1.00000 | 0.83000 | 0.41788 | 1.00000 | 1.00000 |
-| **PAL-P**     | 1.19844 | 1.20482 | 1.00000 | 1.00160 | 0.99840 | 0.99831 |
-| **PAL-I**     | 1.19652 | 0.99841 | 0.99840 | 1.00000 | 0.99822 | 0.99822 |
-| **PAL-M-P**   | 0.99952 | 1.00000 | 1.00160 | 1.19637 | 1.00000 | 1.00178 |
-| **PAL-M-I**   | 0.99448 | 1.00000 | 0.99831 | 0.83586 | 0.99822 | 1.00000 |
+## Legend
 
+- **Lines**: canonical JSON value
+- **Line frequency (f_line)**: canonical line frequency from JSON
+- **Refresh rate**: derived vertical refresh rate from JSON fraction (~48–61 Hz)
 
 ## NTSC-P
 
-### Exact Refresh Rates Summary
-| Mode        | Exact Fraction | Decimal           |
-| ----------- | --------------- | ----------------- |
-| Progressive | 2250000 / 37609 | 59.82610545348188 |
-| Interlaced  | 4500000 / 75075 | 59.94005994005994 |
-
-### Matrix / Golden Table
-| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |
-| ------------- | --------------- | --------------- | --------------- | --------------- |
-| 591750000 / 37609 | 2250000 / 37609 | 4500000 / 75075 | 75218 / 75075 | 75075 / 75218 |
-
-### Timing Sheet Summary
-| Parameter         | Value           | Notes           |
-| ----------------- | --------------- | --------------- |
-| Lines per frame   | 525 | Derived / JSON |
-| Progressive lines | 263 | Derived         |
-| Interlaced lines  | 262 | Derived         |
-| f_line            | 591750000 / 37609 | Calculated      |
-| f_prog            | 2250000 / 37609 | Calculated      |
-| f_int             | 4500000 / 75075 | Calculated      |
-
+### Constants / Canonical Values
+- Lines: 526
+### Derived Values
+- Line frequency: 2250000/143
+- Refresh rate: 2250000/37609 ≈ 59.8261054535 Hz
+- Notes: 4×NTSC crystal × 3.4, 3094 VI clocks/scanline; exact spec timing
 
 ## NTSC-I
 
-### Exact Refresh Rates Summary
-| Mode        | Exact Fraction | Decimal           |
-| ----------- | --------------- | ----------------- |
-| Progressive | 4500000 / 75075 | 59.94005994005994 |
-| Interlaced  | 4500000 / 75075 | 59.94005994005994 |
-
-### Matrix / Golden Table
-| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |
-| ------------- | --------------- | --------------- | --------------- | --------------- |
-| 591750000 / 37609 | 4500000 / 75075 | 4500000 / 75075 | 75218 / 75075 | 75075 / 75218 |
-
-### Timing Sheet Summary
-| Parameter         | Value           | Notes           |
-| ----------------- | --------------- | --------------- |
-| Lines per frame   | 525 | Derived / JSON |
-| Progressive lines | 263 | Derived         |
-| Interlaced lines  | 262 | Derived         |
-| f_line            | 591750000 / 37609 | Calculated      |
-| f_prog            | 4500000 / 75075 | Calculated      |
-| f_int             | 4500000 / 75075 | Calculated      |
-
+### Constants / Canonical Values
+- Lines: 525
+### Derived Values
+- Line frequency: 450000/143
+- Refresh rate: 60000/1001 ≈ 59.9400599401 Hz
+- Notes: 4×NTSC crystal × 3.4, 3094 VI clocks/scanline; exact spec timing
 
 ## PAL-P
 
-### Exact Refresh Rates Summary
-| Mode        | Exact Fraction | Decimal           |
-| ----------- | --------------- | ----------------- |
-| Progressive | 15625 / 313 | 49.92012779552716 |
-| Interlaced  | 50 / 1 | 50.00000000000000 |
-
-### Matrix / Golden Table
-| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |
-| ------------- | --------------- | --------------- | --------------- | --------------- |
-| 4890625 / 313 | 15625 / 313 | 50 / 1 | 626 / 625 | 625 / 626 |
-
-### Timing Sheet Summary
-| Parameter         | Value           | Notes           |
-| ----------------- | --------------- | --------------- |
-| Lines per frame   | 625 | Derived / JSON |
-| Progressive lines | 313 | Derived         |
-| Interlaced lines  | 312 | Derived         |
-| f_line            | 4890625 / 313 | Calculated      |
-| f_prog            | 15625 / 313 | Calculated      |
-| f_int             | 50 / 1 | Calculated      |
-
+### Constants / Canonical Values
+- Lines: 626
+### Derived Values
+- Line frequency: 15625/1
+- Refresh rate: 15625/313 ≈ 49.9201277955 Hz
+- Notes: 4×PAL crystal × 2.8, 3178 VI clocks/scanline; LEAP applied for exact 50 Hz
 
 ## PAL-I
 
-### Exact Refresh Rates Summary
-| Mode        | Exact Fraction | Decimal           |
-| ----------- | --------------- | ----------------- |
-| Progressive | 50 / 1 | 50.00000000000000 |
-| Interlaced  | 50 / 1 | 50.00000000000000 |
-
-### Matrix / Golden Table
-| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |
-| ------------- | --------------- | --------------- | --------------- | --------------- |
-| 4890625 / 313 | 50 / 1 | 50 / 1 | 626 / 625 | 625 / 626 |
-
-### Timing Sheet Summary
-| Parameter         | Value           | Notes           |
-| ----------------- | --------------- | --------------- |
-| Lines per frame   | 625 | Derived / JSON |
-| Progressive lines | 313 | Derived         |
-| Interlaced lines  | 312 | Derived         |
-| f_line            | 4890625 / 313 | Calculated      |
-| f_prog            | 50 / 1 | Calculated      |
-| f_int             | 50 / 1 | Calculated      |
-
+### Constants / Canonical Values
+- Lines: 625
+### Derived Values
+- Line frequency: 7825/1
+- Refresh rate: 50/1 ≈ 50.0000000000 Hz
+- Notes: 4×PAL crystal × 2.8, 3178 VI clocks/scanline; LEAP applied
 
 ## PAL-M-P
 
-### Exact Refresh Rates Summary
-| Mode        | Exact Fraction | Decimal           |
-| ----------- | --------------- | ----------------- |
-| Progressive | 243141548 / 4064665 | 59.81834862159612 |
-| Interlaced  | 486283096 / 8113875 | 59.93228833325630 |
-
-### Matrix / Golden Table
-| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |
-| ------------- | --------------- | --------------- | --------------- | --------------- |
-| 63946227124 / 4064665 | 243141548 / 4064665 | 486283096 / 8113875 | 8128332 / 8113875 | 8113875 / 8128332 |
-
-### Timing Sheet Summary
-| Parameter         | Value           | Notes           |
-| ----------------- | --------------- | --------------- |
-| Lines per frame   | 525 | Derived / JSON |
-| Progressive lines | 263 | Derived         |
-| Interlaced lines  | 262 | Derived         |
-| f_line            | 63946227124 / 4064665 | Calculated      |
-| f_prog            | 243141548 / 4064665 | Calculated      |
-| f_int             | 486283096 / 8113875 | Calculated      |
-
+### Constants / Canonical Values
+- Lines: 526
+### Derived Values
+- Line frequency: 243141548/15455
+- Refresh rate: 243141548/4064665 ≈ 59.8183486216 Hz
+- Notes: 4×MPAL crystal × 3.4, 3091 VI clocks/scanline; integer scanline divisor, no LEAP
 
 ## PAL-M-I
 
-### Exact Refresh Rates Summary
-| Mode        | Exact Fraction | Decimal           |
-| ----------- | --------------- | ----------------- |
-| Progressive | 486283096 / 8113875 | 59.93228833325630 |
-| Interlaced  | 486283096 / 8113875 | 59.93228833325630 |
+### Constants / Canonical Values
+- Lines: 525
+### Derived Values
+- Line frequency: 243141548/15455
+- Refresh rate: 486283096/8113875 ≈ 59.9322883333 Hz
+- Notes: 4×MPAL crystal × 3.4, 3091 VI clocks/scanline; integer divisor, no LEAP
 
-### Matrix / Golden Table
-| f_line        | f_prog          | f_int           | mul_prog_to_int | mul_int_to_prog |
-| ------------- | --------------- | --------------- | --------------- | --------------- |
-| 63946227124 / 4064665 | 486283096 / 8113875 | 486283096 / 8113875 | 8128332 / 8113875 | 8113875 / 8128332 |
+## Master Conversion LUT (Fractions)
 
-### Timing Sheet Summary
-| Parameter         | Value           | Notes           |
-| ----------------- | --------------- | --------------- |
-| Lines per frame   | 525 | Derived / JSON |
-| Progressive lines | 263 | Derived         |
-| Interlaced lines  | 262 | Derived         |
-| f_line            | 63946227124 / 4064665 | Calculated      |
-| f_prog            | 486283096 / 8113875 | Calculated      |
-| f_int             | 486283096 / 8113875 | Calculated      |
-
-
----
-
-### Source and Authority
-
-All refresh rates, conversion multipliers, and derived timing values are computed directly from the canonical JSON:
-`tools/canonical_values.json`
+| From \ To | NTSC-P | NTSC-I | PAL-P | PAL-I | PAL-M-P | PAL-M-I |
+|---|---|---|---|---|---|---|
+| NTSC-P | 1/1 | 526/525 | 37609/45072 | 37609/45000 | 790210031/790312500 | 207825238153/207457031250 |
+| NTSC-I | 525/526 | 1/1 | 25025/30048 | 1001/1200 | 5531470217/5542725000 | 790210031/790312500 |
+| PAL-P | 45072/37609 | 30048/25025 | 1/1 | 626/625 | 76103304524/63510390625 | 152206609048/126779296875 |
+| PAL-I | 45000/37609 | 1200/1001 | 625/626 | 1/1 | 121570774/101616625 | 243141548/202846875 |
+| PAL-M-P | 790312500/790210031 | 5542725000/5531470217 | 63510390625/76103304524 | 101616625/121570774 | 1/1 | 526/525 |
+| PAL-M-I | 207457031250/207825238153 | 790312500/790210031 | 126779296875/152206609048 | 202846875/243141548 | 525/526 | 1/1 |
