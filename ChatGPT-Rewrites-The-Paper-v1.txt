@@ -16,12 +16,12 @@ The Nintendo 64 Video Interface (VI) supports three television standards (NTSC, 
 
 **Scan Types:**
 
-* **Progressive (P)**: All scanlines drawn sequentially in a single pass
-* **Interlaced (I)**: Scanlines drawn in two fields (odd lines, then even lines)
+* **Progressive (`P`)**: All scanlines drawn sequentially in a single pass
+* **Interlaced (`I`)**: Scanlines drawn in two fields (odd lines, then even lines)
 
 ### 1.1 Nomenclature
 
-This document adopts **Vertical Scan Frequency (fV)** as the primary metric for all timing intervals. While the term "refresh rate" is used for general readability, **fV** precisely defines the frequency of the **Vertical Synchronization (VSYNC)** signal.
+This document adopts **Vertical Scan Frequency (fV)** as the primary metric for all timing intervals. While the common industry term "refresh rate" is used for general readability, **fV** precisely defines the frequency of the **Vertical Synchronization (VSYNC)** signal.
 
 * Progressive Modes: This represents the Frame Frequency.
 * Interlaced Modes: This represents the Field Frequency.
@@ -43,7 +43,7 @@ The following table presents the exact refresh rates for all six N64 video modes
 | PAL-M-P | Progressive | 243141548/4064665 | 59.8183486216 |
 | PAL-M-I | Interlaced | 486283096/8113875 | 59.9322883333 |
 
-> **Note on Interlaced Timing**: For all interlaced modes (**-I**), the frequency listed refers to the **Vertical Scan Frequency (Field Rate)**. Two such fields are required to compose one full interlaced frame.
+> **Note on Interlaced Timing**: For all interlaced modes (**`-I`**), the frequency listed refers to the **Vertical Scan Frequency (Field Rate)**. One full interlaced frame comprises two such fields.
 
 ---
 
@@ -91,6 +91,8 @@ All values calculated from the fundamental constants above. Line frequencies and
 | **PAL** | 15625/1 | 15625/1 | 15625/313 | 50/1 |
 | **PAL-M** | 243141548/15455 | 243141548/15455 | 243141548/4064665 | 486283096/8113875 |
 
+> **Note on Interlaced Timing**: For all interlaced modes (**-I**), the frequency listed refers to the **Vertical Scan Frequency (Field Rate)**. Two such fields are required to compose one full interlaced frame.
+
 ### 3.4 Hardware Signal Path
 
 The generation of video timing follows a deterministic path from physical oscillation to digital counting and finally analog conversion:
@@ -113,6 +115,8 @@ Use these expected register values and physical pin mappings to verify timing im
 | **HSYNC Pulse** | VDC_HSYNC | — | Pin 15 | Pin 20 |
 | **Burst Gate** | VDC_BURST | — | Pin 16 | Pin 21 |
 
+> **Note on Signal Handover**: The RCP outputs digital timing pulses (VDC) which are received by the Video Encoder (typically the MAV-N64 or BU9906). These pins represent the last digital stage of the video pipeline before analog conversion.
+
 ---
 
 ## 4. Signal Analysis
@@ -121,7 +125,7 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 ### 4.1 Signal Parameters by Mode
 
-The following table defines the relationship between the hardware's Master Clock (f_vi) and the resulting display timing.
+The following table defines the relationship between the hardware's Master Clock (f_vi) and the resulting display timing. These values are the basis for the default configurations found in libdragon.
 
 | Mode | Master Clock (f_vi) | Clocks / Line (L) | Scanlines (S) | Refresh Rate (fV) |
 | :--- | :--- | :--- | :--- | :--- |
@@ -135,20 +139,24 @@ The following table defines the relationship between the hardware's Master Clock
 **Implementation Note on PAL-M Precision:**
 The Master Clock for PAL-M is derived as exactly 243,141,548 / 5 Hz. The slight deviation in NTSC-equivalent timing (approx. 0.013%) is a hardware constraint caused by the requirement of an integer value for the Clocks / Line (L) register.
 
-#### 4.1.1 Anatomy of the Timing Map
+#### 4.1.1 Anatomy of the Timing Map (774x263)
 
-Figure 3 is a direct pixel-to-timing map, courtesy lidnariq. The image resolution of 774x263 is a spatial representation of the signal timing for one NTSC field:
+Figure 3 is a direct pixel-to-timing map produced by lidnariq's VI Timing Visualizer. The image resolution of 774x263 is a spatial representation of the signal timing for one NTSC field:
 
 ![Figure 3: N64 VI Timing Diagram - Visualizing Register-Defined Bounds](fig3_n64_default_libdragon_240p_timing.png)
 *Figure 3: N64 VI Timing Diagram - Visualizing Register-Defined Bounds*
 
 * **Vertical Axis (263 pixels)**: Represents exactly one NTSC field. Since NTSC-P utilizes a total of 526 lines, one field corresponds to 263 vertical pixels (1 pixel = 1 scanline).
-* **Horizontal Axis (774 pixels)**: Represents effective horizontal period (L). Maps VI clock durations to relative spatial coordinates.
+* **Horizontal Axis (774 pixels)**: Represents the effective horizontal period (L). Maps VI clock durations to relative spatial coordinates.
 
-**Visual Indicators:**
+**Key Visual Indicators:**
 * **Total Canvas (V_SYNC/H_SYNC)**: Defined by `VI_V_SYNC_REG` and `VI_H_SYNC_REG`, these represent the absolute outer limits of the signal.
 * **The Yellow Bar (Color Burst)**: Visualizes the `VI_BURST_REG` values. Proper configuration ensures this "burst gate" does not overlap with the active video start (`H_START`), preventing color-sync artifacts.
 * **The Grey Box (Active Area)**: The region where pixels are fetched from the framebuffer, defined by the start/end offsets in `VI_H_VIDEO_REG` and `VI_V_VIDEO_REG`.
+
+> **Developer Insight**: Because this image is a 1:1 mapping (1 pixel = 1 line), it serves as a "visual logic analyzer". If the Active Area box is shifted, a developer can count the pixels in the image to determine the exact register adjustment needed in `libdragon` to center the output on a CRT.
+
+> **Source Note**: This visualization was generated using **lidnariq's VI Timing Visualizer**, a community-standard tool for verifying N64 signal compliance. The 774x263 resolution provides a literal 1:1 map of the physical timing for one NTSC field.
 
 ### 4.2 Mode-Specific Implementation Notes
 
@@ -176,8 +184,8 @@ Figure 3 is a direct pixel-to-timing map, courtesy lidnariq. The image resolutio
 * **VI clock frequency**: 48,628,309.6 Hz (243,141,548 / 5 Hz)
 * **Color subcarrier**: 3,575,611 Hz (exact)
 * **VI clock multiplier**: 17 / 5 (3.4)
-* **Integer Divisor Constraint**: To match the NTSC standard line rate (approx. 15,734.265 Hz) exactly, the VI would require 3,090.589 clocks per line. Since the VI hardware utilizes integer counting for line duration, it employs the nearest integer (3091).
-* **Frequency Deviation**: This results in a line frequency of approx. 15,732.23 Hz, a deviation of ~0.013% to NTSC nominal ~15,734.265 Hz.
+* **Integer Divisor Constraint**: To match the NTSC standard line rate (approx. 15,734.27 Hz) exactly, the VI would require 3,090.589 clocks per line. Since the VI hardware utilizes integer counting for line duration, it employs the nearest integer (3091).
+* **Frequency Deviation**: This results in a line frequency of approx. 15,732.23 Hz, a deviation of approx. 0.013% to NTSC nominal 15,734.265…. This shift is negligible for CRT deflection circuits but is a key differentiator for high-precision digital capture synchronization.
 * **LEAP register**: Not used (0x00).
 
 ---
@@ -217,6 +225,12 @@ Irreducible fractions for mathematically precise conversions.
 ## 6. Mathematical Derivations
 
 This section provides complete step-by-step derivations for all timing values. All calculations begin with documented hardware constants and proceed through to the final refresh rates.
+
+> ### Clarification: Vertical Scan Frequency (fV)
+> Throughout this document, **Refresh Rate** and **fV** are used interchangeably to define the frequency of the **VSYNC** signal.
+> 
+> * **Progressive Modes**: fV = Frame Rate (the rate at which a unique image is drawn).
+> * **Interlaced Modes**: fV = Field Rate. Because the N64 hardware treats each field as a discrete timing event (alternating the half-line offset), the "Refresh Rate" values in the tables represent how often the screen is physically scanned. One full interlaced frame comprises two such fields.
 
 ### 6.1 NTSC Derivation
 
@@ -367,14 +381,14 @@ Progressive lines:     S_prog = 526
 Interlaced lines:      S_int  = 525
 ```
 
-**Video clock frequency**
+**Video clock frequency (first-principles):**
 
 ```
 f_vi = f_xtal × M
      = 14,302,444 × (17 / 5)
      = (14,302,444 × 17) / 5
      = 243,141,548 / 5 Hz                 (exact rational)
-     = 48,628,309.6 Hz                    (exact)
+     ≈ 48,628,309.6000000000 Hz
 ```
 
 **Horizontal scan frequency:**
@@ -420,9 +434,11 @@ fV_int = f_line / (525 / 2)
 
 ---
 
-## 7. Sources and References
+## 7. Sources and Documentation Map
 
-### 7.1 Visual References
+### 7.1 Component Reference Map
+
+This table maps the visual figures used in this document to their physical hardware components and primary reverse-engineering sources.
 
 | Document Figure | Repo Filename | Component / Source |
 | :--- | :--- | :--- |
@@ -430,7 +446,8 @@ fV_int = f_line / (525 / 2)
 | **Figure 2** | `fig2_rcp_schematic.png` | RCP-NUS (U9) Pinout / VDC Bus. Source: RWeick |
 | **Figure 3** | `fig3_n64_default_libdragon_240p_timing.png` | Libdragon VI Timing Bounds (240p). Source: lidnariq |
 
-* [RWeick/NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) — Reverse-engineered schematic.
+**Primary Schematic Source:**
+* [RWeick/NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) — Comprehensive PCB schematics and pinout references.
 
 ### 7.2 General References
 
@@ -473,12 +490,6 @@ fV_int = f_line / (525 / 2)
 | [Optus N64RGB Archive](https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)                                                                                  | Community N64 RGB signal documentation                                                 |
 | [JunkerHQ – XRBG Optimal Timings](https://junkerhq.net/xrgb/index.php?title=Optimal_timings)                                                                        | Community guide for optimal dot clock and refresh timings                              |
 | [Pineight – Dot Clock Rates](https://pineight.com/mw/page/Dot_clock_rates.xhtml)                                                                                    | Technical reference for dot clocks                                                     |
-
-### 7.3 Acknowledgements
-
-* a thread on [videogameperfection.com](https://videogameperfection.com/forums/topic/nintendo-64-de-blur/) provided the initial spark of curiosity
-* lidnariq provided invaluable insight and corroboration as well as the timing map (Figure 3)
-* the ares Discord in general is a superlative resource
 
 ---
 
