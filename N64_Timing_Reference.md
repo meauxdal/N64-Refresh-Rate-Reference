@@ -60,6 +60,7 @@ Hardware-defined values derived from the system's crystal oscillators and the Vi
 | **PAL-M** | 14.3024440000 MHz | 17 / 5 | 3091 | 525 / 526 | 0x20D / 0x20E |
 
 ![Figure 1: N64 Clock Generation Circuits - U7 (NTSC/PAL-M) and U15 (PAL)](fig1_clock_gen_schematic.png)
+*Figure 1: N64 Clock Generation Circuits - U7 (NTSC/PAL-M) and U15 (PAL)*
 
 **Implementation Notes:**
 * **NTSC Clock Precision**: The NTSC crystal frequency is mathematically defined as exactly 315/22 MHz.
@@ -70,6 +71,7 @@ Hardware-defined values derived from the system's crystal oscillators and the Vi
 The RCP (Reality Co-Processor) processes video timings through the following memory-mapped I/O (MMIO) registers:
 
 ![Figure 2: RCP-NUS Pinout showing VDC (Video Digital Complex) Timing Outputs](fig2_rcp_schematic.png)
+*Figure 2: RCP-NUS Pinout showing VDC (Video Digital Complex) Timing Outputs*
 
 * **VI_V_SYNC_REG (0x0440000C)**: Sets the total number of lines per frame (S).
 * **VI_H_SYNC_REG (0x04400008)**: The lower 12 bits define the total line duration in VI clocks (L).
@@ -82,10 +84,10 @@ The RCP (Reality Co-Processor) processes video timings through the following mem
 All values calculated from the fundamental constants above. Line frequencies and refresh rates are expressed as exact fractions (fully reduced) with corresponding decimal representations.
 
 | Mode | Line Frequency (Hz) | Line Frequency (Hz) | Progressive Refresh (Hz) | Interlaced Refresh (Hz) |
-| --- | --- | --- | --- | --- |
-| **NTSC** | 2250000/143 | 15734.2657342657 | 2250000/37609 | 60000/1001 |
-| **PAL** | 15625/1 | 15625.0000000000 | 15625/313 | 50/1 |
-| **PAL-M** | 243141548/15455 | 15732.2256874798 | 243141548/4064665 | 486283096/8113875 |
+| :--- | :--- | :--- | :--- | :--- |
+| **NTSC** | 2250000/143 | 2250000/143 | 2250000/37609 | 60000/1001 |
+| **PAL** | 15625/1 | 15625/1 | 15625/313 | 50/1 |
+| **PAL-M** | 243141548/15455 | 243141548/15455 | 243141548/4064665 | 486283096/8113875 |
 
 ### 3.4 Hardware Signal Path
 
@@ -120,6 +122,7 @@ Detailed per-mode timing specifications and hardware implementation notes.
 ### 4.1 Signal Parameters by Mode
 
 ![Figure 3: N64 VI Timing Diagram - Visualizing Register-Defined Bounds](fig3_n64_default_libdragon_240p_timing.png)
+*Figure 3: N64 VI Timing Diagram - Visualizing Register-Defined Bounds*
 
 | Mode | Scanlines | VI Clocks per Scanline | Line Frequency (Hz) | Refresh Rate (Hz) |
 | --- | --- | --- | --- | --- |
@@ -396,7 +399,7 @@ This table maps the visual figures used in this document to their physical hardw
 | :--- | :--- | :--- |
 | **Figure 1** | `fig1_clock_gen_schematic.png` | MX8330MC Clock Gen (U7/U15). Source: RWeick |
 | **Figure 2** | `fig2_rcp_schematic.png` | RCP-NUS (U9) Pinout / VDC Bus. Source: RWeick |
-| **Figure 3** | `n64_default_libdragon_240p_timing.png` | Libdragon VI Timing Bounds (240p). Source: lidnariq |
+| **Figure 3** | `fig3_n64_default_libdragon_240p_timing.png` | Libdragon VI Timing Bounds (240p). Source: lidnariq |
 
 **Primary Schematic Source:**
 * [RWeick/NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) — Comprehensive PCB schematics and pinout references.
@@ -408,8 +411,8 @@ This table maps the visual figures used in this document to their physical hardw
 | [ITU-R Recommendation BT.470-6](https://www.itu.int/rec/R-REC-BT.470/en)                                                                                            | Broadcast standard: NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies |
 | [ITU-R Recommendation BT.1700](https://www.itu.int/rec/R-REC-BT.1700/en)                                                                                            | Broadcast standard: composite video signal levels, timing, and sync pulses             |
 | [ITU-R Recommendation BT.1701](https://www.itu.int/rec/R-REC-BT.1701/en)                                                                                            | Broadcast standard: horizontal/vertical timing for composite video                     |
-| [SAA1101 Universal Sync Generator Datasheet](https://people.ece.cornell.edu/land/courses/ece4760/ideas/saa1101.pdf)                                                 | PAL-M chroma frequency specification (227.25 × fH), universal sync generator chip reference |
 | [ATV Compendium (BATC)](https://batc.org.uk/wp-content/uploads/ATVCompendium.pdf)                                                                                   | PAL-M line rate (fH) to chroma frequency relationship, broadcast standard reference    |
+| [SAA1101 Universal Sync Generator Datasheet](https://people.ece.cornell.edu/land/courses/ece4760/ideas/saa1101.pdf)                                                 | PAL-M chroma frequency specification (227.25 × fH), universal sync generator chip reference |
 | [MX8350 Datasheet](https://www.datasheets360.com/part/detail/mx8350/-7133688394404043430/)                                                                          | Hardware datasheet: DAC/video encoder electrical limits and timing                     |
 | [Nintendo 64 Functions Reference Manual (OS 2.0i/j/k/l)](https://ultra64.ca/files/documentation/online-manuals/functions_reference_manual_2.0i/os/osViSetMode.html) | Official SDK: VI register mappings and programmable timing                             |
 | [Nintendo 64 Programming Manual](https://ultra64.ca/resources/documentation/)                                                                                       | Official SDK: memory-mapped I/O, VI mode definitions, system programming reference     |
@@ -445,9 +448,10 @@ This table maps the visual figures used in this document to their physical hardw
 
 ---
 
-**Document Authority Chain:**
-Primary Sources (ITU Standards, Datasheets, Patents)
-↓
-Mathematical Derivations (Section 6)
-↓
-This Reference Document
+**Document Authority Chain:** 
+
+Primary Sources (ITU Standards, Datasheets, Patents)  
+↓  
+Mathematical Derivations (Section 6)  
+↓  
+**[N64_Timing_Reference.md](N64_Timing_Reference.md)**
