@@ -1,8 +1,8 @@
 {
   "NTSC": {
     "line_frequency": {
-      "numerator": 591750000,
-      "denominator": 37609
+      "numerator": 2250000,
+      "denominator": 143
     },
     "vi_clock_divider": 3094,
     "progressive": {
@@ -22,8 +22,8 @@
   },
   "PAL": {
     "line_frequency": {
-      "numerator": 4890625,
-      "denominator": 313
+      "numerator": 15625,
+      "denominator": 1
     },
     "vi_clock_divider": 3178,
     "progressive": {
