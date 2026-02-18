@@ -6,14 +6,14 @@
     },
     "vi_clock_divider": 3094,
     "progressive": {
-      "scanlines": 526,
+      "half_lines": 526,
       "refresh_rate": {
         "numerator": 2250000,
         "denominator": 37609
       }
     },
     "interlaced": {
-      "scanlines": 525,
+      "half_lines": 525,
       "refresh_rate": {
         "numerator": 60000,
         "denominator": 1001
@@ -27,14 +27,14 @@
     },
     "vi_clock_divider": 3178,
     "progressive": {
-      "scanlines": 626,
+      "half_lines": 626,
       "refresh_rate": {
         "numerator": 15625,
         "denominator": 313
       }
     },
     "interlaced": {
-      "scanlines": 625,
+      "half_lines": 625,
       "refresh_rate": {
         "numerator": 50,
         "denominator": 1
@@ -48,14 +48,14 @@
     },
     "vi_clock_divider": 3091,
     "progressive": {
-      "scanlines": 526,
+      "half_lines": 526,
       "refresh_rate": {
         "numerator": 243141548,
         "denominator": 4064665
       }
     },
     "interlaced": {
-      "scanlines": 525,
+      "half_lines": 525,
       "refresh_rate": {
         "numerator": 486283096,
         "denominator": 8113875

@@ -209,9 +209,7 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 ![Figure 1b](fig12_mx8330mc_rev_e.png)  
 *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient.*  
 
-* Thermal drift occurs because the N64’s internal crystal (X1) is physically coupled to the motherboard near the central heatsink. In typical high-temperature conditions (70°C to 80°C / 158°F to 176°F), frequency can vary roughly +/- 50 to 100 ppm, resulting in a fluctuation of approximately 0.003 to 0.006 Hz.  
-* Phase-locked loop (PLL) jitter adds short-term variation. The VCO exhibits typical short-term jitter around 150 ps, so while the average refresh rate remains stable, individual scanline durations vary slightly at the picosecond level.  
-* Initialization transient affects early timing stability. The MX8330MC Rev. E application notice describes startup conditions in which the VCO and feedback divider may not operate synchronously until the divider is reset and the supply voltage exceeds the nominal operating level. The document also notes a stabilization interval of up to approximately 5 ms before the synthesized clock output reaches steady operation. This interval occurs prior to active video output during the 13-step startup sequence (IPL), when the VI registers and clock generator are initialized.  
+* The MX8330MC requires approximately 5 ms stabilization after power-on before FSO output reaches steady operation. This occurs during the IPL startup sequence, before active video output.
 
 ---
 
@@ -525,7 +523,7 @@ fV_int = f_line / (525 / 2)
        ≈ 59.9322883333 Hz  
 ```
 
-* PAL-M timing deviation from NTSC arises solely from the integer constraint L = 3,091.
+* PAL-M timing deviation from NTSC derives solely from the integer constraint L = 3,091.  
 
 ---
 
