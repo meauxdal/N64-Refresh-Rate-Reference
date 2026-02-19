@@ -1,65 +1,65 @@
 {
-  "NTSC": {
-    "line_frequency": {
-      "numerator": 2250000,
-      "denominator": 143
+    "NTSC": {
+        "line_frequency": {
+            "numerator": 2250000,
+            "denominator": 143
+        },
+        "vi_clock_divider": 3094,
+        "progressive": {
+            "half_lines": 526,
+            "refresh_rate": {
+                "numerator": 2250000,
+                "denominator": 37609
+            }
+        },
+        "interlaced": {
+            "half_lines": 525,
+            "refresh_rate": {
+                "numerator": 60000,
+                "denominator": 1001
+            }
+        }
     },
-    "vi_clock_divider": 3094,
-    "progressive": {
-      "half_lines": 526,
-      "refresh_rate": {
-        "numerator": 2250000,
-        "denominator": 37609
-      }
+    "PAL": {
+        "line_frequency": {
+            "numerator": 15625,
+            "denominator": 1
+        },
+        "vi_clock_divider": 3178,
+        "progressive": {
+            "half_lines": 626,
+            "refresh_rate": {
+                "numerator": 15625,
+                "denominator": 313
+            }
+        },
+        "interlaced": {
+            "half_lines": 625,
+            "refresh_rate": {
+                "numerator": 50,
+                "denominator": 1
+            }
+        }
     },
-    "interlaced": {
-      "half_lines": 525,
-      "refresh_rate": {
-        "numerator": 60000,
-        "denominator": 1001
-      }
+    "PAL-M": {
+        "line_frequency": {
+            "numerator": 6953850000,
+            "denominator": 442013
+        },
+        "vi_clock_divider": 3091,
+        "progressive": {
+            "half_lines": 526,
+            "refresh_rate": {
+                "numerator": 6953850000,
+                "denominator": 116249419
+            }
+        },
+        "interlaced": {
+            "half_lines": 525,
+            "refresh_rate": {
+                "numerator": 185436000,
+                "denominator": 3094091
+            }
+        }
     }
-  },
-  "PAL": {
-    "line_frequency": {
-      "numerator": 15625,
-      "denominator": 1
-    },
-    "vi_clock_divider": 3178,
-    "progressive": {
-      "half_lines": 626,
-      "refresh_rate": {
-        "numerator": 15625,
-        "denominator": 313
-      }
-    },
-    "interlaced": {
-      "half_lines": 625,
-      "refresh_rate": {
-        "numerator": 50,
-        "denominator": 1
-      }
-    }
-  },
-  "PAL-M": {
-    "line_frequency": {
-      "numerator": 243141548,
-      "denominator": 15455
-    },
-    "vi_clock_divider": 3091,
-    "progressive": {
-      "half_lines": 526,
-      "refresh_rate": {
-        "numerator": 243141548,
-        "denominator": 4064665
-      }
-    },
-    "interlaced": {
-      "half_lines": 525,
-      "refresh_rate": {
-        "numerator": 486283096,
-        "denominator": 8113875
-      }
-    }
-  }
 }

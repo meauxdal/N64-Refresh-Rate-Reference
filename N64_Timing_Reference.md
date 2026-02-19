@@ -80,8 +80,8 @@ The table lists refresh rates for all video modes. Reduced fractions indicated b
 | NTSC | Interlaced  | 60,000 / 1,001          | 59.9400599401 |
 | PAL  | Progressive | 15,625 / 313            | 49.9201277955 |
 | PAL  | Interlaced  | 50 / 1                  | 50 (exact)    |
-| PAL-M| Progressive | 243,141,548 / 4,064,665 | 59.8183486216 |
-| PAL-M| Interlaced  | 486,283,096 / 8,113,875 | 59.9322883333 |
+| PAL-M| Progressive | 6,953,850,000 / 116,249,419 | 59.8183634793 |
+| PAL-M| Interlaced  | 185,436,000 / 3,094,091     | 59.9323032193 |
 
 *Progressive: lines per frame = (total half-lines ÷ 2)*  
 *Interlaced: lines per field = (total half-lines ÷ 2)*  
@@ -104,8 +104,8 @@ Hardware-defined values derived from the system's crystal oscillators and the Vi
 | NTSC Interlaced   | 14.3181818182 MHz          | 17 / 5         | 3094                 | 525           | `0x20C`     |
 | PAL Progressive   | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 626           | `0x271`     |
 | PAL Interlaced    | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 625           | `0x270`     |
-| PAL-M Progressive | 14.302444 MHz (exact)      | 17 / 5         | 3091                 | 526           | `0x20D`     |
-| PAL-M Interlaced  | 14.302444 MHz (exact)      | 17 / 5         | 3091                 | 525           | `0x20C`     |
+| PAL-M Progressive | 14.3024475524 MHz      | 17 / 5         | 3091                 | 526           | `0x20D`     |
+| PAL-M Interlaced  | 14.3024475524 MHz      | 17 / 5         | 3091                 | 525           | `0x20C`     |
 
 ![Figure 1](fig1_clock_gen_schematic.png)  
 *N64 Clock Generation Circuits – U7 (NTSC/PAL-M) & U15 (PAL). Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
@@ -114,6 +114,7 @@ Hardware-defined values derived from the system's crystal oscillators and the Vi
 
 * NTSC Clock Precision: 315/22 MHz (exact) (≈ 14.3181818182 MHz)
 * PAL Clock Precision: 17,734,475 Hz (exact) = 17.734475 MHz
+* PAL-M Clock Precision: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)
 
 #### 3.1.1 Clock Generator Hardware Revisions
 
@@ -122,7 +123,7 @@ Early revisions (NUS-CPU-01 through NUS-CPU-07, 1996–1998) used two separate M
 ![Figure 1a](fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: MX8350 datasheet*
 
-> The MX8350 datasheet lists the MPAL crystal as 14.302446 MHz. This document uses 14.302444 MHz (= 4 × 3,575,611 Hz), derived from the color burst frequency upward. This 2 Hz discrepancy may reflect a rounding error in primary sources; all derivations in this document use the color-burst-derived value for internal consistency.
+> The MX8350 datasheet lists the MPAL crystal as 14.302446 MHz. The exact value, derived from the PAL-M colorburst frequency (3,575,611 + 127/143 Hz) upward, is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz). The datasheet value is a rounded approximation; all derivations in this document use the colorburst-derived canonical value. See §6.3.
 
 ### 3.2 Video Interface (VI) Register Mapping
 
@@ -138,7 +139,7 @@ The VDC bus carries:
 - `VDC_D0` through `VDC_D6`: 7-bit digital video data
 - `VDC_DSYNC`: Combined vertical/field synchronization pulse
 
-These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC and BFP for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip and not known to have any effect on the timing values derived in this document.  
+These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC and BFP for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip and is not known to affect timing values derived in this document.  
 
 > VI registers operate on terminal counts; all derived timing values use the canonical half-line model described in §1.
 
@@ -160,11 +161,11 @@ All values calculated from the fundamental constants above. Line frequencies and
 | :--- | :--- | :--- | :--- | :--- |
 | NTSC | 15,734.2657342657 Hz | 2250000/143 | 2250000/37609 | 60000/1001 |
 | PAL | 15,625 Hz (exact) | 15625/1 | 15625/313 | 50/1 |
-| PAL-M | 15,732.2256874798 Hz | 243141548/15455 | 243141548/4064665 | 486283096/8113875 |
+| PAL-M | 15,732.2295950572 Hz | 6953850000/442013 | 6953850000/116249419 | 185436000/3094091 |
 
 ### 3.4 Hardware Signal Path
 
-The generation of video timing follows a deterministic path from physical oscillation to digital counting and finally analog conversion. The following (and the document as a whole) applies to NUS-CPU-01 through NUS-CPU-04, as documented in RWeick's NUS-CPU-03 schematics.  
+Video signal timing derives from a deterministic path from physical oscillation to digital counting and finally analog conversion. The following (and the document as a whole) applies to NUS-CPU-01 through NUS-CPU-04, as documented in RWeick's NUS-CPU-03 schematics.  
 
 1. Source: The MX8330MC Clock Generator (U7/U15) utilizes a crystal oscillator (X1/X2) to produce the Master Clock (f_xtal).  
 2. Logic: The RCP (Reality Co-Processor, U9) receives a pre-multiplied clock from the synthesizer to drive the internal Video Interface (VI) logic.  
@@ -208,7 +209,7 @@ The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published d
 
 Tolerance is established by triangulation. AT-cut crystals are effectively commodity at a given frequency; tolerance is determined by frequency and cut. Current production equivalents specify ±30 ppm as the base grade, corroborated by lidnariq and stated for all three N64 standards on the N64brew Video DAC page. 
 
-At ±30 ppm, f_V varies by ±(30 × 10⁻⁶ × f_V). Given NTSC progressive, this represents ±0.0018 from 2,250,000 / 37,609 Hz (≈ 59.8261054535 Hz); visible only via oscilloscope and logic probing. Aggregate second-order variance factors include temperature and voltage. 
+At ±30 ppm, f_V varies by ±(30 × 10⁻⁶ × f_V). Given NTSC progressive, this yields a bounded range of approximately 59.8243054535 to 59.8279054535 Hz (base: 2,250,000 / 37,609 ≈ 59.8261054535 Hz, deviation: ±0.0018 Hz); detectable only via oscilloscope and logic probing. Aggregate second-order variance factors include temperature and voltage.  
 
 Definitive characterization requires direct measurement across multiple units and board revisions. This section will be revised when this data exists.  
 
@@ -227,7 +228,7 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 ### 4.1 Signal Parameters by Mode
 
-The following table defines the relationship between the hardware's Master Clock (f_vi) and the resulting display timing.  
+The following table defines the relationship between the hardware's Master Clock (f_vi) and the resulting display timing. Crystal frequencies and register values are in §3.1; fully reduced refresh rate fractions and line frequencies are in §3.3.  
 
 | Mode | Master Clock (f_vi) | Clocks / Line (L) | Half-Lines (S) | Refresh Rate (fV) |  
 | :--- | :--- | :--- | :--- | :--- |  
@@ -235,10 +236,10 @@ The following table defines the relationship between the hardware's Master Clock
 | NTSC-I | 48.6818181818 MHz | 3094 | 525 | 59.9400599401 Hz |  
 | PAL-P | 49.65653 MHz (exact) | 3178 | 626 | 49.9201277955 Hz |  
 | PAL-I | 49.65653 MHz (exact) | 3178 | 625 | 50 Hz (exact) |  
-| PAL-M-P | 48.6283096000 MHz | 3091 | 526 | 59.8183486216 Hz |  
-| PAL-M-I | 48.6283096000 MHz | 3091 | 525 | 59.9322883333 Hz |  
+| PAL-M-P | 48.6283216783 MHz | 3091 | 526 | 59.8183634793 Hz |
+| PAL-M-I | 48.6283216783 MHz | 3091 | 525 | 59.9323032193 Hz |
 
-> The Master Clock for PAL-M is derived as exactly 243,141,548 / 5 Hz. The slight deviation in NTSC-equivalent timing (approx. 0.013%) is a hardware constraint caused by the requirement of an integer value for the Clocks / Line (L) register.  
+> The Master Clock for PAL-M is derived as exactly 6,953,850,000 / 143 Hz. The slight deviation in NTSC-equivalent timing (≈ 0.0129407959%) is a hardware constraint caused by the requirement of an integer value for the Clocks / Line (L) register.  
 
 #### 4.1.1 Timing Map
 
@@ -280,30 +281,30 @@ PAL (Progressive and Interlaced)
 
 PAL-M (Progressive and Interlaced)
 
-* Crystal frequency: 14,302,444 Hz (exact)  
-* VI clock frequency: 48,628,309.6 Hz (exact) (243,141,548 / 5 Hz)  
-* Color subcarrier: 3,575,611 Hz (exact)  
-* VI clock multiplier: 17 / 5 (3.4)  
-* LEAP register: Not used (`0x00`).  
- 
-*To match the NTSC standard line rate (approx. 15,734.265 Hz) exactly, the VI would require 3,090.589 clocks per line. Since the VI hardware utilizes integer counting for line duration, it employs the nearest integer (3091). This results in a line frequency of approx. 15,732.23 Hz, a deviation of ~0.013% from NTSC nominal ~15,734.265 Hz.*
+* Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)
+* VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)
+* Color subcarrier: 511,312,500 / 143 Hz (exact) (≈ 3,575,611.8881118881 Hz ≈ 3.5756118881 MHz)
+* VI clock multiplier: 17 / 5 (3.4)
+* LEAP register: Not used (`0x00`)
+
+> The VI requires an integer clock count per line; 3091 is the nearest integer to the exact value of 3,090.6, producing the line frequency given above.
 
 #### 4.2.1 Subcarrier Frequency Relationships
 
 All N64 video modes adhere to broadcast standard relationships between subcarrier frequency (fS) and horizontal scan frequency (fH):
 
-
-> (Note to self: TODO - delete figure below, rebuild (more focused) table in markdown )
-
-
 ![Figure 4](fig4_relationship_of_fS_to_fH.png)  
 *Standard fS to fH ratios. Source: Wooding, The Amateur TV Compendium, p. 55*
 
-| Mode  | Relationship            | Verification                                  |
-| :---- | :---------------------  | :-------------------------------------------- |
-| NTSC  | fS = 227.5 × fH         | 3,579,545.45... Hz = 227.5 × 15,734.26... Hz  |
-| PAL   | fS = (283.75 × fH) + 25 | 4,433,618.75 Hz = (283.75 × 15,625) + 25      |
-| PAL-M | fS = 227.25 × fH        | 3,575,611 Hz ≠ 227.25 × 15,732.22... Hz (actual ratio: 15,455/68 ≈ 227.279; see §4.2) |
+| Standard | fS to fH Relationship |
+| :------- | :-------------------- |
+| PAL      | fS = 283.7516 × fH    |
+| SECAM    | fS = 282 × fH         |
+| PAL-N    | fS = 229.2516 × fH    |
+| PAL-M    | fS = 227.25 × fH      |
+| NTSC     | fS = 227.5 × fH       |
+
+PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to a clean integer. The exact colorburst frequency is 3,575,611 + 127/143 Hz — a remainder that propagates through the full derivation chain. The hardware resolves this by rounding to 3091 VI clocks per line, producing an fH of approximately 15,732.23 Hz rather than the NTSC-standard 15,734.27 Hz. The canonical f_V values in this document are derived from the exact fractional colorburst frequency carried through each step; see §6.3 for the full derivation.
 
 ---
 
@@ -315,12 +316,12 @@ To convert from one mode to another, multiply the source refresh rate by the con
 
 Factors rounded to 5 decimal places for practical use.
 
-| From \ To | NTSC-P | NTSC-I | PAL-P | PAL-I | PAL-M-P | PAL-M-I |
+| From \ To | NTSC-P | NTSC-I | PAL-P   | PAL-I   | PAL-M-P | PAL-M-I |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| NTSC-P | 1.00000 | 1.00190 | 0.83442 | 0.83576 | 0.99987 | 1.00177 |
-| NTSC-I | 0.99810 | 1.00000 | 0.83283 | 0.83417 | 0.99797 | 0.99987 |
-| PAL-P | 1.19844 | 1.20072 | 1.00000 | 1.00160 | 1.19828 | 1.20056 |
-| PAL-I | 1.19652 | 1.19880 | 0.99840 | 1.00000 | 1.19637 | 1.19865 |
+| NTSC-P  | 1.00000 | 1.00190 | 0.83442 | 0.83576 | 0.99987 | 1.00178 |
+| NTSC-I  | 0.99810 | 1.00000 | 0.83283 | 0.83417 | 0.99797 | 0.99987 |
+| PAL-P   | 1.19844 | 1.20072 | 1.00000 | 1.00160 | 1.19828 | 1.20056 |
+| PAL-I   | 1.19652 | 1.19880 | 0.99840 | 1.00000 | 1.19637 | 1.19865 |
 | PAL-M-P | 1.00013 | 1.00203 | 0.83453 | 0.83586 | 1.00000 | 1.00190 |
 | PAL-M-I | 0.99823 | 1.00013 | 0.83294 | 0.83427 | 0.99810 | 1.00000 |
 
@@ -330,12 +331,12 @@ Irreducible fractions for mathematically precise conversions.
 
 | From \ To | NTSC Progressive | NTSC Interlaced | PAL Progressive | PAL Interlaced | PAL-M Progressive | PAL-M Interlaced |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| NTSC-P | 1/1 | 526/525 | 37609/45072 | 37609/45000 | 790210031/790312500 | 207825238153/207457031250 |
-| NTSC-I | 525/526 | 1/1 | 25025/30048 | 1001/1200 | 5531470217/5542725000 | 790210031/790312500 |
-| PAL-P | 45072/37609 | 30048/25025 | 1/1 | 626/625 | 76103304524/63510390625 | 152206609048/126779296875 |
-| PAL-I | 45000/37609 | 1200/1001 | 625/626 | 1/1 | 121570774/101616625 | 243141548/202846875 |
-| PAL-M-P | 790312500/790210031 | 5542725000/5531470217 | 63510390625/76103304524 | 101616625/121570774 | 1/1 | 526/525 |
-| PAL-M-I | 207457031250/207825238153 | 790312500/790210031 | 126779296875/152206609048 | 202846875/243141548 | 525/526 | 1/1 |
+| NTSC-P  | 1/1           | 526/525         | 37609/45072         | 37609/45000     | 15453/15455           | 2709426/2704625 |  
+| NTSC-I  | 525/526       | 1/1             | 25025/30048         | 1001/1200       | 1622565/1625866       | 15453/15455 |  
+| PAL-P   | 45072/37609   | 30048/25025     | 1/1                 | 626/625         | 696497616/581247095   | 464331744/386761375 |  
+| PAL-I   | 45000/37609   | 1200/1001       | 625/626             | 1/1             | 139077000/116249419   | 3708720/3094091 |  
+| PAL-M-P | 15455/15453   | 1625866/1622565 | 581247095/696497616 | 116249419/139077000 | 1/1               | 526/525 |  
+| PAL-M-I | 2704625/2709426 | 15455/15453   | 386761375/464331744 | 3094091/3708720 | 525/526               | 1/1 |  
 
 ---
 
@@ -348,8 +349,8 @@ This section provides step-by-step derivations for all timing values. Calculatio
 Constants:
 
 ```
-Color burst frequency: f_colorburst = 315/88 MHz  (≈3.5795454545 MHz)
-Crystal frequency: f_xtal = 4 × f_colorburst = 315/22 MHz  (≈14.3181818182 MHz)
+Color burst frequency: f_colorburst = 315/88 MHz  (≈ 3.5795454545 MHz)
+Crystal frequency: f_xtal = 4 × f_colorburst = 315/22 MHz  (≈ 14.3181818182 MHz)
 VI clock multiplier: M = 17 / 5
 VI clocks per line (full scanlines): L = 3,094
 Total half-lines (progressive): S_prog = 526
@@ -410,8 +411,8 @@ fV_int = f_line / (S_int / 2)
 Constants:
 
 ```
-Color burst frequency: f_colorburst = 17,734,475 / 4 Hz  (≈4.4336187500 MHz)
-Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (=17.734475 MHz)
+Color burst frequency: f_colorburst = 17,734,475 / 4 Hz  (≈ 4.4336187500 MHz)
+Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (= 17.734475 MHz)
 VI clock multiplier: M = 14 / 5
 VI clocks per line (full scanlines): L = 3,178
 Total half-lines (progressive): S_prog = 626
@@ -451,7 +452,7 @@ Vertical scan frequency (progressive):
 
 ```
 fV_prog =  f_line / (S_prog / 2)
-        = 15,625 / (626 / 2)
+        = 15,625 / (626 / 2) Hz
         = 15,625 / 313  (canonical value)
         ≈ 49.9201277955 Hz
 ```
@@ -460,7 +461,7 @@ Vertical scan frequency (interlaced):
 
 ```
 fV_int = f_line / (S_int / 2)
-       = 15,625 / (625 / 2)
+       = 15,625 / (625 / 2) Hz
        = (15,625 × 2) / 625
        = 31,250 / 625
        = 50 / 1  (canonical value)
@@ -477,65 +478,91 @@ The N64 VI uses a hardware compensation mechanism to maintain the exact 15,625 H
 - The `VI_H_TOTAL_LEAP` register (`0x04400020`) defines the alternating fractional clock patterns via two fields:  
   - `LEAP_A` [bits 27:16]: Pattern A, typically adds 5 VI clocks during VSYNC (standard PAL value: 3182).  
   - `LEAP_B` [bits 11:0]: Pattern B, typically adds 6 VI clocks during VSYNC (standard PAL value: 3183).  
-- Over the sequence, the average addition is 5.6 clocks per field. This modifies individual half-line durations without changing the total number of half-lines per frame, preventing color subcarrier drift.  
+- Over the sequence, the average addition is 5.6 clocks per field. Half-line durations are modulated without changing the total number of half-lines per frame, preventing color subcarrier drift.  
 
 ### 6.3 PAL-M Derivation
 
-> **§6.3 Note:** PAL-M colorburst is defined as 227.25 × f_H, yielding 3,575,611 + 127/143 Hz (≈ 3,575,611.8881118881118881...). This differs from derivation as currently indicated below. While mathematically real, in practice, no crystal resolves this difference. Nonetheless, mathematical reconciliation is ongoing.
+> **§6.3 Note:** Prior constants were derived from an integer crystal approximation (14,302,444 Hz = 4 × 3,575,611). The correct derivation carries the 127/143 remainder from the PAL-M colorburst definition (227.25 × f_H) through the full chain, per lidnariq. Constants and canonical values below reflect this correction.
 
 Constants:  
 
 ```
-Color burst frequency: f_colorburst = 3,575,611 Hz  (exact)  
-Crystal frequency: f_xtal = 4 × f_colorburst  (= 14,302,444 Hz)  
-VI clock multiplier: M = 17 / 5  
-VI clocks per line (full scanlines): L = 3,091  
-Total half-lines (progressive): S_prog = 526  
-Total half-lines (interlaced): S_int = 525  
+Color burst frequency: f_colorburst = 511,312,500 / 143 Hz (≈ 3,575,611.8881118881 Hz) (≈ 3.5756118881 MHz)
+                                   (= 3,575,611 + 127/143 Hz)
+Crystal frequency: f_xtal = 4 × f_colorburst = 2,045,250,000 / 143 Hz (≈ 14,302,447.5524475524 Hz) (≈ 14.3024475524 MHz)
+VI clock multiplier: M = 17 / 5
+VI clocks per line (full scanlines): L = 3,091
+Total half-lines (progressive): S_prog = 526
+Total half-lines (interlaced): S_int = 525
 ```
 
 Video clock frequency:  
 
 ```
-f_vi = f_xtal × M  
-     = 14,302,444 × (17 / 5) Hz  
-     = (14,302,444 × 17) / 5  
-     = 243,141,548 / 5  (exact rational)  
-     = 48,628,309.6 Hz  (exact)  
-     = 48.6283096 MHz  (exact)  
+f_vi = f_xtal × M
+     = (2,045,250,000 / 143) × (17 / 5) Hz 
+     = (2,045,250,000 × 17) / (143 × 5)
+     = 34,769,250,000 / 715
+     = 6,953,850,000 / 143  (canonical value)
+     ≈ 48,628,321.6783 Hz
+     ≈ 48.6283216783 MHz
 ```
 
-Horizontal scan frequency:
+Horizontal scan frequency:  
 
 ```
 f_line = f_vi / L  
-       = (243,141,548 / 5) / 3,091 Hz  
-       = 243,141,548 / (5 × 3,091)  
-       = 243,141,548 / 15,455  (canonical value)  
-       ≈ 15,732.2256874798 Hz  
+       = (6,953,850,000 / 143) / 3,091 Hz  
+       = 6,953,850,000 / (143 × 3,091)  
+       = 6,953,850,000 / 442,013  (canonical value)  
+       ≈ 15,732.2295950572 Hz  
 ```
 
-Vertical scan frequency (Progressive):
+Vertical scan frequency (progressive):  
 
 ```
-fV_prog = f_line / 263  
-        = (243,141,548 / 15,455) / 263 Hz  
-        = 243,141,548 / (15,455 × 263)  
-        = 243,141,548 / 4,064,665  (canonical value)  
-        ≈ 59.8183486216 Hz  
+fV_prog = f_line / (S_prog / 2)  
+        = (6,953,850,000 / 442,013) / 263 Hz 
+        = 6,953,850,000 / (442,013 × 263)  
+        = 6,953,850,000 / 116,249,419  (canonical value)  
+        ≈ 59.8183634793 Hz  
 ```
 
-Vertical scan frequency (Interlaced):
+Vertical scan frequency (interlaced):  
 
 ```
-fV_int = f_line / (525 / 2)  
-       = (243,141,548 / 15,455) / (525 / 2)  
-       = (243,141,548 × 2) / (15,455 × 525)  
-       = 486,283,096 / 8,113,875  (canonical value)  
-       ≈ 59.9322883333 Hz  
+fV_int = f_line / (S_int / 2)  
+       = (6,953,850,000 / 442,013) / (525 / 2) Hz  
+       = (6,953,850,000 × 2) / (442,013 × 525)  
+       = 13,907,700,000 / 232,056,825  
+       = 185,436,000 / 3,094,091  (canonical value)  
+       ≈ 59.9323032193 Hz  
 ```
 
-* PAL-M timing deviation from NTSC derives solely from the integer constraint L = 3,091.  
+#### 6.3.1 Derived Error Analysis
+
+PAL-M timing deviation from NTSC derives from the 127/143 fractional remainder in the colorburst definition and the integer constraint L = 3,091.
+
+```
+f_H deviation from NTSC nominal:
+
+f_H_ntsc  = 2,250,000 / 143          ≈ 15,734.2657342657 Hz
+f_H_PAL-M = 6,953,850,000 / 442,013  ≈ 15,732.2295950572 Hz
+
+delta     = f_H_ntsc - f_H_PAL-M
+          = 2.0361392085 Hz
+
+deviation = (delta / f_H_ntsc) × 100
+          = (2.0361392085 / 15,734.2657342657) × 100
+          = 0.0129407959%
+
+Crystal approximation error (prior constants → corrected derivation):
+
+old f_V (progressive): ≈ 59.8183486216 Hz
+new f_V (progressive): ≈ 59.8183634793 Hz
+delta:                 ≈ 0.0000148577 Hz
+relative error:        ≈ 0.0000248380%
+```
 
 ---
 
