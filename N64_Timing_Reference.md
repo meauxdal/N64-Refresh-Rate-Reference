@@ -304,7 +304,7 @@ All N64 video modes adhere to broadcast standard relationships between subcarrie
 | PAL-M    | fS = 227.25 × fH      |
 | NTSC     | fS = 227.5 × fH       |
 
-PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to a clean integer. The exact colorburst frequency is 3,575,611 + 127/143 Hz — a remainder that propagates through the full derivation chain. The hardware resolves this by rounding to 3091 VI clocks per line, producing an fH of approximately 15,732.23 Hz rather than the NTSC-standard 15,734.27 Hz. The canonical f_V values in this document are derived from the exact fractional colorburst frequency carried through each step; see §6.3 for the full derivation.
+PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to a clean integer. The exact colorburst frequency is 3,575,611 + 127/143 Hz. This fractional remainder that propagates through the full derivation chain. The hardware resolves this by rounding to 3091 VI clocks per line, producing an fH of approximately 15,732.23 Hz rather than the NTSC-standard 15,734.27 Hz. The canonical f_V values in this document are derived from the exact fractional colorburst frequency carried through each step; see §6.3 for the full derivation.
 
 ---
 
