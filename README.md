@@ -15,7 +15,7 @@ This repository contains the precise refresh rates for the Nintendo 64's video i
 
 ## Usage
 
-[`canonical_values.json`](tools/canonical_values.json)_ provides irreducible fractions to avoid floating-point precision loss in timing calculations.  
+[`canonical_values.json`](tools/canonical_values.json)_ provides irreducible fractions to avoid floating-point precision loss in timing calculations. (important note - PAL-M constants need further revising)  
 [`N64_Timing_Reference.md`](N64_Timing_Reference.md) shows how the hardware oscillators and register logic produce these timing constants, with full derivations.
 
 ## Hardware Specifics
@@ -30,3 +30,5 @@ double frame_duration_ns = (37609.0 / 2250000.0) * 1e9;
 ```
 
 Use double-precision or fixed-point arithmetic for cycle counters.
+
+WIP until further noted. Corrections and reconciliation of errors ongoing.

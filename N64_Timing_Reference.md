@@ -49,13 +49,13 @@ The document uses N64brew naming conventions throughout. SDK equivalents are not
 
 | N64brew Name | SDK Name | Address | Description |  
 |:---|:---|:---|:---|  
-| `VI_V_TOTAL` | `VI_V_SYNC_REG` | `0x0440 0018` | Terminal half-line count; effective half-lines = REG + 1 |  
-| `VI_H_TOTAL` | `VI_H_SYNC_REG` | `0x0440 001C` | Terminal VI clock count per scanline; effective clocks = REG + 1 |  
-| `VI_H_TOTAL_LEAP` | `VI_H_SYNC_LEAP_REG` | `0x0440 0020` | `LEAP_A` [bits 27:16] and `LEAP_B` [bits 11:0] alternate scanline lengths for PAL compensation |  
-| `VI_V_CURRENT` | `VI_V_CURRENT_LINE_REG` | `0x0440 0010` | Current half-line; increments once per half-line |  
-| `VI_BURST` | `VI_BURST_REG` | `0x0440 0014` | Color burst gate timing |  
-| `VI_H_VIDEO` | `VI_H_VIDEO_REG` | `0x0440 0024` | Active video horizontal start/end |  
-| `VI_V_VIDEO` | `VI_V_VIDEO_REG` | `0x0440 0028` | Active video vertical start/end |  
+| `VI_V_TOTAL` | `VI_V_SYNC_REG` | `0x04400018` | Terminal half-line count; effective half-lines = REG + 1 |  
+| `VI_H_TOTAL` | `VI_H_SYNC_REG` | `0x0440001C` | Terminal VI clock count per scanline; effective clocks = REG + 1 |  
+| `VI_H_TOTAL_LEAP` | `VI_H_SYNC_LEAP_REG` | `0x04400020` | `LEAP_A` [bits 27:16] and `LEAP_B` [bits 11:0] alternate scanline lengths for PAL compensation |  
+| `VI_V_CURRENT` | `VI_V_CURRENT_LINE_REG` | `0x04400010` | Current half-line; increments by 2 per line |  
+| `VI_BURST` | `VI_BURST_REG` | `0x04400014` | Color burst gate timing |  
+| `VI_H_VIDEO` | `VI_H_VIDEO_REG` | `0x04400024` | Active video horizontal start/end |  
+| `VI_V_VIDEO` | `VI_V_VIDEO_REG` | `0x04400028` | Active video vertical start/end |  
 
 #### Modes  
 - Progressive: lines per vertical refresh = total half-lines ÷ 2  
@@ -129,26 +129,22 @@ Early revisions (NUS-CPU-01 through NUS-CPU-07, 1996–1998) used two separate M
 The RCP (Reality Co-Processor) processes video timings through the following memory-mapped I/O (MMIO) registers:
 
 ![Figure 2](fig2_rcp_schematic.png)  
-*RCP-NUS VDC pinout & timing signals. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*
+*RCP-NUS VDC pinout & timing signals. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*
 
 ![Figure 2a](fig9_rcp_vdc_schematic.png)  
-*VDC pin assignments – 7-bit digital output. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*
+*VDC pin assignments – 7-bit digital output. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*
 
 The VDC bus carries:
 - `VDC_D0` through `VDC_D6`: 7-bit digital video data
 - `VDC_DSYNC`: Combined vertical/field synchronization pulse
 
-These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs 
-digital-to-analog conversion and generates CSYNC and BFP for the downstream 
-ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through 
-NUS-CPU-04; later revisions integrate both functions into a single chip with no 
-effect on the timing values derived in this document.  
+These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC and BFP for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip and not known to have any effect on the timing values derived in this document.  
 
 > VI registers operate on terminal counts; all derived timing values use the canonical half-line model described in §1.
 
-* `VI_V_TOTAL` (`0x0440 0018`): The register stores a terminal half-line count; the effective number of half-lines per frame equals `VI_V_TOTAL` + 1.  
-* `VI_H_TOTAL` (`0x0440 001C`): The register stores a terminal VI clock count (per full scanline); the effective clocks per line equal `VI_H_TOTAL` + 1.  
-* `VI_V_CURRENT` (`0x0440 0010`): Reports the current half-line count; increments once per half-line.
+* `VI_V_TOTAL` (`0x04400018`): The register stores a terminal half-line count; the effective number of half-lines per frame equals `VI_V_TOTAL` + 1.  
+* `VI_H_TOTAL` (`0x0440001C`): The register stores a terminal VI clock count (per full scanline); the effective clocks per line equal `VI_H_TOTAL` + 1.  
+* `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments once per half-line.
 
 *Progressive: counts all half-lines sequentially → lines per vertical refresh = total half-lines ÷ 2.*  
 *Interlaced: counts alternating half-lines per field → lines per field = total half-lines ÷ 2.*  
@@ -204,12 +200,24 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 
 ### 3.7 Physical Variance and Environmental Stability
 
-§6 presents a theoretical ideal, but actual hardware performance is influenced by the Macronix MX8330MC and MX8350 clock synthesizers.  
+The derivations in §6 assume an ideal crystal oscillator at exactly the specified frequency. In practice, all deviation in f_V traces to f_xtal. K is a deterministic ratio; it does not drift. The crystal is another matter.  
+
+#### 3.7.1 X1 Crystal Oscillators
+
+The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published datasheets. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5–26.5 pF (see C39, C40, Figure 1). It is not currently established if the crystals used were rated for this figure or were effectively off-the-shelf parts operating out of spec. 
+
+Tolerance is established by triangulation. AT-cut crystals are effectively commodity at a given frequency; tolerance is determined by frequency and cut. Current production equivalents specify ±30 ppm as the base grade, corroborated by lidnariq and stated for all three N64 standards on the N64brew Video DAC page. 
+
+At ±30 ppm, f_V varies by ±(30 × 10⁻⁶ × f_V). Given NTSC progressive, this represents ±0.0018 from 2,250,000 / 37,609 Hz (≈ 59.8261054535 Hz); visible only via oscilloscope and logic probing. Aggregate second-order variance factors include temperature and voltage. 
+
+Definitive characterization requires direct measurement across multiple units and board revisions. This section will be revised when this data exists.  
+
+#### 3.7.2 Initialization Transient Behavior
 
 ![Figure 1b](fig12_mx8330mc_rev_e.png)  
 *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient.*  
 
-* The MX8330MC requires approximately 5 ms stabilization after power-on before FSO output reaches steady operation. This occurs during the IPL startup sequence, before active video output.
+The MX8330MC requires approximately 5 ms stabilization after power-on before FSO output reaches steady operation. This occurs during the IPL startup sequence, before active video output.  
 
 ---
 
@@ -283,6 +291,10 @@ PAL-M (Progressive and Interlaced)
 #### 4.2.1 Subcarrier Frequency Relationships
 
 All N64 video modes adhere to broadcast standard relationships between subcarrier frequency (fS) and horizontal scan frequency (fH):
+
+
+> (Note to self: TODO - delete figure below, rebuild (more focused) table in markdown )
+
 
 ![Figure 4](fig4_relationship_of_fS_to_fH.png)  
 *Standard fS to fH ratios. Source: Wooding, The Amateur TV Compendium, p. 55*
@@ -469,7 +481,7 @@ The N64 VI uses a hardware compensation mechanism to maintain the exact 15,625 H
 
 ### 6.3 PAL-M Derivation
 
-**PAL-M derivation is mathematically consistent but unverified against hardware.** Derivation is based on observed behavior and partial documentation, as PAL-M systems remain largely undocumented and inaccessible.
+> **§6.3 Note:** PAL-M colorburst is defined as 227.25 × f_H, yielding 3,575,611 + 127/143 Hz (≈ 3,575,611.8881118881118881...). This differs from derivation as currently indicated below. While mathematically real, in practice, no crystal resolves this difference. Nonetheless, mathematical reconciliation is ongoing.
 
 Constants:  
 
