@@ -139,7 +139,7 @@ The VDC bus carries:
 - `VDC_D0` through `VDC_D6`: 7-bit digital video data
 - `VDC_DSYNC`: Combined vertical/field synchronization pulse
 
-These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC and BFP for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip and is not known to affect timing values derived in this document.  
+These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC and BFP for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip (this is not known to affect timing values derived in this document).  
 
 > VI registers operate on terminal counts; all derived timing values use the canonical half-line model described in §1.
 
@@ -175,7 +175,7 @@ Video signal timing derives from a deterministic path from physical oscillation 
 
 ### 3.5 NTSC Progressive Verification Sample
 
-Expected register values and physical pin mappings (NUS-CPU-01 through NUS-CPU-04; based on RWeick NUS-CPU-03 schematics). Later revisions integrate VDC and encoder functions into a single chip with no effect on the timing values derived in this document.  
+Expected register values and physical pin mappings (NUS-CPU-01 through NUS-CPU-04; based on RWeick NUS-CPU-03 schematics).  
 
 | Target Parameter | Register | Value | Result | RCP-NUS (U9) Pin | VDC-NUS (U4) Pin |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -207,7 +207,7 @@ The derivations in §6 assume an ideal crystal oscillator at exactly the specifi
 
 The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published datasheets. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5–26.5 pF (see C39, C40, Figure 1). It is not currently established if the crystals used were rated for this figure or were effectively off-the-shelf parts operating out of spec.  
 
-AT-cut crystals are effectively commodity parts; grade and cut determine the figure (corroborated by lidnariq). Current production equivalents specify a tolerance of ±30 ppm as the base grade. Given NTSC progressive, this yields an approximate base value of 59.8261 Hz (2,250,000 / 37,609) with a frequency range of ±0.0018 Hz. Aggregate second-order variance factors include temperature and voltage.
+AT-cut crystals are effectively commodity parts; grade and cut determine the figure (corroborated by lidnariq). Current production equivalents specify a tolerance of ±30 ppm as the base grade. Given NTSC progressive, this yields an approximate base frequency of 59.8261 Hz (2,250,000 / 37,609) with a range of ±0.0018 Hz. Aggregate second-order variance factors include temperature and voltage.
 
 Definitive characterization requires direct measurement across multiple units and board revisions. This section will be revised when this data exists.  
 
