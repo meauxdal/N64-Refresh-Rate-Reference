@@ -363,19 +363,20 @@ Video clock frequency:
 f_vi = f_xtal × M
      = (315/22) × (17/5) MHz
      = (315 × 17)/(22 × 5) 
-     = 5,355/110  (exact)
-     = 48.6818181818 MHz  (exact)
+     = 5,355/110  
+     = 1,071/22  (reduced)
+     ≈ 48.6818181818 MHz  
 ```
 
 Horizontal scan frequency:
 
 ```
 f_line = f_vi / L
-       = (5,355 / 110 × 1,000,000) / 3,094 Hz
-       = 5,355,000,000 / (110 × 3,094)
-       = 5,355,000,000 / 340,340
-       = 591,750,000 / 37,609  (reduced)
-       = 2,250,000 / 143  (canonical value)
+       = (5,355 / 110 × 1,000,000) / 3,094 Hz  
+       = 5,355,000,000 / (110 × 3,094)  
+       = 5,355,000,000 / 340,340  
+       = 591,750,000 / 37,609  (reduced)  
+       = 2,250,000 / 143  (canonical value)  
        ≈ 15,734.2657342657 Hz
 ```
 
@@ -384,12 +385,12 @@ Vertical scan frequency (progressive):
 *Progressive: 526 half-lines per vertical scan cycle, scanned sequentially.*  
 
 ```
-fV_prog = f_line / (S_prog / 2)
-        = (2,250,000 / 143) / (526 / 2) Hz
-        = (2,250,000 / 143) / 263
-        = 2,250,000 / (143 × 263)
-        = 2,250,000 / 37,609  (canonical value)
-        ≈ 59.8261054535 Hz
+fV_prog = f_line / (S_prog / 2)  
+        = (2,250,000 / 143) / (526 / 2) Hz  
+        = (2,250,000 / 143) / 263  
+        = 2,250,000 / (143 × 263)  
+        = 2,250,000 / 37,609  (canonical value)  
+        ≈ 59.8261054535 Hz  
 ```
 
 Vertical scan frequency (interlaced):
@@ -397,13 +398,13 @@ Vertical scan frequency (interlaced):
 *Interlaced: 525 half-lines per vertical scan cycle, alternating between odd and even fields (262.5 lines each).*  
 
 ```
-fV_int = f_line / (S_int / 2)
-       = (2,250,000 / 143) / (525 / 2) Hz
-       = (2,250,000 / 143) / 262.5
-       = (2,250,000 × 2) / (143 × 525)
-       = 4,500,000 / 75,075
-       = 60,000 / 1,001  (canonical value)
-       ≈ 59.9400599401 Hz
+fV_int = f_line / (S_int / 2)  
+       = (2,250,000 / 143) / (525 / 2) Hz  
+       = (2,250,000 / 143) / 262.5  
+       = (2,250,000 × 2) / (143 × 525)  
+       = 4,500,000 / 75,075  
+       = 60,000 / 1,001  (canonical value)  
+       ≈ 59.9400599401 Hz  
 ```
 
 ### 6.2 PAL Derivation
@@ -411,23 +412,23 @@ fV_int = f_line / (S_int / 2)
 Constants:
 
 ```
-Color burst frequency: f_colorburst = 17,734,475 / 4 Hz  (= 4.43361875 MHz)
-Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (= 17.734475 MHz)
-VI clock multiplier: M = 14 / 5
-VI clocks per line (full scanlines): L = 3,178
-Total half-lines (progressive): S_prog = 626
-Total half-lines (interlaced): S_int = 625
+Color burst frequency: f_colorburst = 17,734,475 / 4 Hz  (= 4.43361875 MHz)  
+Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (= 17.734475 MHz)  
+VI clock multiplier: M = 14 / 5  
+VI clocks per line (full scanlines): L = 3,178  
+Total half-lines (progressive): S_prog = 626  
+Total half-lines (interlaced): S_int = 625  
 ```
 
 Video clock frequency:
 
 ```
-f_vi = f_xtal × M
-     = 17,734,475 × (14/5) Hz
-     = (17,734,475 × 14) / 5
-     = 248,282,650 / 5
-     = 49,656,530 Hz
-     = 49.656530 MHz  (exact)
+f_vi = f_xtal × M  
+     = 17,734,475 × (14/5) Hz  
+     = (17,734,475 × 14) / 5  
+     = 248,282,650 / 5  
+     = 49,656,530 Hz  
+     = 49.65653 MHz  (exact)  
 ```
 
 Horizontal scan frequency:
@@ -435,37 +436,37 @@ Horizontal scan frequency:
 *Without LEAP compensation, the theoretical line frequency would be:*  
 
 ```
-f_line (theoretical) = f_vi / L
-                     = 49,656,530 / 3,178 Hz
-                     = 24,828,265 / 1,589  (reduced)
-                     ≈ 15,625.0881057269 Hz
+f_line (theoretical) = f_vi / L  
+                     = 49,656,530 / 3,178 Hz  
+                     = 24,828,265 / 1,589  (reduced)  
+                     ≈ 15,625.0881057269 Hz  
 ```                 
 
 *The LEAP register compensates for this ~5.6 ppm error by adding fractional VI clocks during VSYNC, resulting in a line frequency of 15,625 Hz exactly. See §6.2.1.*  
 
 ```
-f_line = 15,625 / 1 Hz  (canonical value)
-       = 15,625 Hz  (exact)
+f_line = 15,625 / 1 Hz  (canonical value)  
+       = 15,625 Hz  (exact)  
 ```
 
 Vertical scan frequency (progressive):
 
 ```
-fV_prog =  f_line / (S_prog / 2)
-        = 15,625 / (626 / 2) Hz
-        = 15,625 / 313  (canonical value)
-        ≈ 49.9201277955 Hz
+fV_prog =  f_line / (S_prog / 2)  
+        = 15,625 / (626 / 2) Hz  
+        = 15,625 / 313  (canonical value)  
+        ≈ 49.9201277955 Hz  
 ```
 
 Vertical scan frequency (interlaced):
 
 ```
-fV_int = f_line / (S_int / 2)
-       = 15,625 / (625 / 2) Hz
-       = (15,625 × 2) / 625
-       = 31,250 / 625
-       = 50 / 1  (canonical value)
-       = 50 Hz  (exact)
+fV_int = f_line / (S_int / 2)  
+       = 15,625 / (625 / 2) Hz  
+       = (15,625 × 2) / 625  
+       = 31,250 / 625  
+       = 50 / 1  (canonical value)  
+       = 50 Hz  (exact)  
 ```
 
 ### 6.2.1 PAL Phase Synchronization and LEAP
