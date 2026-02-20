@@ -411,7 +411,7 @@ fV_int = f_line / (S_int / 2)
 Constants:
 
 ```
-Color burst frequency: f_colorburst = 17,734,475 / 4 Hz  (≈ 4.4336187500 MHz)
+Color burst frequency: f_colorburst = 17,734,475 / 4 Hz  (= 4.43361875 MHz)
 Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (= 17.734475 MHz)
 VI clock multiplier: M = 14 / 5
 VI clocks per line (full scanlines): L = 3,178
