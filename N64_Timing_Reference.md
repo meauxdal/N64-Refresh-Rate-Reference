@@ -206,11 +206,11 @@ The derivations in §6 assume an ideal crystal oscillator at exactly the specifi
 #### 3.7.1 X1 Crystal Oscillators
 
 The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published datasheets. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5–26.5 pF (see C39, C40, Figure 1). It is not currently established if the crystals used were rated for this figure or were effectively off-the-shelf parts operating out of spec.  
-﻿
-Tolerance is established by triangulation. AT-cut crystals are effectively commodity at a given frequency; tolerance is determined by frequency and cut. Current production equivalents specify ±30 ppm as the base grade, corroborated by lidnariq and stated for all three N64 standards on the N64brew Video DAC page.  
-﻿
-At ±30 ppm, f_V varies by ±(30 × 10⁻⁶ × f_V). Given NTSC progressive, this yields a bounded range of approximately 59.8243 to 59.8279 Hz (base: 2,250,000 / 37,609 ≈ 59.8261 Hz, deviation: ±0.0018 Hz). Aggregate second-order variance factors include temperature and voltage.  
-﻿
+
+AT-cut crystals are effectively commodity parts; grade and cut determine the figure (corroborated by lidnariq). Current production equivalents specify ±30 ppm as the base grade.  
+
+Given NTSC progressive, this yields a bounded range of 59.8243 to 59.8279 Hz (base: 2,250,000 / 37,609 ≈ 59.8261 Hz, deviation: ±0.0018 Hz). Aggregate second-order variance factors include temperature and voltage.  
+
 Definitive characterization requires direct measurement across multiple units and board revisions. This section will be revised when this data exists.  
 
 #### 3.7.2 Initialization Transient Behavior
