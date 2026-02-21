@@ -396,11 +396,10 @@ Vertical scan frequency (interlaced):
 *Interlaced: 525 half-lines per vertical scan cycle, alternating between odd and even fields (262.5 lines each).*  
 
 ```
-fV_int = f_line / (S_int / 2)  
-       = (2,250,000 / 143) / (525 / 2) Hz  
-       = (2,250,000 / 143) / 262.5  
-       = (2,250,000 × 2) / (143 × 525)  
-       = 4,500,000 / 75,075  
+fV_int = f_line / (S_int / 2)
+       = (2,250,000 / 143) / (525 / 2)
+       = (2,250,000 × 2) / (143 × 525)
+       = 4,500,000 / 75,075
        = 60,000 / 1,001  (canonical value)  
        ≈ 59.9400599401 Hz  
 ```
@@ -471,13 +470,15 @@ fV_int = f_line / (S_int / 2)
 
 The N64 VI uses a hardware compensation mechanism to maintain the exact 15,625 Hz line frequency required by PAL standards. 
 
-- During the vertical blanking interval, the VI alternates line durations by ±1 VI clock cycle to correct the theoretical fractional error in line timing.  
-- A repeating 5-field sequence (B-A-B-A-B) averages the fractional adjustments over multiple fields, maintaining precise synchronization with the PAL color subcarrier.  
-- The LEAP field in `VI_H_TOTAL` [bits 20:16] encodes this sequence directly as `0x15` (binary `10101`), where each bit selects `LEAP_B` (1) or `LEAP_A` (0) for the corresponding field.  
-- The `VI_H_TOTAL_LEAP` register (`0x04400020`) defines the alternating fractional clock patterns via two fields:  
-  - `LEAP_A` [bits 27:16]: Pattern A, typically adds 5 VI clocks during VSYNC (standard PAL value: 3182).  
-  - `LEAP_B` [bits 11:0]: Pattern B, typically adds 6 VI clocks during VSYNC (standard PAL value: 3183).  
-- Over the sequence, the average addition is 5.6 clocks per field. Half-line durations are modulated without changing the total number of half-lines per frame, preventing color subcarrier drift.  
+### 6.2.1 PAL Phase Synchronization and LEAP
+
+The N64 VI maintains the exact 15,625 Hz line frequency required for PAL output using a hardware compensation mechanism. During the vertical blanking interval, the VI alternates the duration of individual scanlines by ±1 VI clock cycle. This adjustment corrects the small theoretical fractional error that arises from integer constraints in the horizontal timing registers.  
+
+Observed behavior follows a repeating 5-field sequence, commonly denoted B-A-B-A-B, which distributes the fractional corrections across multiple fields. The sequence is encoded in the `VI_H_TOTAL` register [bits 20:16] as the value `0x15` (binary `10101`). Each bit selects whether the corresponding field applies the slightly longer (`LEAP_B`) or slightly shorter (`LEAP_A`) line duration.  
+
+The specific LEAP patterns are stored in the `VI_H_TOTAL_LEAP` register (`0x04400020`). Pattern A (`LEAP_A`, bits 27:16) adds 5 VI clocks during VSYNC, while pattern B (`LEAP_B`, bits 11:0) adds 6 (averaging 5.6). This keeps the total number of half-lines per frame constant, ensuring correct synchronization with the PAL color subcarrier.  
+
+The values 3182 and 3183 correspond to the observed standard PAL VI clock additions for patterns A and B. Their use results in an average addition of 5.6 clocks per field, producing the exact 15,625 Hz line frequency required.  
 
 ### 6.3 PAL-M Derivation
 
