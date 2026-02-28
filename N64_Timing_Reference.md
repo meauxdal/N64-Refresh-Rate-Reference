@@ -26,7 +26,7 @@ Vertical scan frequency (fV) defines the interval of the vertical synchronizatio
 * In progressive modes, this represents **frame** frequency.  
 * In interlaced modes, this represents **field** frequency.  
 
-All values are derived from the system's Master Clock (f_xtal) and the Video Interface (VI) divisor logic.  
+All values are derived from the system's master clock (f_xtal) and the Video Interface (VI) divisor logic.  
 
 ### 1.2 Annotations
 
@@ -109,9 +109,9 @@ Hardware-defined values derived from the system's crystal oscillators and the Vi
 | PAL-M Interlaced  | 14.3024475524 MHz          | 17 / 5         | 3091                 | 525            | `0x20C`      |
 
 ![Figure 1](fig1_clock_gen_schematic.png)  
-*N64 Clock Generation Circuits – U7 (NTSC/PAL-M) & U15 (PAL). Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
+*N64 Clock Generation Circuits - U7 (NTSC/PAL-M) & U15 (PAL). Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
 
-> Later N64 revisions used Macronix Part No. MX8350 instead of Part No. MX8330MC (see 3.1.1)
+> Later N64 revisions used Macronix Part No. MX8350 instead of Part No. MX8330MC (see §3.1.1)
 
 * NTSC Clock Precision: 315/22 MHz (exact) (≈ 14.3181818182 MHz)
 * PAL Clock Precision: 17,734,475 Hz (exact) = 17.734475 MHz
@@ -119,7 +119,7 @@ Hardware-defined values derived from the system's crystal oscillators and the Vi
 
 #### 3.1.1 Clock Generator Hardware Revisions
 
-Early revisions (NUS-CPU-01 through NUS-CPU-07, 1996–1998) used two separate MX8330MC chips: U7 (NTSC/PAL-M) with FSEL tied high → 17/5 multiplier, and U15 (PAL) with FSEL tied low → 14/5 multiplier. Later revisions (NUS-CPU-08 onward, 1999+) consolidated these into a single MX8350 dual-channel chip with equivalent output frequencies and timing characteristics.
+Early revisions (NUS-CPU-01 through NUS-CPU-07, 1996-1998) used two separate MX8330MC chips: U7 (NTSC/PAL-M) with FSEL tied high → 17/5 multiplier, and U15 (PAL) with FSEL tied low → 14/5 multiplier. Later revisions (NUS-CPU-08 onward, 1999+) consolidated these into a single MX8350 dual-channel chip with equivalent output frequencies and timing characteristics.
 
 ![Figure 1a](fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: MX8350 datasheet*
@@ -134,13 +134,13 @@ The RCP (Reality Co-Processor) processes video timings through the following mem
 *RCP-NUS VDC pinout & timing signals. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*
 
 ![Figure 2a](fig9_rcp_vdc_schematic.png)  
-*VDC pin assignments – 7-bit digital output. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*
+*VDC pin assignments - 7-bit digital output. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*
 
-The VDC bus carries:
+The VDC bus carries:  
 - `VDC_D0` through `VDC_D6`: 7-bit digital video data  
 - `VDC_DSYNC`: Continuous timing signal; while low, sync information is encoded on the accompanying VDC data lines
 
-These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC (Composite Sync) and BFP (Burst Flag Pulse) for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip (this is not known to affect timing values derived in this document).  
+These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC (Composite Sync) and BFP (Burst Flag Pulse) for the downstream ENC-NUS encoder (U5). This two-stage signal path (VDC-NUS + ENC-NUS) applies to NUS-CPU-01 through NUS-CPU-04. Other revisions consolidate both functions into a single chip: DENC-NUS, AVDC-NUS, or MAV-NUS depending on revision. This is not known to affect timing values derived in this document.  
 
 > VI registers operate on terminal counts; all derived timing values use the canonical half-line model described in §1.
 
@@ -166,13 +166,43 @@ All values calculated from the fundamental constants above. Line frequencies and
 
 ### 3.4 Hardware Signal Path
 
-Video signal timing derives from a deterministic path from physical oscillation to digital counting and finally analog conversion. The following (and the document as a whole) applies to NUS-CPU-01 through NUS-CPU-04, as documented in RWeick's NUS-CPU-03 schematics.  
+Video signal timing derives from a deterministic path from physical oscillation to digital counting and finally analog conversion. The following applies to NUS-CPU-01 through NUS-CPU-04, as documented in RWeick's NUS-CPU-03 schematics.  
 
-1. Source: The MX8330MC Clock Generator (U7/U15) utilizes a crystal oscillator (X1/X2) to produce the Master Clock (f_xtal).  
-2. Logic: The RCP (Reality Co-Processor, U9) receives a pre-multiplied clock from the synthesizer to drive the internal Video Interface (VI) logic.  
-3. Counting: The VI hardware counts cycles based on values stored in `VI_H_TOTAL` (Line Length) and `VI_V_TOTAL` (Frame Height). These terminal counts define the horizontal and vertical timing boundaries of the video signal.  
-4. Sync Encoding: In parallel, the RCP drives `VDC_DSYNC` on pin 14, cycling at VI clock ÷ 4. This is not a discrete sync event pulse; while `VDC_DSYNC` is low, the remaining 7 VDC data bits carry encoded sync information. The timing structure is expressed via this continuous signal rather than a dedicated pulse line.  
-5. Output: The VDC-NUS (BU9801F, U4) receives `VDC_DSYNC` on pin 10 along with digital video data, decodes the sync information, generates analog RGB, CSYNC, and BFP, and passes these to the ENC-NUS (U5) for final composite and S-Video encoding.  
+1. Source: The MX8330MC Clock Generator (U7) interfaces with crystal X1 to produce the master clock (f_xtal), which drives the Video Interface (VI) timing and all derivations used in this document.¹  
+2. Logic: The RCP (Reality Co-Processor, U9) receives the pre-multiplied master clock to drive the internal VI logic.  
+3. Counting: The VI hardware counts cycles according to `VI_H_TOTAL` (line length) and `VI_V_TOTAL` (frame height). These terminal counts define the exact integer boundaries for the video signal. For example, the NTSC progressive line length is strictly defined by a `VI_H_TOTAL` of 3094 VI clocks (derived from the terminal count 0xC15 plus one).  
+4. Sync Encoding: In parallel, the RCP asserts `VDC_DSYNC` once per four VI clocks during active video. This is not a discrete pulse; rather, it initiates a four-step multiplexing cycle on the VDC bus, subsequently described as a "beat." The 7-bit bus sequentially transmits synchronization status, Red, Green, and Blue data over four VI clock cycles.²  
+5. Output: The VDC-NUS (BU9801F, U4) receives `VDC_DSYNC` on pin 10 along with digital video data. It decodes the sync information, generates analog RGB, CSYNC, and BFP, and passes these to the ENC-NUS (U5). The ENC-NUS natively receives the subcarrier clock from U7.FSC into its SCIN pin for final composite and S-Video encoding.³  
+
+![Figure 2b](fig13_n64videosys.png)  
+*N64 Video System - 4-beat VDC bus protocol and DSYNC waveform. Source: Tim Worthington, N64RGB documentation*  
+
+The VDC bus carries 7 bits per beat (D0-D6), yielding 21 bits per pixel across the three color beats following the sync beat. Although the 4-beat multiplex structure could accommodate 8 bits per beat, the DAC uses only 7.⁴  
+
+![Figure 2c](fig14_vdc-nus.png)  
+*VDC-NUS (BU9801F) pinout. Source: Tim Worthington, N64RGB documentation*  
+
+![Figure 2d](fig18_VDC-NUS.png)  
+*VDC-NUS in circuit. Source: RWeick, NUS-CPU-03 schematic*  
+
+![Figure 2e](fig17_ENC-NUS.png)  
+*ENC-NUS in circuit. Source: RWeick, NUS-CPU-03 schematic*  
+
+¹ Later revisions use a single MX8350 in place of twin MX8330MCs. f_xtal derivations are equivalent. The second clock crystal (X2) and its corresponding synthesizer chip (U15) are not used for the master video clock; they instead drive RAMBUS clock timing.
+
+² The beat identifies the four-step multiplexing cycle used by the VDC bus. Initiated by the `VDC_DSYNC` pulse, the bus transmits sync and status information on the first clock cycle, followed by Red data on the second, Green on the third, and Blue on the fourth.  
+
+³ The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite. Each implementation performs the same DAC/encoding function; see Figures 2f and 2g for consolidated pinouts.  
+
+![Figure 2f](fig15_denc-nus.png)  
+*DENC-NUS pinout. Source: Tim Worthington, N64RGB documentation*  
+
+![Figure 2g](fig16_mav-nus.png)  
+*MAV-NUS pinout. Source: Tim Worthington, N64RGB documentation*  
+
+> A notable variant uses the S-RGB A NUS encoder, found on motherboards marked NUS-CPU(R)-01 and primarily sold in France. This chip is a true RGB DAC, but its RGB output pins were not connected on the motherboard, and it does not generate an S-Video signal. Consequently, these consoles are limited to composite video output without modification. As this hardware revision still operates under the PAL standard, the VI timing derived in this document remains identical.  
+
+⁴ Per N64brew.dev Video DAC page: "it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
 
 ### 3.5 NTSC Progressive Verification Sample
 
@@ -180,10 +210,10 @@ Expected register values and physical pin mappings (NUS-CPU-01 through NUS-CPU-0
 
 | Target Parameter | Register | Value | Result | RCP-NUS (U9) Pin | VDC-NUS (U4) Pin |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| Half-Lines (S) | `VI_V_TOTAL` | `0x20D` | 526 Lines | — | — |
-| Line Duration (L) | `VI_H_TOTAL` | `0xC15` | 3094 Clocks | — | — |
-| Composite Sync | `CSYNC` | — | — | — | Pin 14 (out) |
-| Burst Flag Pulse | `BFP` | — | — | — | Pin 13 (out) |
+| Half-Lines (S) | `VI_V_TOTAL` | `0x20D` | 526 Lines | - | - |
+| Line Duration (L) | `VI_H_TOTAL` | `0xC15` | 3094 Clocks | - | - |
+| Composite Sync | `CSYNC` | - | - | - | Pin 14 (out) |
+| Burst Flag Pulse | `BFP` | - | - | - | Pin 13 (out) |
 
 ### 3.6 Diagnostics
 
@@ -194,8 +224,8 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | NTSC Color Subcarrier (FSC) | U7 | 8 | 3.58 MHz | 3.0 Vpp |
 | NTSC Video Clock (VCLK) | U7 | 1 | 48.68 MHz | 3.3 Vpp |
 | PAL Video Clock (VCLK) | U15 | 1 | 49.66 MHz | 3.3 Vpp |
-| Master Clock | U10 | 16 | 62.51 MHz | — |
-| Rambus Clock (RCLK) | U1 | 5 | 250.2 MHz | — |
+| Master Clock | U10 | 16 | 62.51 MHz | - |
+| Rambus Clock (RCLK) | U1 | 5 | 250.2 MHz | - |
 
 ### 3.7 Physical Variance and Environmental Stability
 
@@ -203,11 +233,11 @@ The derivations in §6 assume an ideal crystal oscillator at exactly the specifi
 
 #### 3.7.1 X1 Crystal Oscillators
 
-The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published datasheets. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5–26.5 pF (see C39, C40, Figure 1). It is not currently established if the crystals used were rated for this value or were effectively off-the-shelf parts operating out of spec.  
+The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published datasheets. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5-26.5 pF (see C39, C40, *N64 Clock Generation Circuits - U7 (NTSC/PAL-M) & U15 (PAL)*). It is not currently established if the crystals used were rated for this value or were effectively off-the-shelf parts operating out of spec.  
 
 AT-cut crystals are effectively commodity parts; grade and cut determine the figure (corroborated by lidnariq). Current production equivalents specify a tolerance of ±30 ppm as the base grade. Given NTSC progressive, this yields an approximate base frequency of 59.8261 Hz (2,250,000 / 37,609) with a range of ±0.0018 Hz. Aggregate second-order variance factors include temperature and voltage. Direct measurement across a large enough sample size would further characterize these effects.  
 
-Values derived in §6 are exact by construction; irreducible fractions traceable to hardware integers. The hardware itself operates within crystal tolerance. That the measurable values deviate is not a flaw in the derivation; it is the expected relationship between mathematical specification and physical implementation.  
+Values derived in §6 are exact by construction, representing irreducible fractions traceable to hardware integers. The hardware itself operates within crystal tolerance. That the measurable values deviate is not a flaw in the derivation; it is the expected relationship between mathematical specification and physical implementation. GBS-C telemetry from PlayStation 1 and Sega Saturn hardware returns progressive values consistent with 2,250,000 / 37,609 Hz within crystal tolerance, corroborating the over-determined nature of standards-compliant NTSC 526 half-line progressive timing across independent clock architectures.  
 
 #### 3.7.2 Initialization Transient Behavior
 
@@ -224,7 +254,7 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 ### 4.1 Signal Parameters by Mode
 
-The following table defines the relationship between the hardware's Master Clock (f_vi) and the resulting display timing. Crystal frequencies and register values are in §3.1; fully reduced refresh rate fractions and line frequencies are in §3.3.  
+The following table defines the relationship between the hardware's master clock (f_vi) and the resulting display timing. Crystal frequencies and register values are in §3.1; fully reduced refresh rate fractions and line frequencies are in §3.3.  
 
 | Mode | Master Clock (f_vi) | Clocks / Line (L) | Half-Lines (S) | Refresh Rate (fV) |  
 | :--- | :--- | :--- | :--- | :--- |  
@@ -235,7 +265,7 @@ The following table defines the relationship between the hardware's Master Clock
 | PAL-M-P | 48.6283216783 MHz | 3091 | 526 | 59.8183634793 Hz |
 | PAL-M-I | 48.6283216783 MHz | 3091 | 525 | 59.9323032193 Hz |
 
-> The Master Clock for PAL-M is derived as exactly 6,953,850,000 / 143 Hz. The slight deviation in NTSC-equivalent timing (≈ 0.0129407959%) is a hardware constraint caused by the requirement of an integer value for the Clocks / Line (L) register.  
+> The master clock for PAL-M is derived as exactly 6,953,850,000 / 143 Hz. The slight deviation in NTSC-equivalent timing (≈ 0.0129407959%) is a hardware constraint caused by the requirement of an integer value for the Clocks / Line (L) register.  
 
 #### 4.1.1 Timing Map
 
@@ -411,9 +441,7 @@ fV_int  = f_line / (525/2) = 60,000 / 1,001      ≈ 59.9400599401 Hz
 fV_prog = f_line / (526/2) = 2,250,000 / 37,609  ≈ 59.8261054535 Hz
 ```
 
-*The denominator is the only variable. The ~0.12 Hz gap between the two rates is entirely and exactly the consequence of the single additional half-line in the progressive frame structure.¹*
-
-¹ GBS-C telemetry from PlayStation 1 and Sega Saturn hardware returns progressive values consistent with 2,250,000 / 37,609 Hz within crystal tolerance, corroborating the over-determined nature of standards-compliant NTSC 526 half-line progressive timing across independent clock architectures.
+*The denominator is the only variable. The ~0.12 Hz gap between the two rates is entirely and exactly the consequence of the single additional half-line in the progressive frame structure. See §3.7.1.*
 
 ### 6.2 PAL Derivation
 
@@ -488,8 +516,6 @@ The specific LEAP patterns are stored in the `VI_H_TOTAL_LEAP` register (`0x0440
 The values 3182 and 3183 correspond to the observed standard PAL VI clock additions for patterns A and B. Their use results in an average addition of 5.6 clocks per field, producing the exact 15,625 Hz line frequency required.  
 
 ### 6.3 PAL-M Derivation
-
-> **§6.3 Note:** Prior constants were derived from an integer crystal approximation (14,302,444 Hz = 4 × 3,575,611). The correct derivation carries the 127/143 remainder from the PAL-M colorburst definition (227.25 × f_H) through the full chain, per lidnariq. Constants and canonical values below reflect this correction.
 
 Constants:  
 
@@ -567,63 +593,70 @@ deviation = ((f_H_ntsc - f_H_PAL-M) / f_H_ntsc) × 100
 
 | Figure | Filename | Technical Source / Description |
 | :--- | :--- | :--- |
-| Figure 1 | `fig1_clock_gen_schematic.png` | *N64 Clock Generation Circuits – U7 (NTSC/PAL-M) and U15 (PAL) (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |
+| Figure 1 | `fig1_clock_gen_schematic.png` | *N64 Clock Generation Circuits - U7 (NTSC/PAL-M) and U15 (PAL) (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |
 | Figure 1a | `fig6_mx8350_table.png` | *MX8350 output frequencies for NTSC/PAL/MPAL configurations (Source: MX8350 datasheet)* |
 | Figure 1b | `fig12_mx8330mc_rev_e.png` | *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient (Source: MX8330MC datasheet)* |
 | Figure 2 | `fig2_rcp_schematic.png` | *RCP-NUS Pinout showing VDC (Video Digital Complex) Timing Outputs (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |
 | Figure 2a | `fig9_rcp_vdc_schematic.png` | *Video Digital Complex (VDC) pin assignments showing 7-bit digital video output (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |
+| Figure 2b | `fig13_n64videosys.png` | *N64 Video System - 4-beat VDC bus protocol, DSYNC waveform, and byte contents (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |
+| Figure 2c | `fig14_vdc-nus.png` | *VDC-NUS (BU9801F) pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |
+| Figure 2d | `fig15_denc-nus.png` | *DENC-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |
+| Figure 2e | `fig16_mav-nus.png` | *MAV-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |
 | Figure 3 | `fig3_n64_default_libdragon_240p_timing.png` | *N64 VI Timing Diagram (NTSC Progressive) (Source: lidnariq via ares emulator Discord server - reverse-engineered via hardware probing)* |
-| Figure 4 | `fig4_relationship_of_fS_to_fH.png` | *Standard fS to fH ratios (Source: Wooding, M., The Amateur TV Compendium, p. 55)* |
+| Figure 4 | `fig4_relationship_of_fS_to_fH.png` | *Standard fS to fH ratios (Source: Wooding, M., The Amateur TV Compendium, p. 55)* |  
 
 ### 7.2 References & Documentation Bridges
 
 #### Primary Technical Documentation (Hardware & Standards)
 
-* Nintendo 64 Functions Reference Manual (OS 2.0i/j/k/l) – VI register mappings and programmable timing.  
-* Nintendo 64 Programming Manual – Memory-mapped I/O, VI mode definitions, system programming reference.  
-* Nintendo 64 Programming Manual Addendums – Corrections and detailed timing tables.  
-* Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001A) – Block diagrams, boot sequence, oscilloscope timing verification.  
-* Macronix MX8350 Datasheet – Dual-channel clock synthesizer, NTSC/PAL/MPAL output frequencies.  
-* Macronix MX8330MC Datasheet – Single-channel clock synthesizer, FSEL pin configuration, startup transient (Rev. E application notice).  
-* [ITU-R Recommendation BT.470-6](https://www.itu.int/rec/R-REC-BT.470/en) – NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies.  
-* [ITU-R Recommendation BT.1700](https://www.itu.int/rec/R-REC-BT.1700/en) – Composite video signal levels, timing, sync pulses.  
-* [ITU-R Recommendation BT.1701](https://www.itu.int/rec/R-REC-BT.1701/en) – Horizontal/vertical timing for composite video.  
-* [US6556197B1 – Programmable Video Timing Registers](https://patents.google.com/patent/US6556197B1/en) – Horizontal/vertical sync generation, color burst gate timing.  
-* [US4054919A – Video Image Positioning Control](https://patents.google.com/patent/US4054919A/en) – Sync counter generation and display positioning.  
-* [SAA1101 Universal Sync Generator Datasheet](https://people.ece.cornell.edu/land/courses/ece4760/ideas/saa1101.pdf) – Corroborating hardware reference for PAL-M chroma frequency relationship (227.25 × fH).  
+* Nintendo 64 Functions Reference Manual (OS 2.0i/j/k/l) - VI register mappings and programmable timing.  
+* Nintendo 64 Programming Manual - Memory-mapped I/O, VI mode definitions, system programming reference.  
+* Nintendo 64 Programming Manual Addendums - Corrections and detailed timing tables.  
+* Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001A) - Block diagrams, boot sequence, oscilloscope timing verification.  
+* Macronix MX8350 Datasheet - Dual-channel clock synthesizer, NTSC/PAL/MPAL output frequencies.  
+* Macronix MX8330MC Datasheet - Single-channel clock synthesizer, FSEL pin configuration, startup transient (Rev. E application notice).  
+* [ITU-R Recommendation BT.470-6](https://www.itu.int/rec/R-REC-BT.470/en) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies.  
+* [ITU-R Recommendation BT.1700](https://www.itu.int/rec/R-REC-BT.1700/en) - Composite video signal levels, timing, sync pulses.  
+* [ITU-R Recommendation BT.1701](https://www.itu.int/rec/R-REC-BT.1701/en) - Horizontal/vertical timing for composite video.  
+* [US6556197B1 - Programmable Video Timing Registers](https://patents.google.com/patent/US6556197B1/en) - Horizontal/vertical sync generation, color burst gate timing.  
+* [US4054919A - Video Image Positioning Control](https://patents.google.com/patent/US4054919A/en) - Sync counter generation and display positioning.  
+* [SAA1101 Universal Sync Generator Datasheet](https://people.ece.cornell.edu/land/courses/ece4760/ideas/saa1101.pdf) - Corroborating hardware reference for PAL-M chroma frequency relationship (227.25 × fH).  
 
 #### Hardware Analysis & Reverse-Engineering
 
-* [RWeick/NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) – Complete PCB layout, component values, signal paths.  
-* [Rodrigo Copetti – Nintendo 64 Architecture](https://www.copetti.org/writings/consoles/nintendo-64/) – CPU, RCP, memory subsystem, graphics pipeline analysis.  
-* [JRRA – N64 Documentation](https://jrra.zone/n64/doc/) – Hardware behavior, VI implementation details.  
-* [N64 Motherboard Revisions – ModRetro Forums](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) – Motherboard revision history, component changes, and video encoder chip progression across revisions.  
+* [RWeick/NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete PCB layout, component values, signal paths.  
+* [Rodrigo Copetti - Nintendo 64 Architecture](https://www.copetti.org/writings/consoles/nintendo-64/) - CPU, RCP, memory subsystem, graphics pipeline analysis.  
+* [JRRA - N64 Documentation](https://jrra.zone/n64/doc/) - Hardware behavior, VI implementation details.  
+* [N64 Motherboard Revisions - ModRetro Forums](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history, component changes, and video encoder chip progression across revisions.  
+* [Archived German N64 RGB Mod Guide](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Historical modding page identifying the NUS-CPU(R)-01 motherboard, documenting the S-RGB A NUS pinout for RGB restoration, and confirming DENC-NUS' unsuitability for RGB output.  
+* [NFGGames Forum - French N64 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community analysis and discussion of the French PAL console and its unique S-RGB A encoder.  
 
 #### Community Development Resources (SDKs & Tools)
 
-* [libdragon](https://libdragon.dev/) – High-level API access to N64 hardware and VI timing abstraction.  
-* [n64brew.dev – Video Interface](https://n64brew.dev/wiki/Video_Interface) – VI register behavior, timing examples, LEAP implementation.  
-* [n64brew.dev – Libultra](https://n64brew.dev/wiki/Libultra) – OS interface functions for VI and hardware access.  
-* [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) – Direct register-level mappings including VI constants.  
-* [n64.readthedocs.io – N64 Hardware Reference](https://n64.readthedocs.io/index.html#video-interface) – General hardware reference and verification.  
+* [libdragon](https://libdragon.dev/) - High-level API access to N64 hardware and VI timing abstraction.  
+* [N64brew.dev - Video Interface](https://n64brew.dev/wiki/Video_Interface) - VI register behavior, timing examples, LEAP implementation.  
+* [N64brew.dev - Video DAC](https://n64brew.dev/wiki/Video_DAC) - Video DAC chip variants (VDC-NUS, DENC-NUS, AVDC-NUS, MAV-NUS), 4-beat bus protocol, and DSYNC signal behaviour.  
+* [N64brew.dev - Libultra](https://n64brew.dev/wiki/Libultra) - OS interface functions for VI and hardware access.  
+* [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) - Direct register-level mappings including VI constants.  
+* [n64.readthedocs.io - N64 Hardware Reference](https://n64.readthedocs.io/index.html#video-interface) - General hardware reference and verification.  
 
 #### Emulator & FPGA Implementations (Cross-Validation)
 
-* [ares N64 Emulator](https://github.com/ares-emulator/ares/tree/master/ares/n64) – Software VI timing implementation.  
-* [CEN64 Emulator](https://github.com/n64dev/cen64) – Software VI timing implementation.  
-* [MAME Emulator](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) – Software VI timing implementation.  
-* [MiSTer FPGA N64 Core HDL](https://github.com/MiSTer-devel/N64_MiSTer) – Hardware VI timing implementation.  
+* [ares N64 Emulator](https://github.com/ares-emulator/ares/tree/master/ares/n64) - Software VI timing implementation.  
+* [CEN64 Emulator](https://github.com/n64dev/cen64) - Software VI timing implementation.  
+* [MAME Emulator](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) - Software VI timing implementation.  
+* [MiSTer FPGA N64 Core HDL](https://github.com/MiSTer-devel/N64_MiSTer) - Hardware VI timing implementation.  
 
 #### General Overview & Contextual References
 
-* [Wikipedia – NTSC](https://en.wikipedia.org/wiki/NTSC) / [PAL](https://www.wikipedia.org/wiki/PAL) / [PAL-M](https://www.wikipedia.org/wiki/PAL-M) – Broadcast standard overviews.  
-* [ATV Compendium (BATC)](https://batc.org.uk/wp-content/uploads/ATVCompendium.pdf) – PAL-M line rate to chroma frequency relationships.  
-* [Martin Hinner – VGA/PAL](https://martin.hinner.info/vga/pal.html) – PAL timing specifications and sync relationships.  
-* [Danalee Analog Video](https://danalee.ca/ttt/analog_video.htm) – Composite signal structure and timing.  
-* [Pembers Archive – World TV Standards](https://web.archive.org/web/20160512200958/http://www.pembers.freeserve.co.uk/World-TV-Standards/) – International broadcast specifications.  
-* [JunkerHQ – XRGB Optimal Timings](https://junkerhq.net/xrgb/index.php?title=Optimal_timings) – Optimal dot clock and refresh timings.  
-* [Pineight – Dot Clock Rates](https://pineight.com/mw/page/Dot_clock_rates.xhtml) – Dot clock calculations for various video standards.  
-* [Optus N64RGB Archive](https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html) – N64 RGB signal modification documentation.  
+* [Wikipedia - NTSC](https://en.wikipedia.org/wiki/NTSC) / [PAL](https://www.wikipedia.org/wiki/PAL) / [PAL-M](https://www.wikipedia.org/wiki/PAL-M) - Broadcast standard overviews.  
+* [ATV Compendium (BATC)](https://batc.org.uk/wp-content/uploads/ATVCompendium.pdf) - PAL-M line rate to chroma frequency relationships.  
+* [Martin Hinner - VGA/PAL](https://martin.hinner.info/vga/pal.html) - PAL timing specifications and sync relationships.  
+* [Danalee Analog Video](https://danalee.ca/ttt/analog_video.htm) - Composite signal structure and timing.  
+* [Pembers Archive - World TV Standards](https://web.archive.org/web/20160512200958/http://www.pembers.freeserve.co.uk/World-TV-Standards/) - International broadcast specifications.  
+* [JunkerHQ - XRGB Optimal Timings](https://junkerhq.net/xrgb/index.php?title=Optimal_timings) - Optimal dot clock and refresh timings.  
+* [Pineight - Dot Clock Rates](https://pineight.com/mw/page/Dot_clock_rates.xhtml) - Dot clock calculations for various video standards.  
+* [Optus N64RGB Archive](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html) - N64 RGB signal modification documentation; source of 4-beat VDC bus protocol diagram and DAC pinouts (Figures 2b, 2c, 2d).  
 
 ### 7.3 Acknowledgements
 
