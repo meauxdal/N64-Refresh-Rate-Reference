@@ -100,13 +100,13 @@ Hardware constants and register mapping for implementing video timings.
 Hardware-defined values derived from the system's crystal oscillators and the Video Interface (VI) register logic.
 
 | Mode              | Crystal Frequency (f_xtal) | Multiplier (M) | VI Clocks / Line (L) | Half-Lines (S) | `VI_V_TOTAL` |
-| :---              | :---                       | :---           | :---                 | :---          | :---        |
-| NTSC Progressive  | 14.3181818182 MHz          | 17 / 5         | 3094                 | 526           | `0x20D`     |
-| NTSC Interlaced   | 14.3181818182 MHz          | 17 / 5         | 3094                 | 525           | `0x20C`     |
-| PAL Progressive   | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 626           | `0x271`     |
-| PAL Interlaced    | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 625           | `0x270`     |
-| PAL-M Progressive | 14.3024475524 MHz      | 17 / 5         | 3091                 | 526           | `0x20D`     |
-| PAL-M Interlaced  | 14.3024475524 MHz      | 17 / 5         | 3091                 | 525           | `0x20C`     |
+| :---              | :---                       | :---           | :---                 | :---           | :---         |
+| NTSC Progressive  | 14.3181818182 MHz          | 17 / 5         | 3094                 | 526            | `0x20D`      |
+| NTSC Interlaced   | 14.3181818182 MHz          | 17 / 5         | 3094                 | 525            | `0x20C`      |
+| PAL Progressive   | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 626            | `0x271`      |
+| PAL Interlaced    | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 625            | `0x270`      |
+| PAL-M Progressive | 14.3024475524 MHz          | 17 / 5         | 3091                 | 526            | `0x20D`      |
+| PAL-M Interlaced  | 14.3024475524 MHz          | 17 / 5         | 3091                 | 525            | `0x20C`      |
 
 ![Figure 1](fig1_clock_gen_schematic.png)  
 *N64 Clock Generation Circuits – U7 (NTSC/PAL-M) & U15 (PAL). Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
@@ -137,22 +137,22 @@ The RCP (Reality Co-Processor) processes video timings through the following mem
 *VDC pin assignments – 7-bit digital output. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*
 
 The VDC bus carries:
-- `VDC_D0` through `VDC_D6`: 7-bit digital video data
-- `VDC_DSYNC`: Combined vertical/field synchronization pulse
+- `VDC_D0` through `VDC_D6`: 7-bit digital video data  
+- `VDC_DSYNC`: Continuous timing signal; while low, sync information is encoded on the accompanying VDC data lines
 
-These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC and BFP for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip (this is not known to affect timing values derived in this document).  
+These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC (Composite Sync) and BFP (Burst Flag Pulse) for the downstream ENC-NUS encoder (U5). This two-stage signal path applies to NUS-CPU-01 through NUS-CPU-04; later revisions integrate both functions into a single chip (this is not known to affect timing values derived in this document).  
 
 > VI registers operate on terminal counts; all derived timing values use the canonical half-line model described in §1.
 
 * `VI_V_TOTAL` (`0x04400018`): The register stores a terminal half-line count; the effective number of half-lines per frame equals `VI_V_TOTAL` + 1.  
 * `VI_H_TOTAL` (`0x0440001C`): The register stores a terminal VI clock count (per full scanline); the effective clocks per line equal `VI_H_TOTAL` + 1.  
-* `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments once per half-line.
+* `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments by 2 per line. In interlaced mode, bit 0 toggles each field to indicate odd or even lines; libdragon uses this to determine which lines require redrawing in 480i mode.
 
 *Progressive: counts all half-lines sequentially → lines per vertical refresh = total half-lines ÷ 2.*  
 *Interlaced: counts alternating half-lines per field → lines per field = total half-lines ÷ 2.*  
 *Effective VSYNC period = total half-lines ÷ 2 (for progressive) or ÷ 2 (per field, for interlaced). This matches the frame frequency for progressive modes and the field frequency for interlaced modes.*  
 
-> For interlaced modes, S is set to an odd integer (525 or 625). The VI hardware automatically offsets the VSYNC pulse (`VDC_DSYNC`) by 0.5 lines every other field.
+> For interlaced modes, S is set to an odd integer (525 or 625). The VI hardware automatically offsets the vertical sync position by 0.5 lines every other field.
 
 ### 3.3 Derived Timing Values
 
@@ -170,9 +170,9 @@ Video signal timing derives from a deterministic path from physical oscillation 
 
 1. Source: The MX8330MC Clock Generator (U7/U15) utilizes a crystal oscillator (X1/X2) to produce the Master Clock (f_xtal).  
 2. Logic: The RCP (Reality Co-Processor, U9) receives a pre-multiplied clock from the synthesizer to drive the internal Video Interface (VI) logic.  
-3. Counting: The VI hardware counts cycles based on values stored in `VI_H_TOTAL` (Line Length) and `VI_V_TOTAL` (Frame Height).  
-4. Trigger: Upon reaching the defined count, the RCP asserts `VDC_DSYNC` on pin 14.  
-5. Output: The VDC-NUS (BU9801F, U4) receives `VDC_DSYNC` on pin 10 along with digital video data, generates analog RGB, CSYNC, and BFP, and passes these to the ENC-NUS (U5) for final composite and S-Video encoding.  
+3. Counting: The VI hardware counts cycles based on values stored in `VI_H_TOTAL` (Line Length) and `VI_V_TOTAL` (Frame Height). These terminal counts define the horizontal and vertical timing boundaries of the video signal.  
+4. Sync Encoding: In parallel, the RCP drives `VDC_DSYNC` on pin 14, cycling at VI clock ÷ 4. This is not a discrete sync event pulse; while `VDC_DSYNC` is low, the remaining 7 VDC data bits carry encoded sync information. The timing structure is expressed via this continuous signal rather than a dedicated pulse line.  
+5. Output: The VDC-NUS (BU9801F, U4) receives `VDC_DSYNC` on pin 10 along with digital video data, decodes the sync information, generates analog RGB, CSYNC, and BFP, and passes these to the ENC-NUS (U5) for final composite and S-Video encoding.  
 
 ### 3.5 NTSC Progressive Verification Sample
 
@@ -182,13 +182,12 @@ Expected register values and physical pin mappings (NUS-CPU-01 through NUS-CPU-0
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | Half-Lines (S) | `VI_V_TOTAL` | `0x20D` | 526 Lines | — | — |
 | Line Duration (L) | `VI_H_TOTAL` | `0xC15` | 3094 Clocks | — | — |
-| VSYNC/DSYNC Pulse | `VDC_DSYNC` | — | — | Pin 14 (out) | Pin 10 (in) |
 | Composite Sync | `CSYNC` | — | — | — | Pin 14 (out) |
 | Burst Flag Pulse | `BFP` | — | — | — | Pin 13 (out) |
 
 ### 3.6 Diagnostics
 
-Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following oscilloscope verification points for clock signal integrity:
+Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following oscilloscope verification points for clock signal integrity:  
 
 | Signal | Component | Pin | Expected Frequency | Expected Amplitude |
 | :--- | :--- | :--- | :--- | :--- |
@@ -198,26 +197,24 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | Master Clock | U10 | 16 | 62.51 MHz | — |
 | Rambus Clock (RCLK) | U1 | 5 | 250.2 MHz | — |
 
-> The service manual documents a 13-step startup sequence (IPL1→IPL2→IPL3) that initializes the VI timing registers. See official documentation for complete boot diagnostics.
-
 ### 3.7 Physical Variance and Environmental Stability
 
-The derivations in §6 assume an ideal crystal oscillator at exactly the specified frequency. In practice, all deviation in f_V traces to f_xtal. K is a deterministic ratio; it does not drift. The crystal is another matter.  
+The derivations in §6 assume an ideal crystal oscillator at exactly the specified frequency. In practice, f_V's derivation from a non-ideal f_xtal proves less exact.  
 
 #### 3.7.1 X1 Crystal Oscillators
 
-The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published datasheets. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5–26.5 pF (see C39, C40, Figure 1). It is not currently established if the crystals used were rated for this figure or were effectively off-the-shelf parts operating out of spec.  
+The NTSC and PAL-M clock crystals (X1, likely KDS Daishinku) have no published datasheets. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5–26.5 pF (see C39, C40, Figure 1). It is not currently established if the crystals used were rated for this value or were effectively off-the-shelf parts operating out of spec.  
 
-AT-cut crystals are effectively commodity parts; grade and cut determine the figure (corroborated by lidnariq). Current production equivalents specify a tolerance of ±30 ppm as the base grade. Given NTSC progressive, this yields an approximate base frequency of 59.8261 Hz (2,250,000 / 37,609) with a range of ±0.0018 Hz. Aggregate second-order variance factors include temperature and voltage.
+AT-cut crystals are effectively commodity parts; grade and cut determine the figure (corroborated by lidnariq). Current production equivalents specify a tolerance of ±30 ppm as the base grade. Given NTSC progressive, this yields an approximate base frequency of 59.8261 Hz (2,250,000 / 37,609) with a range of ±0.0018 Hz. Aggregate second-order variance factors include temperature and voltage. Direct measurement across a large enough sample size would further characterize these effects.  
 
-Definitive characterization requires direct measurement across multiple units and board revisions. This section will be revised when this data exists.  
+Values derived in §6 are exact by construction; irreducible fractions traceable to hardware integers. The hardware itself operates within crystal tolerance. That the measurable values deviate is not a flaw in the derivation; it is the expected relationship between mathematical specification and physical implementation.  
 
 #### 3.7.2 Initialization Transient Behavior
 
 ![Figure 1b](fig12_mx8330mc_rev_e.png)  
 *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient.*  
 
-The MX8330MC requires approximately 5 ms stabilization after power-on before FSO output reaches steady operation. This occurs during the IPL startup sequence, before active video output.  
+The MX8330MC requires an approximately 5 millisecond stabilization period after power-on before FSO output reaches steady operation. This occurs during the IPL startup sequence, before active video output.  
 
 ---
 
@@ -341,7 +338,7 @@ Irreducible fractions for mathematically precise conversions.
 
 ## 6. Mathematical Derivations
 
-This section provides step-by-step derivations for all timing values. Calculations begin with hardware constants and proceed through to the final refresh rates. All quantities originate from hardware-authoritative integers; no floating-point values are used in the derivation path. Decimals appear only as final representations (.10f formatting). All frequencies are expressed in Hertz (Hz) unless otherwise noted.  
+This section provides step-by-step derivations for all timing values. Calculations begin with hardware constants and proceed through to the final refresh rates. All quantities originate from hardware-authoritative integers; no floating-point values are used in the derivation path. All frequencies are expressed in Hertz (Hz) unless otherwise noted.  
 
 ### 6.1 NTSC Derivation
 
@@ -479,10 +476,6 @@ fV_int = f_line / (S_int / 2)
        = 50 / 1  (canonical value)  
        = 50 Hz  (exact)  
 ```
-
-### 6.2.1 PAL Phase Synchronization and LEAP
-
-The N64 VI uses a hardware compensation mechanism to maintain the exact 15,625 Hz line frequency required by PAL standards. 
 
 ### 6.2.1 PAL Phase Synchronization and LEAP
 
@@ -635,7 +628,10 @@ deviation = ((f_H_ntsc - f_H_PAL-M) / f_H_ntsc) × 100
 ### 7.3 Acknowledgements
 
 * A thread on [videogameperfection.com](https://videogameperfection.com/forums/topic/nintendo-64-de-blur/) provided the initial spark of curiosity.
-* lidnariq for invaluable insight and corroboration as well as the timing map (Figure 3).
+* lidnariq for PAL-M colorburst correction (§6.3), DSYNC signal behaviour analysis (§3.2, §3.4), ±30 ppm crystal tolerance figure (§3.7.1), VI timing map (Figure 3), and extensive derivation audit. This document could not exist in its current form without these contributions.
+* Robert Peip (FPGAzumSpass) for auditing and corroboration of `VI_V_CURRENT` behaviour.
+* Rasky for cross-referencing register naming against N64brew convention.
+* kev4cards for research leads and additional auditing and refinement.
 
 ---
 
