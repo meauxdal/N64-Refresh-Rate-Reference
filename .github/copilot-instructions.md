@@ -5,24 +5,26 @@
 This document defines the permanent technical, stylistic, and epistemic ground truth for the N64 video timing manuscript. It is the authoritative reference for all edits.
 
 General guidelines:
-**No LaTeX. No em dashes. No en dashes. Minimal bolding. Minimal bullet points. Minimal numerical lists. Italics only for soft annotative notes. Blockquotes only for asides. Footnotes where appropriate; don't overuse. Prefer prose. All mathematical notation must conform to the canon defined herein. Fractions fully carried through all calculations. No floating-point math (decimals only used for representation and legibility). **
+**No LaTeX. No em dashes. No en dashes. Minimal bolding. Minimal bullet points. Minimal numerical lists. Italics only for soft annotative notes. Blockquotes only for asides. Footnotes where appropriate; don't overuse. Prefer prose. All mathematical notation must conform to the canon defined herein. Fractions fully carried through all calculations. No floating-point math (decimals only used for representation and legibility).**
 
 Philosophical guideline:
 **Every word is a liability.** If we don't know, we research. If we can't verify, we don't imply we can.
 
 A-B-C-D-E consistency mnemonic:
 A) Analyze conventions
-B) Be on the look out for outliers 
+B) Be on the look out for outliers
 C) Cognitively reason about them
 D) Decide on action
 E) Execute and iterate
 
 Caution words:
-* Master clock - do not re-insert. f_xtal = master crystal frequency, System Master Clock is used once in a header row to align with primary sources and should be left unaltered.
-* "Beat" - never used in current revision, do not re-insert. "Stage" is used
+* "Master clock" - do not re-insert. f_xtal = master crystal frequency. "System Master Clock" is used once in a header row to align with primary sources and should be left unaltered.
+* "Beat" - never used in current revision, do not re-insert. "Stage" is used.
 * "Line" or "scanline" is used sparingly, strongly prefer use of atomic, canonical hardware unit "half-line" (S). This is somewhat flexible as long as ambiguity is mitigated.
+* "Field" - avoid in LEAP and vertical timing derivations. The half-line model (S) is canonical. "Per S half-lines" is the correct framing; "per field" introduces a broadcast-domain concept that conflicts with the hardware-native unit. Exception: acceptable in prose when describing the B-A-B-A-B sequence in plain English, provided S is already established in context.
+* "Frame" - avoid wherever possible to prevent ambiguity, as above.
 
-Guidance for LLMs specifically: 
+Guidance for LLMs specifically:
 Line endings use two spaces. **Retain these when editing in-place, but never add these to newly emitted text.** This is an authorship fingerprint. Exception: when emitting figures, ensure double-spaced line endings to force newline behavior in Markdown renderers.
 
 ---
@@ -100,22 +102,22 @@ Programmer-visible register states and hardware-generated signals must not be co
 *   No LaTeX.
 *   Minimal bolding, minimal bullet points, minimal numerical lists.
 *   Prefer integrating loose info into prose where suitable.
-*   Register names and signal names are *always* `code blocked` in prose. No exceptions. 
+*   Register names and signal names are *always* `code blocked` in prose. No exceptions.
 *   Caution required regarding intermingling of register names and effective values (registers are terminal-counted; effective values are not) - both formatting consistency and clarity are key.
 *   Division operators follow a context rule: `/` is used for fraction notation in derivation chains, tables, and inline mathematical expressions. `÷` is used in prose when describing hardware signal relationships in natural language (e.g., "FSO ÷ 5", "f_xtal ÷ 4"). Do not normalize these to a single symbol.
 
 ## 8. Pending Items
 * Glossary insertion and finalization.
 * Table of contents generation.
-* Final tone/style audit by human author. 
+* Final tone/style audit by human author.
 
 ### 8.1
-* Symbol audit: consitency through the following:  
-=, ≈, ≠, <, >, +, -, ×, ÷, ±, ∈, {,}, [,], 
+* Symbol audit: consistency through the following:
+=, ≈, ≠, <, >, +, -, ×, ÷, ±, ∈, {,}, [,]
 
 **Notes:**
-* Prose uses `÷`, while tables, code blocks and derivations use `/`
-* Prose division identified by space-padded ` / ` pattern; fraction notation uses unpadded `/`.
+* Prose uses `÷` for division and `/` for fractions, while tables, code blocks and derivations use `/` for both.
+* Code block division identified by space-padded ` / ` pattern; fraction notation uses unpadded `/`.
 
 ## 9. Repository structure
 
@@ -124,14 +126,14 @@ N64-Refresh-Rate-Reference/
 ├── .github/
 │   └── copilot-instructions.md       ← this file
 ├── docs/
-│   ├── LaTeX-matrix.md
-│   ├── LaTeX-tables-v2.md
+│   ├── Glossary.md
+│   ├── Quick-Reference-LaTeX-Tables.md
+│   ├── WIP_N64-Repair-Docs-Summary.docx
 │   └── [ITU-R standards PDFs]
+├── figures/
+│   └── fig1–fig22.*                  ← all figures and figure-PDFs
 ├── tools/
 │   └── canonical_values.json
-├── fig*.png                          ← all figures at root level
-├── HBI.pdf
-├── VBI-625-PAL.pdf
 ├── N64_Timing_Reference.md
 └── README.md
 ```
