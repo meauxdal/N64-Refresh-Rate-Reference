@@ -56,7 +56,7 @@ Scan Types:
 
 **Vertical scan frequency (fV)**, expressed in Hz, is the reciprocal of the `VSYNC` period, measured from the rising edge of one `VSYNC` pulse to the next rising edge. Where used in this document, "refresh rate" refers to this value. In progressive modes, fV represents frame frequency; in interlaced modes, fV represents field frequency.  
 
-All video timing derives from a single physical source: the quartz crystal oscillator. Its frequency is designated f_xtal. The VI clock (f_vi) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). fH follows by dividing f_vi by L, the integer VI clock count per horizontal line. fV follows by dividing fH by half the nominal half-line count S.  
+All video timing derives from a single physical source: one of two quartz crystal oscillators (X1 and X2). Its frequency is designated f_xtal. The VI clock (f_vi) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). fH follows by dividing f_vi by L, the integer VI clock count per horizontal line. fV follows by dividing fH by half the nominal half-line count S.  
 
 ```
 f_vi = f_xtal × M
@@ -66,7 +66,7 @@ fV   = fH / (S / 2)
 fV   = (f_xtal × M) / (L × S/2)
 ```
 
-f_xtal is the sole true constant; all VI timing frequencies are rational derivatives of f_xtal.  
+All VI timing frequencies are rational derivatives of f_xtal.  
 
 ### 1.2 Annotations  
 
@@ -208,11 +208,11 @@ Video signal timing derives from a deterministic path from physical oscillation 
 2. Logic: The RCP (Reality Co-Processor, U9) receives the clock synthesizer output (derived from f_xtal) to drive the internal VI logic.
 3. Counting: The VI hardware counts clock cycles according to `VI_H_TOTAL` (line length) and `VI_V_TOTAL` (frame height) to define the signal's timing boundaries.  
 4. Encoding: The VI prepares pixel data for output using a 4-stage multiplexing process, where each stage corresponds to one VI clock cycle.²  
-5. Output: The digital stream from the RCP is received by the VDC-NUS chip (U4), which performs the initial digital-to-analog conversion. U4's CLK pin is driven by U7.FSO/5; FSO being the Frequency Synthesizer Output, the Rambus-domain clock divided by five for video timing. The VDC-NUS generates analog RGB, CSYNC, and BFP, and passes these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (Subcarrier Frequency, fS = f_xtal ÷ 4) into its SCIN (Subcarrier Input) pin via the R13/R12 resistor divider and C21, attenuated from ~3 V to ~468 mV before injection into the encoder.  
+5. Output: The digital stream from the RCP is received by the VDC-NUS chip (U4), which performs the initial digital-to-analog conversion. U4's CLK pin is driven by U7.FSO/5; FSO being the Frequency Synthesizer Output, the Rambus-domain clock divided by five for video timing. The VDC-NUS generates analog RGB, CSYNC, and BFP, and passes these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (Subcarrier Frequency, fS = f_xtal ÷ 4) into its SCIN (Subcarrier Input) pin via the R13/R12 resistor divider and C21, attenuated from ~3 V to ~468 mV before arrival at the encoder.  
 
-The 4-stage multiplexing process described in step 4 above is key to understanding the N64's digital video bus. This process uses several signals to transmit data from the RCP to the VDC-NUS: the 7-bit³ data bus (VDC_D0-VDC_D6), the VDC_DSYNC (a.k.a. !DSYNC) signal, and a shared clock. The entire 4-stage group contains all the data for one final, rendered pixel and can be usefully conceptualized as a "VI pixel."  
+The 4-stage multiplexing process described in step 4 is key to understanding the N64's digital video bus. This process uses several signals to transmit data from the RCP to the VDC-NUS: the 7-bit³ data bus (VDC_D0-VDC_D6), the VDC_DSYNC (a.k.a. !DSYNC) signal, and a shared clock. The entire 4-stage group contains all the data for one final, rendered pixel and can be usefully conceptualized as a "VI pixel."  
 
-VDC_DSYNC goes low during the first stage (Stage 0) to signal the start of a new 4-stage group on the data bus. During this process, three of the stages are used to transmit the 7-bit components of a single 21-bit color value (Red, Green, and Blue). The first stage is used for synchronization data. Because one "VI pixel" requires this 4-stage multiplex to be transmitted, the total number of VI pixels per scanline is the VI clocks per line (L) divided by four. Because L is not always evenly divisible by 4 (e.g., 3094 for NTSC), a scanline consists of a number of complete 4-stage groups plus a fractional remainder. See §4.1.1 for visualization.
+VDC_DSYNC goes low during the first stage (Stage 0) to signal the start of a new 4-stage group on the data bus. During this process, three of the stages are used to transmit the 7-bit components of a single 21-bit color value (Red, Green, and Blue). The first stage is used for synchronization data. Because one "VI pixel" requires this 4-stage multiplex to be transmitted, the total number of VI pixels per scanline is the VI clocks per line (L) divided by four. However, L is never evenly divisible by 4 (e.g. NTSC: 3094 ÷ 4 = 773.5), therefore a scanline consists of a number of complete 4-stage groups plus a fractional remainder. See §4.1.1 for visualization.
 
 ![Figure 2b](/figures/fig13_n64videosys.png)  
 *N64 Video System - 4-stage multiplexing behavior of VDC bus protocol, VDC_DSYNC waveform. Source: Tim Worthington, N64RGB documentation*  
@@ -792,7 +792,7 @@ A quick reference for terminology used in this document.
 
 * **MX8350:** A dual-channel Macronix clock synthesizer that replaced the twin MX8330MC configuration in later N64 revisions (NUS-CPU-08 onward, 1999+). It consolidates both NTSC/PAL-M and PAL clock synthesis with equivalent output frequencies. Derived values are unaffected by this revision. *See also: MX8330MC.*  
 
-* **NTSC (National Television System Committee):** The broadcast video standard used in North America, Japan, South Korea, and parts of Central America. Precisely, the standard name NTSC-M (so-called due to combination of System M (a monochrome broadcast standard) and NTSC color). Defines a 525-line, approximately 59.94 Hz interlaced signal. On the N64, the NTSC crystal is 315/22 MHz (exact), the VI clock multiplier is 17/5, and there are 3,094 VI clocks per line. *See PAL, PAL-M.*  
+* **NTSC (National Television System Committee):** The broadcast video standard used in North America, Japan, South Korea, and parts of Central America. Precisely, the standard name is NTSC-M (so-called due to combination of System M (a monochrome broadcast standard) and NTSC color). Defines a 525-line, approximately 59.94 Hz interlaced signal. On the N64, the NTSC crystal is 315/22 MHz (exact), the VI clock multiplier is 17/5, and there are 3,094 VI clocks per line. *See PAL, PAL-M.*  
 
 * **PAL (Phase Alternating Line):** Broadcast video standard used across Europe, Australia, New Zealand, and much of Africa and Asia. 625-line, 50 Hz interlaced signal with a chroma subcarrier of exactly 4,433,618.75 Hz. On the N64, the PAL crystal is 17.734475 MHz (exact), the VI clock multiplier is 14/5, and LEAP register use is required to maintain standard 15,625 Hz line frequency. *See also NTSC, PAL-M.*  
 
