@@ -1,34 +1,22 @@
-# N64 VI Timing Constants
+# N64 Video Timing Reference
 
 This repository contains the precise refresh rates for the Nintendo 64's video interface. The values are derived from the hardware oscillators and internal register logic, ensuring cycle-accurate timing for emulators, FPGA cores, and other tools that require hardware-level precision.
 
-## Quick Reference
+## Reference
 
 | Mode | Scan Type | Exact Refresh (f_V) | Decimal (Hz) |
 | :--- | :--- | :--- | :--- |
 | NTSC | Progressive | 2,250,000 / 37,609 | 59.8261054535 |
 | NTSC | Interlaced | 60,000 / 1,001 | 59.9400599401 |
 | PAL | Progressive | 15,625 / 313 | 49.9201277955 |
-| PAL | Interlaced | 50 / 1 | 50.0000000000 |
+| PAL | Interlaced | 50 / 1 | 50 (exact) |
 | PAL-M | Progressive | 6,953,850,000 / 116,249,419 | 59.8183634793 |
 | PAL-M | Interlaced | 185,436,000 / 3,094,091 | 59.9323032193 |
 
-## Usage
+# Primary document
 
-[`canonical_values.json`](tools/canonical_values.json) provides irreducible fractions to avoid floating-point precision loss in timing calculations. 
-[`N64_Timing_Reference.md`](N64_Timing_Reference.md) shows how the hardware oscillators and register logic produce these timing constants, with full derivations.
+[`N64_Timing_Reference.md`](N64_Timing_Reference.md)
 
-> Document status, 2026.02.19: PAL-M constants resolved to canonical precision  
+# Canonical fractions for each signal
 
-## Hardware Specifics
-
-Progressive modes include an extra half-line (526 for NTSC/PAL-M, 626 for PAL) to suppress interlace artifacts, resulting in a refresh rate slightly below the standard 60,000/1,001 Hz. PAL-M uses a distinct integer divisor of 3091 VI clocks per line. All NTSC derivations are based on the canonical 315/22 MHz crystal oscillator, not the commonly cited approximation of 14.318 MHz.
-
-## Example
-```cpp
-// NTSC Progressive: 2,250,000 / 37,609 Hz
-double frame_duration_ns = (37609.0 / 2250000.0) * 1e9; 
-// Result: ~16,715,111.11 ns
-```
-
-Precision is only preserved if your implementation carries it.  
+[`canonical_values.json`](tools/canonical_values.json)

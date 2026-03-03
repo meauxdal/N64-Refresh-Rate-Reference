@@ -1,18 +1,15 @@
-PS C:\Workspace\Git\N64-Refresh-Rate-Reference> dir -r
-
-
-    Directory: C:\Workspace\Git\N64-Refresh-Rate-Reference
+Directory: C:\Workspace\Git\N64-Refresh-Rate-Reference
 
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
-d-----          3/1/2026   1:26 AM                .github
-d-----          3/1/2026   3:58 PM                docs
+d-----          3/2/2026  10:24 PM                .github
+d-----          3/1/2026  10:31 PM                docs
 d-----          3/1/2026   4:21 PM                figures
 d-----         2/27/2026  10:07 PM                tools
 -a----         2/27/2026  10:07 PM            109 .gitignore
--a----          3/1/2026   4:31 PM           4214 directory_stucture_2026.03.01_16-31-58.txt
--a----          3/1/2026   4:45 PM          49635 N64_Timing_Reference.md
+-a----          3/2/2026   3:38 PM           4087 directory_stucture_2026.03.02_15-38-56.txt
+-a----          3/2/2026  10:24 PM          63715 N64_Timing_Reference.md
 -a----         2/27/2026  10:07 PM           1798 README.md
 
 
@@ -21,7 +18,7 @@ d-----         2/27/2026  10:07 PM                tools
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
--a----          3/1/2026   4:49 PM           7549 copilot-instructions.md
+-a----          3/2/2026  10:30 PM          17458 copilot-instructions.md
 
 
     Directory: C:\Workspace\Git\N64-Refresh-Rate-Reference\docs
@@ -29,7 +26,6 @@ Mode                 LastWriteTime         Length Name
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
--a----          3/1/2026   2:44 PM          10728 Glossary.md
 -a----          3/1/2026   3:36 PM           3391 Quick-Reference-LaTeX-Tables.md
 -a----         2/27/2026  10:07 PM         233346 R-REC-BT.1700-0-200502-I!!ZPF-E_1700-e.pdf
 -a----         2/27/2026  10:07 PM         220021 R-REC-BT.1700-0-200502-I!!ZPF-E_S170m-2004.pdf

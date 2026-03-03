@@ -1,6 +1,39 @@
 # N64 Refresh Rate Reference  
 
-Reference for Nintendo 64 video refresh rates and timing specifications across all supported video modes. **Vertical scan frequency** (colloquially termed '**refresh rate**') defines the period of the vertical synchronization cycle.  
+Reference for Nintendo 64 video refresh rates and timing specifications across all supported video modes. 
+
+---
+
+## Contents
+
+* [§1 Introduction](#1-introduction)
+  * [§1.1 Terminology](#11-terminology)
+  * [§1.2 Annotations](#12-annotations)
+  * [§1.3 Distinctions and Hazards](#13-distinctions-and-hazards)
+* [§2 Refresh Rate Summary](#2-refresh-rate-summary)
+* [§3 Technical Specifications](#3-technical-specifications)
+  * [§3.1 Fundamental Constants](#31-fundamental-constants)
+  * [§3.2 Video Interface (VI) Register Mapping](#32-video-interface-vi-register-mapping)
+  * [§3.3 Derived Timing Values](#33-derived-timing-values)
+  * [§3.4 Hardware Signal Path](#34-hardware-signal-path)
+  * [§3.5 NTSC Progressive Verification Sample](#35-ntsc-progressive-verification-sample)
+  * [§3.6 Diagnostics](#36-diagnostics)
+  * [§3.7 Physical Variance and Environmental Stability](#37-physical-variance-and-environmental-stability)
+* [§4 Signal Analysis](#4-signal-analysis)
+  * [§4.1 Signal Parameters by Mode](#41-signal-parameters-by-mode)
+  * [§4.2 Mode-Specific Notes](#42-mode-specific-notes)
+* [§5 Mathematical Derivations](#5-mathematical-derivations)
+  * [§5.1 NTSC Derivation](#51-ntsc-derivation)
+  * [§5.2 PAL Derivation](#52-pal-derivation)
+  * [§5.3 PAL-M Derivation](#53-pal-m-derivation)
+* [§6 Conversion Reference](#6-conversion-reference)
+  * [§6.1 Decimal Conversions](#61-decimal-conversions)
+  * [§6.2 Exact Fractional Conversions](#62-exact-fractional-conversions)
+* [§7 References and Metadata](#7-references-and-metadata)
+  * [§7.1 Visual References](#71-visual-references)
+  * [§7.2 References](#72-references)
+  * [§7.3 Acknowledgements](#73-acknowledgements)
+* [§8 Glossary](#8-glossary)
 
 ---
 
@@ -16,48 +49,24 @@ Video Modes:
 
 Scan Types:  
 
-* **Progressive (P)**: 526 half-lines counted sequentially per frame (PAL: 626)  
-* **Interlaced (I)**: 525 half-lines per field, alternating odd/even (PAL: 625)  
+* **Progressive (P)**: 526 half-lines per frame (counted sequentially) (PAL: 626)  
+* **Interlaced (I)**: 525 half-lines per field (alternating odd/even) (PAL: 625)  
 
-### 1.1 Terminology  
+### 1.1 Terminology
 
-**Vertical scan frequency (fV)**, expressed in Hz, is the reciprocal of the **vertical synchronization period (VSYNC)**, measured from the rising edge of one VSYNC pulse to the next rising edge. Where used in this document, "refresh rate" refers to this value.  
+**Vertical scan frequency (fV)**, expressed in Hz, is the reciprocal of the `VSYNC` period, measured from the rising edge of one `VSYNC` pulse to the next rising edge. Where used in this document, "refresh rate" refers to this value. In progressive modes, fV represents frame frequency; in interlaced modes, fV represents field frequency.  
 
-* In progressive modes, fV represents frame frequency.  
-* In interlaced modes, fV represents field frequency.  
+All video timing derives from a single physical source: the quartz crystal oscillator. Its frequency is designated f_xtal. The VI clock (f_vi) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). fH follows by dividing f_vi by L, the integer VI clock count per horizontal line. fV follows by dividing fH by half the nominal half-line count S.  
 
-Within the context of Video Interface timing, all derivations are contingent on the period of the N64's physical quartz crystal's oscillation (**f_xtal**) and the VI's integer divisor logic.  
+```
+f_vi = f_xtal × M
+fH   = f_vi / L
+fV   = fH / (S / 2)
 
-f_xtal is the sole true constant.  
+fV   = (f_xtal × M) / (L × S/2)
+```
 
-```  
-All video timing is derived from a single crystal oscillator.  
-
-Let:  
-
-f_xtal - Master crystal frequency (physical quartz oscillator)
-f_vi - Video Interface clock (derived via internal multiplier from f_xtal) 
-fH - Horizontal scan frequency  
-fV - Vertical scan frequency  
-
-The clock chain is hierarchical. Mathematical derivations are strictly nested:  
-
-f_vi = f_xtal × M  
-fH   = f_vi / L  
-fV   = fH / (S / 2)  
-
-Where:  
-
-M - VI clock multiplier (region-defined integer)  
-L -  VI clocks per horizontal line (integer divisor)  
-S -  Nominal half-line count per frame (integer; S/2 equals full lines per frame)  
-
-Combined:  
-
-**fV = (f_xtal × M) / (L × S/2)**  
-
-All VI timing frequencies are integer derivatives of f_xtal.  
-```  
+f_xtal is the sole true constant; all VI timing frequencies are rational derivatives of f_xtal.  
 
 ### 1.2 Annotations  
 
@@ -74,6 +83,7 @@ Parenthetical annotations clarify numerical representations:
 
 * **Half-line (S)** is the atomic unit for VI registers.  
 * One line (or scanline) equals 2 half-lines. Progressive counts sequentially; interlaced alternates odd/even per field. Where feasible, this document endeavors to avoid "line" count modelling, favoring half-line models; adherence yields hardware-logic alignment, consistent rational fractions, and general disambiguation.  
+* Similarly, this document aims to minimize "frame" and "frame rate" terminology to mitigate ambiguity. The term loses clear meaning when discussing both progressive and interlaced modes (e.g. "two interlaced fields compose a frame" modelling forces meaning to bifurcate per mode).
 * The ~0.12 Hz difference between NTSC progressive and interlaced rates is not arbitrary; it is the arithmetic consequence of the additional half-line in the divisor (526 vs 525). See §5.1.  
 
 #### 1.3.2 Registers  
@@ -84,7 +94,7 @@ The document uses N64brew naming conventions throughout. SDK equivalents are not
 |:---|:---|:---|:---|  
 | `VI_V_TOTAL` | `VI_V_SYNC_REG` | `0x04400018` | Terminal half-line count; effective half-lines = REG + 1 |  
 | `VI_H_TOTAL` | `VI_H_SYNC_REG` | `0x0440001C` | Terminal VI clock count per scanline; effective clocks = REG + 1 |  
-| `VI_H_TOTAL_LEAP` | `VI_H_SYNC_LEAP_REG` | `0x04400020` | `LEAP_A` [bits 27:16] and `LEAP_B` [bits 11:0] alternate scanline lengths for PAL compensation |  
+| `VI_H_TOTAL_LEAP` | `VI_H_SYNC_LEAP_REG` | `0x04400020` | LEAP_A [bits 27:16] and LEAP_B [bits 11:0] alternate scanline lengths for PAL compensation |  
 | `VI_V_CURRENT` | `VI_V_CURRENT_LINE_REG` | `0x04400010` | Current half-line; increments by 2 per line |  
 | `VI_BURST` | `VI_BURST_REG` | `0x04400014` | Color burst gate timing |  
 | `VI_H_VIDEO` | `VI_H_VIDEO_REG` | `0x04400024` | Active video horizontal start/end |  
@@ -92,8 +102,8 @@ The document uses N64brew naming conventions throughout. SDK equivalents are not
 
 #### 1.3.3 Modes  
 
-- Progressive: lines per vertical refresh = total half-lines ÷ 2  
-- Interlaced: lines per field = total half-lines ÷ 2  
+- Progressive: lines per vertical refresh (frame)= total half-lines ÷ 2  
+- Interlaced: lines per vertical refresh (field) = total half-lines ÷ 2  
 - Interlaced VSYNC offsets 0.5 lines per field automatically
 
 #### 1.3.4 Hazards  
@@ -127,7 +137,7 @@ Hardware constants and register mapping.
 
 ### 3.1 Fundamental Constants  
 
-Hardware constants derived from the primary crystal oscillator (X1) and the Video Interface (VI) registers.  
+Hardware constants derived from f_xtal and the Video Interface (VI) registers.  
 
 | Mode              | Crystal Frequency (f_xtal) | Multiplier (M) | VI Clocks / Line (L) | Half-Lines (S) | `VI_V_TOTAL` |  
 | :---              | :---                       | :---           | :---                 | :---           | :---         |  
@@ -154,7 +164,7 @@ Early revisions (NUS-CPU-01 through NUS-CPU-07, 1996-1998) used two separate MX8
 ![Figure 1a](/figures/fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: MX8350 datasheet*  
 
-> The MX8350 datasheet lists the MPAL crystal as 14.302446 MHz. The exact value, derived from the PAL-M colorburst frequency (3,575,611 + 127/143 Hz) upward, is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz). The datasheet value is (likely) a rounded approximation; all derivations in this document use the fractional form for precision. See §5.3.  
+> While the MX8350 datasheet lists the MPAL crystal as 14.302446 MHz, the correct value (derived upward from the canonically defined PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this error is not indicated by sources. For precision and correctness, all derivations in this document use the fractional form. See §5.3.  
 
 ### 3.2 Video Interface (VI) Register Mapping  
 
@@ -167,8 +177,8 @@ The RCP (Reality Co-Processor) processes video timings through the following mem
 *VDC pin assignments - 7-bit digital output. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
 
 The VDC bus carries:  
-* `VDC_D0` through `VDC_D6`: 7-bit digital video data  
-* `VDC_DSYNC`: Continuous timing signal; while low, sync information is encoded on the accompanying VDC data lines  
+* VDC_D0 through VDC_D6: 7-bit digital video data  
+* VDC_DSYNC: Continuous timing signal; while low, sync information is encoded on the accompanying VDC data lines  
 
 These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC (Composite Sync) and BFP (Burst Flag Pulse) for the downstream ENC-NUS encoder (U5). This two-stage signal path (VDC-NUS + ENC-NUS) applies to NUS-CPU-01 through NUS-CPU-04. Other revisions consolidate both functions into a single chip; e.g. DENC-NUS, AVDC-NUS, & MAV-NUS. The substitution of these components is not known to affect timing values derived in this document.  
 
@@ -177,8 +187,6 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 * `VI_V_TOTAL` (`0x04400018`): The register stores a terminal half-line count; effective number of half-lines per frame is equal to `VI_V_TOTAL` + 1.  
 * `VI_H_TOTAL` (`0x0440001C`): The register stores a terminal VI clock count (per full scanline); effective clocks per line is equal to `VI_H_TOTAL` + 1.  
 * `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments by 2 per line. In interlaced mode, bit 0 toggles each field to indicate odd or even lines. Libdragon uses this register to determine which lines require redrawing in 480i mode.  
-
-*Effective VSYNC period in progressive modes yields frame frequency; in interlaced modes it yields field frequency.*  
 
 > For interlaced modes, S is set to an odd integer (525 or 625). The VI hardware automatically offsets the vertical sync position by 0.5 lines every other field.  
 
@@ -202,12 +210,12 @@ Video signal timing derives from a deterministic path from physical oscillation 
 4. Encoding: The VI prepares pixel data for output using a 4-stage multiplexing process, where each stage corresponds to one VI clock cycle.²  
 5. Output: The digital stream from the RCP is received by the VDC-NUS chip (U4), which performs the initial digital-to-analog conversion. U4's CLK pin is driven by U7.FSO/5; FSO being the Frequency Synthesizer Output, the Rambus-domain clock divided by five for video timing. The VDC-NUS generates analog RGB, CSYNC, and BFP, and passes these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (Subcarrier Frequency, fS = f_xtal ÷ 4) into its SCIN (Subcarrier Input) pin via the R13/R12 resistor divider and C21, attenuated from ~3 V to ~468 mV before injection into the encoder.  
 
-The 4-stage multiplexing process described in step 4 above is key to understanding the N64's digital video bus. This process uses several signals to transmit data from the RCP to the VDC-NUS: the 7-bit³ data bus (`VDC_D0`-`VDC_D6`), the `VDC_DSYNC` (a.k.a. `!DSYNC`) signal, and a shared clock. The entire 4-stage group contains all the data for one final, rendered pixel and can be usefully conceptualized as a "VI pixel."  
+The 4-stage multiplexing process described in step 4 above is key to understanding the N64's digital video bus. This process uses several signals to transmit data from the RCP to the VDC-NUS: the 7-bit³ data bus (VDC_D0-VDC_D6), the VDC_DSYNC (a.k.a. !DSYNC) signal, and a shared clock. The entire 4-stage group contains all the data for one final, rendered pixel and can be usefully conceptualized as a "VI pixel."  
 
-`VDC_DSYNC` goes low during the first stage (Stage 0) to signal the start of a new 4-stage group on the data bus. During this process, three of the stages are used to transmit the 7-bit components of a single 21-bit color value (Red, Green, and Blue). The first stage is used for synchronization data. Because one "VI pixel" requires this 4-stage multiplex to be transmitted, the total number of VI pixels per scanline is the VI clocks per line (L) divided by four. Because L is not always evenly divisible by 4 (e.g., 3094 for NTSC), a scanline consists of a number of complete 4-stage groups plus a fractional remainder. See §4.1.1 for visualization.
+VDC_DSYNC goes low during the first stage (Stage 0) to signal the start of a new 4-stage group on the data bus. During this process, three of the stages are used to transmit the 7-bit components of a single 21-bit color value (Red, Green, and Blue). The first stage is used for synchronization data. Because one "VI pixel" requires this 4-stage multiplex to be transmitted, the total number of VI pixels per scanline is the VI clocks per line (L) divided by four. Because L is not always evenly divisible by 4 (e.g., 3094 for NTSC), a scanline consists of a number of complete 4-stage groups plus a fractional remainder. See §4.1.1 for visualization.
 
 ![Figure 2b](/figures/fig13_n64videosys.png)  
-*N64 Video System - 4-stage multiplexing behavior of VDC bus protocol, `VDC_DSYNC` waveform. Source: Tim Worthington, N64RGB documentation*  
+*N64 Video System - 4-stage multiplexing behavior of VDC bus protocol, VDC_DSYNC waveform. Source: Tim Worthington, N64RGB documentation*  
 
 ![Figure 2c](/figures/fig14_vdc-nus.png)  
 *VDC-NUS (BU9801F) pinout. Source: Tim Worthington, N64RGB documentation*  
@@ -218,7 +226,7 @@ The 4-stage multiplexing process described in step 4 above is key to understandi
 ![Figure 2e](/figures/fig17_ENC-NUS.png)  
 *ENC-NUS (U5) in circuit - RGB inputs through 110 Ω termination and 1 µF coupling; YOUT and VOUT outputs; SCIN (Subcarrier Input, pin 8) receives U7.FSC (f_xtal ÷ 4) via R13/R12 divider network. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
 
-¹ Later revisions use a single MX8350 in place of twin MX8330MCs. f_xtal derivations are equivalent. While U15 generates the video clock on PAL consoles, all timing derivations are mathematically rooted in the properties of the primary PAL crystal (X1), maintaining a consistent architectural model. The second crystal (X2) is related to other system functions.  
+¹ Later revisions use a single MX8350 in place of twin MX8330MCs. f_xtal derivations are equivalent. On PAL consoles, U15 (MX8330MC) is driven by crystal X2 to produce the PAL video clock; X1 drives U7 for NTSC and PAL-M. Both crystals feed into the same architectural model; the derivations in §5 are rooted in the respective regional crystal in each case.  
 
 ² The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite. Each implementation performs the same DAC/encoding function; see Figures 2f and 2g below.  
 
@@ -250,7 +258,7 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | System Master Clock         | U10       | 16   | 62.51 MHz          | -                  |  
 | Rambus Clock (RCLK)         | U1        | 5    | 250.2 MHz          | -                  |  
 
-> The System Master Clock (62.51 MHz) is a logic-domain frequency used by the CPU and RCP for execution timing. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the master crystal frequency (f_xtal) used in video timing derivations.  
+> The System Master Clock (62.51 MHz) is a logic-domain frequency used by the CPU and RCP for execution timing. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
 
 ### 3.7 Physical Variance and Environmental Stability  
 
@@ -258,7 +266,7 @@ The derivations in §5 assume an ideal crystal oscillator at exactly the specifi
 
 #### 3.7.1 X1 Crystal Oscillators  
 
-The NTSC and PAL-M clock crystal (X1, likely KDS Daishinku) has no published datasheet. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5 to 26.5 pF (see C39, C40, Figure 1, §3.1, *N64 Clock Generation Circuits*). It is not currently established whether the crystals used were rated for this load or were effectively off-the-shelf parts operating out of specification.  
+The NTSC and PAL-M clock crystal (X1, likely KDS Daishinku) has no published datasheet. The NUS-CPU-03 oscillator circuit presents an effective load capacitance of approximately 23.5 to 26.5 pF (see C39, C40, Figure 1, §3.1, *N64 Clock Generation Circuits*). It is not currently established whether the crystals used were rated for this load or were effectively off-the-shelf parts operating out of spec.  
 
 AT-cut crystals are effectively commodity parts; grade and cut determine the exact oscillation frequency (corroborated by lidnariq). Current production equivalents specify a tolerance of ±30 ppm as the base grade, yielding a range of ±0.0018 Hz around the canonical values in §2 (e.g. NTSC progressive: [59.8243, 59.8279] Hz). GBS-C telemetry from two NTSC N64 units corroborates:  
 
@@ -269,14 +277,14 @@ AT-cut crystals are effectively commodity parts; grade and cut determine the exa
 
 Both fall within the predicted tolerance window. The ppm offset within each unit is essentially identical across progressive and interlaced modes, as expected: both rates derive from the same crystal. The differing offsets between units reflect normal unit-to-unit crystal variance. Aggregate second-order variance factors (temperature, aging, supply voltage) would require a larger sample to characterize statistically.  
 
-Values derived in §5 are exact by construction, representing irreducible fractions traceable to hardware integers. The hardware itself operates within crystal tolerance. That the measurable values deviate is not a flaw in the derivation; it is the expected relationship between mathematical specification and physical implementation. GBS-C telemetry from PlayStation 1 and Sega Saturn hardware returns progressive values consistent with 2,250,000 ÷ 37,609 Hz within crystal tolerance, providing supplementary corroboration of the over-determined nature of standards-compliant NTSC 526 half-line progressive timing across independent clock architectures.  
+Values derived in §5 are exact by construction, representing irreducible fractions traceable to hardware integers. The hardware itself operates within crystal tolerance. That the measurable values deviate is not a flaw in the derivation; it is the expected relationship between mathematical specification and physical implementation. GBS-C telemetry from PlayStation 1 and Sega Saturn hardware returns progressive values consistent with 2,250,000 / 37,609 Hz within crystal tolerance. This further corroborates the over-determined nature of standards-compliant NTSC 526 half-line progressive timing: independent clock architectures converge on the same value.
 
 #### 3.7.2 Initialization Transient Behavior  
 
 ![Figure 1b](/figures/fig12_mx8330mc_rev_e.png)  
 *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient.*  
 
-The MX8330MC requires an approximately 5 millisecond stabilization period after power-on before FSO output reaches steady operation. This occurs during the IPL startup sequence, prior to the first visible scanline.  
+The MX8330MC requires an approximately 5 millisecond stabilization period after power-on before FSO reaches steady operation. This occurs during the IPL startup sequence, prior to the first visible scanline.  
 
 ---
 
@@ -310,7 +318,7 @@ The figure below is a visualization created by lidnariq after oscilloscope analy
 
 * Horizontal Axis (774 units): Represents the number of "VI pixels" per scanline. As established in §3.4, this quotient reflects the total VI clocks per line (L) divided by four.  
 
-> L = 3094 is not evenly divisible by 4; each NTSC line contains exactly 773 complete VI pixel groups and a 2-clock remainder. `VDC_DSYNC` is a free-running quotient (÷ 4) of f_vi and does not reset at HSYNC; line boundaries are not aligned to 4-stage group boundaries. HSYNC events are communicated to the VDC-NUS through the sync data bits in whichever Stage 0 is running at the time. This fact renders the non-integer quotient a non-issue. The visualization represents this as 774 horizontal units, capturing the full line duration including the partial terminal group.  
+> L = 3094 is not evenly divisible by 4; each NTSC line contains exactly 773 complete VI pixel groups and a 2-clock remainder. VDC_DSYNC is a free-running quotient (÷ 4) of f_vi and does not reset at HSYNC; line boundaries are not aligned to 4-stage group boundaries. HSYNC events are communicated to the VDC-NUS through the sync data bits in whichever Stage 0 is running at the time. This fact renders the non-integer quotient a non-issue. The visualization represents this as 774 horizontal units, capturing the full line duration including the partial terminal group.  
 
 | Element | Region                 | Register                                           |  
 | :---    | :---                   | :---                                               |  
@@ -342,8 +350,7 @@ PAL (Progressive and Interlaced)
 * Color subcarrier: 4,433,618.75 Hz (exact) (17,734,475/4 Hz)  
 * VI clock multiplier: 14/5 (2.8)  
 * LEAP register: Used to maintain exact 15625 Hz line frequency  
-* LEAP pattern: 5-field sequence (B-A-B-A-B) adds fractional VI clocks (6-5-6-5-6 pattern)  
-* Color Phase: Maintains the Bruch Phase (PAL switch); the V-component of the color subcarrier inverts on alternate lines via f_xtal synchronization.  
+* LEAP pattern: 5-stage sequence (6-5-6-5-6 pattern) extends scanline duration during blanking periods
 
 PAL-M (Progressive and Interlaced)  
 
@@ -366,6 +373,7 @@ All N64 video modes adhere to broadcast standard relationships between subcarrie
 | PAL-N    | fS = 229.2516 × fH    |  
 | PAL-M    | fS = 227.25 × fH      |  
 | NTSC     | fS = 227.5 × fH       |  
+
 *Standard fS to fH ratios. Source: Wooding, M., The Amateur TV Compendium, p. 55*  
 
 PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to an integer number of VI clocks per line. The exact colorburst frequency is 3,575,611 + 127/143 Hz. This remainder propagates through the derivation chain. The hardware resolves this by rounding to 3091 VI clocks per line, producing an fH of approximately 15,732.23 Hz rather than the NTSC-standard 15,734.27 Hz. The canonical fV values in this document are derived from the exact fractional colorburst frequency carried through each step; see §5.3 for the full derivation.  
@@ -484,7 +492,7 @@ fH (theoretical) = f_vi / L
                  ≈ 15,625.0881057269 Hz  
 ```  
 
-*The LEAP register compensates for this error by adding fractional VI clocks during VSYNC, resulting in an exact line frequency of 15,625 Hz. The ~5.64 ppm frequency error corresponds to a fractional excess of 0.01792 VI clocks per line (0.01792 ÷ 3178 ≈ 5.64 ppm), which accumulates to 5.6 clocks per field. See §5.2.1.*  
+*The LEAP register compensates for this error by adding fractional VI clocks during VSYNC, resulting in an exact line frequency of 15,625 Hz. The ~5.64 ppm frequency error corresponds to a fractional excess of 0.01792 VI clocks per line (0.01792 ÷ 3178 ≈ 5.64 ppm), which accumulates to 5.6 clocks per vertical scan cycle. See §5.2.1.*  
 
 ```  
 fH = 15,625 / 1 Hz  (canonical value)  
@@ -530,7 +538,7 @@ The true average line length is the sum of the base line length and this LEAP ad
 True L_avg = 3,178 + 56/3,125 = (9,931,250 + 56) / 3,125 = 9,931,306 / 3,125
 ```
 
-The LEAP mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-field sequence (B-A-B-A-B) alternates between adding 6 clocks (`LEAP_B`) and 5 clocks (`LEAP_A`) during the vertical blanking interval, yielding the required 28/5-clock average per S half-lines.
+The LEAP mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-stage sequence (B-A-B-A-B) alternates between adding 6 clocks (LEAP_B) and 5 clocks (LEAP_A) during the vertical blanking interval, yielding the required 28/5-clock average per S half-lines.
 
 ```
 (6 + 5 + 6 + 5 + 6) / 5 = 28/5 (average clocks added per S half-lines)
@@ -543,7 +551,7 @@ fH = f_vi / (L + (28/5) / (S/2))
    = 15,625 Hz (exact)
 ```
 
-> These additions occur only during the vertical blanking interval and do not affect active video timing. The sequence is encoded in `VI_H_TOTAL` [bits 20:16] as `0x15` (binary `10101`).  
+> These additions occur only during the vertical blanking interval and do not affect active video timing. The sequence is encoded in the `VI_H_TOTAL_LEAP` register.
 
 ### 5.3 PAL-M Derivation
 
@@ -680,11 +688,12 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 
 ### 7.2 References & Documentation Bridges  
 
-#### Primary Technical Documentation (Hardware & Standards)  
+#### 7.2.1 Primary Technical Documentation (Hardware & Standards)  
 
 * Nintendo 64 Functions Reference Manual (OS 2.0i/j/k/l) - VI register mappings and programmable timing.  
 * Nintendo 64 Programming Manual - Memory-mapped I/O, VI mode definitions, system programming reference.  
 * Nintendo 64 Programming Manual Addendums - Corrections and detailed timing tables.  
+* [Nintendo 64 Online Manual 5.2](https://jrra.zone/n64/doc/) - Hardware behavior, VI implementation details.  
 * Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001A) - Block diagrams, boot sequence, oscilloscope timing verification.  
 * Macronix MX8350 Datasheet - Dual-channel clock synthesizer, NTSC/PAL/MPAL output frequencies.  
 * Macronix MX8330MC Datasheet - Single-channel clock synthesizer; FSEL (Frequency Select, explicit), FSC (Subcarrier Frequency; function confirmed as "1/4 of OSC1 frequency"; independently corroborated as "NTSC Color Subcarrier" in D.C.N. NUS-06-0014-001A §3.6 and by RWeick net label U7.FSC), FSO (Frequency Synthesizer Output; inferred from "Rambus clock output" functional description, corroborated by RWeick net label RAMBUS_ClkGen_FSO/5); startup transient (Rev. E application notice). SCIN expansion (Subcarrier Input) is a logical inference from schematic position and Nintendo Case 2 diagnostic chain; no datasheet definition exists.  
@@ -695,16 +704,16 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * [US4054919A - Video Image Positioning Control](https://patents.google.com/patent/US4054919A/en) - Sync counter generation and display positioning.  
 * [SAA1101 Universal Sync Generator Datasheet](https://people.ece.cornell.edu/land/courses/ece4760/ideas/saa1101.pdf) - Corroborating hardware reference for PAL-M chroma frequency relationship (227.25 × fH).  
 
-#### Hardware Analysis & Reverse-Engineering  
+#### 7.2.2 Hardware Analysis & Reverse-Engineering  
 
 * [RWeick/NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete PCB layout, component values, signal paths.  
 * [Rodrigo Copetti - Nintendo 64 Architecture](https://www.copetti.org/writings/consoles/nintendo-64/) - CPU, RCP, memory subsystem, graphics pipeline analysis.  
-* [JRRA - N64 Documentation](https://jrra.zone/n64/doc/) - Hardware behavior, VI implementation details.  
+* [Zoinkity Pastebin regarding VI](https://web.archive.org/web/20260119215039/https://pastebin.com/pJG5SBnW) - 237/474 line libultra behavior, VI reverse-engineering details.
 * [N64 Motherboard Revisions - ModRetro Forums](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history, component changes, and video encoder chip progression across revisions.  
-[Archived German N64 RGB Mod Guide](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Historical modding page identifying the NUS-CPU(R)-01 motherboard, documenting the S-RGB A pinout for RGB restoration, and confirming DENC-NUS' unsuitability for RGB output.  
-[NFGGames Forum - French N64 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community analysis and discussion of the French PAL console and its unique S-RGB A encoder.  
+* [Archived German N64 RGB Mod Guide](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Historical modding page identifying the NUS-CPU(R)-01 motherboard, documenting the S-RGB A pinout for RGB restoration, and confirming DENC-NUS' unsuitability for RGB output.  
+* [NFGGames Forum - French N64 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community analysis and discussion of the French PAL console and its unique S-RGB A encoder.  
 
-#### Community Development Resources (SDKs & Tools)  
+#### 7.2.3 Community Development Resources (SDKs & Tools)  
 
 * [libdragon](https://libdragon.dev/) - High-level API access to N64 hardware and VI timing abstraction.  
 * [N64brew.dev - Video Interface](https://n64brew.dev/wiki/Video_Interface) - VI register behavior, timing examples, LEAP implementation.  
@@ -713,14 +722,14 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) - Direct register-level mappings including VI constants.  
 * [n64.readthedocs.io - N64 Hardware Reference](https://n64.readthedocs.io/index.html#video-interface) - General hardware reference and verification.  
 
-#### Emulator & FPGA Implementations (Cross-Validation)  
+#### 7.2.4 Emulator & FPGA Implementations (Cross-Validation)  
 
 * [ares N64 Emulator](https://github.com/ares-emulator/ares/tree/master/ares/n64) - Software VI timing implementation.  
 * [CEN64 Emulator](https://github.com/n64dev/cen64) - Software VI timing implementation.  
 * [MAME Emulator](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) - Software VI timing implementation.  
 * [MiSTer FPGA N64 Core HDL](https://github.com/MiSTer-devel/N64_MiSTer) - Hardware VI timing implementation.  
 
-#### General Overview & Contextual References  
+#### 7.2.5 General Overview & Contextual References  
 
 * [Wikipedia - NTSC](https://en.wikipedia.org/wiki/NTSC) / [PAL](https://www.wikipedia.org/wiki/PAL) / [PAL-M](https://www.wikipedia.org/wiki/PAL-M) - Broadcast standard overviews.  
 * [ATV Compendium (BATC)](https://batc.org.uk/wp-content/uploads/ATVCompendium.pdf) - PAL-M line rate to chroma frequency relationships.  
@@ -741,8 +750,74 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 
 ---
 
-**Document Authority Chain:** Primary Sources (Official documentation, ITU standards, datasheets, patents)  
-↓  
-Mathematical Derivations (§5)  
-↓  
-This document (N64_Timing_Reference.md)  
+### 8. Glossary
+
+A quick reference for terminology used in this document.
+
+* **240p:** Shorthand for NTSC and PAL-M progressive (PAL equivalent: 288p). In NTSC and PAL-M progressive modes, the N64 outputs 240 active lines per vertical scan at 640 pixels wide, regardless of internal framebuffer resolution. Of the 263 total scanlines per vertical scan, 240 carry active video (though no retail NTSC game outputs more than 237 lines of visible content) and 23 constitute the vertical blanking interval. *See also: Progressive, Raster, Vertical Scan Frequency.*  
+
+* **480i:** Shorthand for NTSC and PAL-M interlaced (PAL equivalent: 576i). The N64 outputs 480 active lines across two fields in interlaced mode at 640 pixels wide, regardless of internal framebuffer resolution. Contemporary retail games built with libultra draw no more than 474 lines of visible content. *See also: Interlaced, Vertical Scan Frequency.*  
+
+* **BFP (Burst Flag Pulse):** A timing pulse generated by the VDC-NUS chip (U4) that gates the colorburst window on each active line. It signals to the downstream encoder (ENC-NUS, U5) the interval during which the chroma subcarrier reference should be inserted into the back porch of the composite output. The burst gate window duration is approximately 5.1 μs per oscilloscope observation. *See also: Chrominance Subcarrier Frequency, CSYNC.*  
+
+* **Chrominance Subcarrier Frequency (fS, f_colorburst):** A reference sine wave inserted into the back porch of the horizontal blanking interval on each active line, providing the phase and frequency reference against which a receiver decodes color information. Its frequency is defined by international broadcast standards: 315/88 MHz (NTSC), 17,734,475/4 Hz (PAL), and 511,312,500/143 Hz (PAL-M). In this document's derivations, fS serves as the starting constant from which f_xtal and all downstream timing values are established. *See also: BFP, fH.*  
+
+* **Colorburst:** *See Chrominance Subcarrier Frequency.*
+
+* **Crystal Oscillator Frequency (f_xtal):** The principal high-frequency crystal oscillator signal that drives the N64's Reality Co-Processor (RCP). All video timing is derived from this signal through integer multiplication and division. On NUS-CPU-01 through NUS-CPU-07, f_xtal is produced by U7 (MX8330MC) from crystal X1 for NTSC and PAL-M, and by U15 (MX8330MC) from crystal X2 for PAL. VI clock (f_vi) equals f_xtal multiplied by the region-specific factor M (17/5 for NTSC and PAL-M; 14/5 for PAL). f_xtal is the sole true constant within the context of N64 video timing.  
+
+* **CSYNC (Composite Sync):** A signal generated by the VDC-NUS (U4) that combines horizontal sync (HSYNC) and vertical sync (VSYNC) into a single waveform. CSYNC is passed to the ENC-NUS encoder (U5) and embedded in the final composite video output, allowing a display to lock to the signal's horizontal and vertical timing simultaneously. *See also: VSYNC, BFP.*
+
+* **f_xtal:** Symbol for crystal oscillator frequency. *See Crystal Oscillator Frequency.*  
+
+* **fH:** Symbol for horizontal scan frequency. *See Horizontal Scan Frequency.*  
+
+* **fS (f_colorburst):** Symbol for colorburst or chroma subcarrier signal. fS connotes broadcast standard constant. f_colorburst disambiguates. *See Chrominance Subcarrier Frequency.*  
+
+* **fV:** Symbol for vertical scan frequency (refresh rate). *See Vertical Scan Frequency.*
+
+* **Half-Line (S):** The atomic unit of vertical timing used by the N64's Video Interface (VI). Two half-lines constitute one full horizontal scanline. The total half-line count per vertical scan cycle is programmed via `VI_V_TOTAL`; the effective value is `VI_V_TOTAL` + 1. *See also: Terminal Count.*
+
+* **Horizontal Scan Frequency (fH):** The number of horizontal lines transmitted per second, expressed in Hz. Derived as f_vi ÷ L. Also referred to as line frequency. *See also: L, fV.*
+
+* **Interlaced (I):** A scan method in which lines are transmitted across two successive vertical scans. Half-lines are output in alternating stripes of even, then odd (262.5 lines per vertical scan in NTSC and PAL-M interlaced modes). Each vertical scan is a field in broadcast terminology. S is set to an odd integer (525 for NTSC and PAL-M; 625 for PAL), and the VI hardware offsets the vertical sync position by half a line on every other vertical scan. fV represents the rate of each individual vertical scan. *See also: Progressive, Half-line, fV.*
+
+* **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,091 (PAL-M). *See also: Terminal Count, VI.*
+
+* **LEAP Register:** A hardware compensation mechanism used exclusively by PAL N64 consoles. It periodically adjusts the length of a scanline by one VI clock cycle to correct for the small fractional timing error that results from integer constraints in the horizontal timing registers. The adjustment follows a repeating 5-stage B-A-B-A-B sequence, averaging 5.6 VI clocks per stage, and maintains the exact 15,625 Hz line frequency required by the PAL timing standard. Not used in NTSC or PAL-M modes. *See also: PAL, f_vi.*
+
+* **M (VI Clock Multiplier):** The region-specific rational factor by which f_xtal is multiplied to produce f_vi. Values are 17/5 for NTSC and PAL-M, and 14/5 for PAL. M is a deterministic hardware ratio and does not vary; crystal tolerance affects f_xtal and propagates through the derivation chain, but M itself is fixed. *See also: Crystal Oscillator Frequency, Horizontal Scan Frequency.*
+
+* **MX8330MC:** A single-channel Macronix clock synthesizer IC. In early N64 revisions (NUS-CPU-01 through NUS-CPU-07), two MX8330MC chips were used: U7 (NTSC/PAL-M, FSEL high → 17/5 multiplier) driven by crystal X1, and U15 (PAL, FSEL low → 14/5 multiplier) driven by crystal X2. Each chip outputs FSC (its input crystal ÷ 4, the chroma subcarrier reference) and FSO (the Rambus clock); the chip additionally outputs FSO/5 from a dedicated pin to drive the video domain. *See also: MX8350, Crystal Oscillator Frequency.*  
+
+* **MX8350:** A dual-channel Macronix clock synthesizer that replaced the twin MX8330MC configuration in later N64 revisions (NUS-CPU-08 onward, 1999+). It consolidates both NTSC/PAL-M and PAL clock synthesis with equivalent output frequencies. Derived values are unaffected by this revision. *See also: MX8330MC.*  
+
+* **NTSC (National Television System Committee):** The broadcast video standard used in North America, Japan, South Korea, and parts of Central America. Precisely, the standard name NTSC-M (so-called due to combination of System M (a monochrome broadcast standard) and NTSC color). Defines a 525-line, approximately 59.94 Hz interlaced signal. On the N64, the NTSC crystal is 315/22 MHz (exact), the VI clock multiplier is 17/5, and there are 3,094 VI clocks per line. *See PAL, PAL-M.*  
+
+* **PAL (Phase Alternating Line):** Broadcast video standard used across Europe, Australia, New Zealand, and much of Africa and Asia. 625-line, 50 Hz interlaced signal with a chroma subcarrier of exactly 4,433,618.75 Hz. On the N64, the PAL crystal is 17.734475 MHz (exact), the VI clock multiplier is 14/5, and LEAP register use is required to maintain standard 15,625 Hz line frequency. *See also NTSC, PAL-M.*  
+
+* **PAL-M (MPAL):** A distinct Brazilian broadcast standard that combines PAL-derived color encoding with an NTSC-derived line rate. The "M" in PAL-M refers to CCIR System M. The chroma subcarrier is 511,312,500/143 Hz (containing a 127/143 fractional remainder), the crystal is 2,045,250,000/143 Hz, and there are 3,091 VI clocks per line. Commonly referred to as MPAL; less commonly, PAL/M.  *See also NTSC, PAL.*
+
+* **Progressive (P):** A scan method in which all lines of a vertical scan are transmitted sequentially in a single pass. Half-lines per vertical scan (S) must be even in progressive modes (526, 626). fV represents the rate of each complete vertical scan. In full scanline units, 526 half-lines corresponds to 263 scanlines: 240 active and 23 vertical blanking. Interestingly, NTSC and PAL-M games built with Nintendo's libultra library never draw more than 237 lines of actual content in progressive modes. *See also: Interlaced, Half-line, fV.*
+
+* **Raster:** The complete signal area of one vertical scan, encompassing both the active area and all blanking intervals. In the context of lidnariq's VI timing visualization (Figure 3), each horizontal unit represents one VI pixel group and each vertical unit represents one half-line.
+
+* **RCP (Reality Co-Processor):** Principal Silicon Graphics co-processor in the N64 that handles both graphics (Reality Display Processor) and audio/system tasks (Reality Signal Processor). It contains the Video Interface (VI), which generates video timing signals.
+
+* **S (Half-Lines per Vertical Scan):** Symbol for the total half-line count per vertical scan cycle, as programmed via the `VI_V_TOTAL` register. The effective value is `VI_V_TOTAL` + 1 (terminal-count convention). S / 2 gives the number of full scanlines. Values are 526 / 525 (NTSC and PAL-M progressive / interlaced) and 626 / 625 (PAL). *See also: Half-line, Terminal Count.*
+
+* **S-Video:** Two-channel analog video interface that carries luminance (Y) and chrominance (C) as separate signals, mitigating chroma/luma quality loss via composite's single-channel muxing. On N64 hardware, S-Video output is generated natively by the DENC-NUS, AVDC-NUS, and MAV-NUS encoder variants. The VDC-NUS + ENC-NUS two-chip path found on NUS-CPU-01 through NUS-CPU-04 produces composite and S-Video, but not RGB without modification.
+
+* **Terminal Count:** A register convention used by the N64's Video Interface in which the stored value is one less than the effective hardware count. To derive the actual number of clocks or half-lines, add 1 to the register value: effective half-lines = `VI_V_TOTAL` + 1; effective clocks per line = `VI_H_TOTAL` + 1. Timing derivations in this document apply this correction before calculation.
+
+* **Vertical Scan Frequency (fV):** The rate of vertical scans per second, measured from one VSYNC pulse to the next, expressed in Hz. Also referred to as refresh rate. In progressive modes fV is the vertical scan rate directly; in interlaced modes fV is the rate of each individual field. *See also: VSYNC, Horizontal Scan Frequency.*
+
+* **VDC Bus:** The digital video bus between the RCP (U9) and the VDC-NUS chip (U4). It carries seven bits of pixel data (VDC_D0 through VDC_D6), the VDC_DSYNC timing signal, and a shared clock. Data is transmitted in a four-stage multiplexed cycle, one stage per VI clock: Stage 0 carries synchronization data with VDC_DSYNC held low; Stages 1-3 carry the Red, Green, and Blue color components of a single rendered pixel. Each 4-stage group can be modelled as a "VI pixel". 2-stage phase-walk occurs on NTSC and PAL; 3-stage on PAL-M. Phase-walk here is immaterial to video out. *See also: VDC_DSYNC, VDC-NUS.*
+
+* **VDC_DSYNC** *(a.k.a. !DSYNC):* A signal on the VDC bus transmitted from the RCP (U9) to the VDC-NUS (U4). Free-running clock at f_vi ÷ 4 during active video. When low, accompanying data lines carry synchronization and control information (not pixel color data). During blanking, VDC_DSYNC may be held low for multiple consecutive VI clocks to transmit control signals including HSYNC, VSYNC, colorburst clamp, and CSYNC. VDC_DSYNC does not reset at HSYNC; line boundaries are not aligned to its four-stage cycle. *See also: VDC Bus.*
+
+* **VDC-NUS / ENC-NUS / DENC-NUS / AVDC-NUS / MAV-NUS / S-RGB A NUS:** The family of video output chips used across N64 motherboard revisions; each configuration converts the RCP's digital video stream to an analog output signal. NUS-CPU-01 through NUS-CPU-04 use a two-chip path: VDC-NUS acts as a DAC (Digital to Analog Converter) as well as generating CSYNC and BFP; ENC-NUS (U5) handles composite and S-Video encoding, receiving the chroma subcarrier reference via its SCIN pin. Other revisions use a single chip for consolidated functionality. Timing is unaffected.
+
+* **VI (Video Interface):** The hardware block within the RCP responsible for generating the N64's video signal. It reads from memory and uses a set of programmable registers (e.g., `VI_V_TOTAL`, `VI_H_TOTAL`) to define the timing, resolution, and format of the output signal.
+
+* **VSYNC (Vertical Synchronization):** A timing pulse in the video signal marking the end of a vertical scan cycle. The interval between successive VSYNC pulses defines fV. *See also: fV, CSYNC.*
