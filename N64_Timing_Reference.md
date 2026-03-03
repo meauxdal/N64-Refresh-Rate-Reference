@@ -54,7 +54,7 @@ Scan Types:
 
 ### 1.1 Terminology
 
-**Vertical scan frequency (fV)**, expressed in Hz, is the reciprocal of the `VSYNC` period, measured from the rising edge of one `VSYNC` pulse to the next rising edge. Where used in this document, "refresh rate" refers to this value. In progressive modes, fV represents frame frequency; in interlaced modes, fV represents field frequency.  
+**Vertical scan frequency (fV)**, expressed in Hz, is the reciprocal of the VSYNC period, measured from the rising edge of one VSYNC pulse to the next rising edge. Where used in this document, "refresh rate" refers to this value. In progressive modes, fV represents frame frequency; in interlaced modes, fV represents field frequency.  
 
 All video timing derives from a single physical source: one of two quartz crystal oscillators (X1 and X2). Its frequency is designated f_xtal. The VI clock (f_vi) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). fH follows by dividing f_vi by L, the integer VI clock count per horizontal line. fV follows by dividing fH by half the nominal half-line count S.  
 
@@ -437,7 +437,7 @@ fV_prog  = fH / (S_prog / 2)
 
 Vertical scan frequency (interlaced):
 
-*Interlaced: 525 half-lines per vertical scan cycle, alternating between odd and even fields (262.5 lines each).*  
+*Interlaced: 525 half-lines per vertical scan cycle, alternating between odd and even fields.*  
 
 ```
 fV_int  = fH / (S_int / 2)
