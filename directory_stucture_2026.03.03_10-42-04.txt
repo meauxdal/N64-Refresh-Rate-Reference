@@ -1,16 +1,19 @@
-Directory: C:\Workspace\Git\N64-Refresh-Rate-Reference
+PS C:\Workspace\Git\N64-Refresh-Rate-Reference> dir -r
+
+
+    Directory: C:\Workspace\Git\N64-Refresh-Rate-Reference
 
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
-d-----          3/2/2026  10:24 PM                .github
-d-----          3/1/2026  10:31 PM                docs
+d-----          3/3/2026  11:45 PM                .github
+d-----          3/5/2026  10:20 PM                docs
 d-----          3/1/2026   4:21 PM                figures
 d-----         2/27/2026  10:07 PM                tools
 -a----         2/27/2026  10:07 PM            109 .gitignore
--a----          3/2/2026   3:38 PM           4087 directory_stucture_2026.03.02_15-38-56.txt
--a----          3/2/2026  10:24 PM          63715 N64_Timing_Reference.md
--a----         2/27/2026  10:07 PM           1798 README.md
+-a----          3/3/2026  10:42 AM           4087 directory_stucture_2026.03.03_10-42-04.txt
+-a----          3/5/2026  11:55 AM          61365 N64_Timing_Reference.md
+-a----          3/4/2026   9:22 AM           1236 README.md
 
 
     Directory: C:\Workspace\Git\N64-Refresh-Rate-Reference\.github
@@ -18,7 +21,7 @@ d-----         2/27/2026  10:07 PM                tools
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
--a----          3/2/2026  10:30 PM          17458 copilot-instructions.md
+-a----          3/4/2026   2:49 PM          19639 copilot-instructions.md
 
 
     Directory: C:\Workspace\Git\N64-Refresh-Rate-Reference\docs
@@ -26,12 +29,13 @@ Mode                 LastWriteTime         Length Name
 
 Mode                 LastWriteTime         Length Name
 ----                 -------------         ------ ----
--a----          3/1/2026   3:36 PM           3391 Quick-Reference-LaTeX-Tables.md
+-a----          3/4/2026   9:21 AM           3640 Quick-Reference-LaTeX-Tables.md
 -a----         2/27/2026  10:07 PM         233346 R-REC-BT.1700-0-200502-I!!ZPF-E_1700-e.pdf
 -a----         2/27/2026  10:07 PM         220021 R-REC-BT.1700-0-200502-I!!ZPF-E_S170m-2004.pdf
 -a----         2/27/2026  10:07 PM         174656 R-REC-BT.1701-1-200508-I!!PDF-E.pdf
 -a----         2/27/2026  10:07 PM         512439 R-REC-BT.470-6-199811-S!!PDF-E.pdf
 -a----         2/27/2026  10:07 PM          68821 R-REC-BT.470-7-200502-I!!PDF-E.pdf
+-a----          3/5/2026  10:07 PM          15322 sources.md
 -a----         2/28/2026   1:59 PM          18753 WIP_N64-Repair-Docs-Summary.docx
 
 

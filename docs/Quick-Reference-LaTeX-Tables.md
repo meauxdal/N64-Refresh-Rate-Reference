@@ -1,4 +1,4 @@
-<h1 align=center>Quick Reference (/docs/LaTeX-tables.md)</h1>
+<h2 align=center>Quick Reference (/docs/Quick-Reference-LaTeX-Tables.md)</h2>
 
 <h3 align=center> Fundamental Constants</h3>
 
@@ -45,14 +45,14 @@ $$\begin{array}{|l|c|}
 
 $$\begin{array}{|l|c|c|c|c|c|c|}
 \hline
-\text{From} \backslash \text{To} & \text{NTSC-P} & \text{NTSC-I} & \text{PAL-P} & \text{PAL-I} & \text{PAL-M-P} & \text{PAL-M-I} \\
+\text{From} \backslash \text{To} & \text{NTSC Progressive} & \text{NTSC Interlaced} & \text{PAL Progressive} & \text{PAL Interlaced} & \text{PAL-M Progressive} & \text{PAL-M Interlaced} \\
 \hline
-\text{NTSC-P}  & 1.00000 & 0.99810 & 1.19844 & 1.19652 & 1.00013 & 0.99823 \\
-\text{NTSC-I}  & 1.00190 & 1.00000 & 1.20072 & 1.19880 & 1.00203 & 1.00013 \\
-\text{PAL-P}   & 0.83442 & 0.83283 & 1.00000 & 0.99840 & 0.83453 & 0.83294 \\
-\text{PAL-I}   & 0.83576 & 0.83417 & 1.00160 & 1.00000 & 0.83586 & 0.83427 \\
-\text{PAL-M-P} & 0.99987 & 0.99797 & 1.19828 & 1.19637 & 1.00000 & 0.99810 \\
-\text{PAL-M-I} & 1.00178 & 0.99987 & 1.20056 & 1.19865 & 1.00190 & 1.00000 \\
+\text{NTSC Progressive}  & 1.00000 & 0.99810 & 1.19844 & 1.19652 & 1.00013 & 0.99823 \\
+\text{NTSC Interlaced}   & 1.00190 & 1.00000 & 1.20072 & 1.19880 & 1.00203 & 1.00013 \\
+\text{PAL Progressive}   & 0.83442 & 0.83283 & 1.00000 & 0.99840 & 0.83453 & 0.83294 \\
+\text{PAL Interlaced}    & 0.83576 & 0.83417 & 1.00160 & 1.00000 & 0.83586 & 0.83427 \\
+\text{PAL-M Progressive} & 0.99987 & 0.99797 & 1.19828 & 1.19637 & 1.00000 & 0.99810 \\
+\text{PAL-M Interlaced}  & 1.00178 & 0.99987 & 1.20056 & 1.19865 & 1.00190 & 1.00000 \\
 \hline
 \end{array}$$
 
@@ -60,13 +60,13 @@ $$\begin{array}{|l|c|c|c|c|c|c|}
 
 $$\begin{array}{|l|c|c|c|c|c|c|}
 \hline
-\text{From} \backslash \text{To} & \text{NTSC-P} & \text{NTSC-I} & \text{PAL-P} & \text{PAL-I} & \text{PAL-M-P} & \text{PAL-M-I} \\
+\text{From} \backslash \text{To} & \text{NTSC Progressive} & \text{NTSC Interlaced} & \text{PAL Progressive} & \text{PAL Interlaced} & \text{PAL-M Progressive} & \text{PAL-M Interlaced} \\
 \hline
-\text{NTSC-P}  & 1/1             & 525/526         & 45072/37609         & 45000/37609         & 15455/15453         & 2704625/2709426     \\
-\text{NTSC-I}  & 526/525         & 1/1             & 30048/25025         & 1200/1001           & 1625866/1622565     & 15455/15453         \\
-\text{PAL-P}   & 37609/45072     & 25025/30048     & 1/1                 & 625/626             & 581247095/696497616 & 386761375/464331744 \\
-\text{PAL-I}   & 37609/45000     & 1001/1200       & 626/625             & 1/1                 & 116249419/139077000 & 3094091/3708720     \\
-\text{PAL-M-P} & 15453/15455     & 1622565/1625866 & 696497616/581247095 & 139077000/116249419 & 1/1                 & 525/526             \\
-\text{PAL-M-I} & 2709426/2704625 & 15453/15455     & 464331744/386761375 & 3708720/3094091     & 526/525             & 1/1                 \\
+\text{NTSC Progressive}  & 1/1             & 525/526         & 45072/37609         & 45000/37609         & 15455/15453         & 2704625/2709426     \\
+\text{NTSC Interlaced}   & 526/525         & 1/1             & 30048/25025         & 1200/1001           & 1625866/1622565     & 15455/15453         \\
+\text{PAL Progressive}   & 37609/45072     & 25025/30048     & 1/1                 & 625/626             & 581247095/696497616 & 386761375/464331744 \\
+\text{PAL Interlaced}    & 37609/45000     & 1001/1200       & 626/625             & 1/1                 & 116249419/139077000 & 3094091/3708720     \\
+\text{PAL-M Progressive} & 15453/15455     & 1622565/1625866 & 696497616/581247095 & 139077000/116249419 & 1/1                 & 525/526             \\
+\text{PAL-M Interlaced}  & 2709426/2704625 & 15453/15455     & 464331744/386761375 & 3708720/3094091     & 526/525             & 1/1                 \\
 \hline
 \end{array}$$

@@ -1,6 +1,6 @@
 # N64 Video Timing Document — Style & Architecture Guide (/.github/copilot-instructions.md)
 
-## Handoff — 2026.03.02.ver03
+## Handoff — 2026.03.03
 
 This is a rigorous technical document regarding vertical scan frequency math for the Nintendo 64 video game console (1996). It traces the signal path from crystal oscillation to final analog output, and provides accurate rational fractional forms of refresh rates for all regional and mode combinations: (NTSC, PAL, PAL-M) × (Progressive, Interlaced) = 6 signals.
 
@@ -15,62 +15,79 @@ C) Cognitively reason about them
 D) Decide on action
 E) Execute and iterate
 
----
-
-## 0. HOTFIX 
-
-### 0.1 Pending Audit: "Sole True Constant" Language
-
-The phrase "sole true constant" or equivalent appears in at least two places:
-
-1. **Crystal Oscillator Frequency glossary entry:** "f_xtal is the sole true constant within the context of N64 video timing."
-2. **§3.x body text** (suspected - unverified location): similar language asserting f_xtal's primacy.
-
-**The problem:** The Chrominance Subcarrier Frequency entry now reads "In this document's derivations, fS serves as the starting constant from which f_xtal and all downstream timing values are established." This creates a tension: fS is the derivation entry point, f_xtal is the hardware constant. Both statements are true but they can read as contradictory without careful framing.
-
-**Required action:**
-- Locate all instances of "sole true constant" or equivalent in the document.
-- Verify that each instance is scoped correctly: f_xtal is the sole true *hardware* constant; fS is the sole true *derivation entry point*.
-- Ensure the two entries do not contradict each other at a casual reading.
-- Consider whether a single clarifying sentence in one of the two entries resolves the apparent tension, rather than rewording both.
-
-**Do not resolve speculatively. Human author review required.**
-
-### 0.2 Pending Verification
-- §5.2.1 (LEAP): The 5-stage B-A-B-A-B sequence enable-bit encoding (tentatively 0x15 / binary 10101)
-  in VI_H_TOTAL_LEAP bits 20:16) was removed pending sourcing. If verifiable against hardware
-  documentation or emulator source, it belongs in §5.2.1 with attribution.
+f_xtal is derived from fS - f_xtal is a "hardware primitive" not a "true constant"
 
 ---
 
-## 1. Document Status & Pending Items
+## 0. Recent Session Notes — 2026.03.04
 
-### 1.1 Completed This Session (2026.03.02)
-- Glossary overhaul: complete pending human author final review.
-- Crystal Oscillator Frequency entry corrected: X1/U7 (NTSC/PAL-M) and X2/U15 (PAL) now correctly distinguished.
-- §3.4 footnote ¹ corrected: previous version incorrectly stated X2 was unrelated to video timing.
-- VDC_DSYNC definition improved: free-running behavior, blanking hold behavior, and non-reset-at-HSYNC now documented.
-- RDP expansion corrected to "Reality Display Processor" throughout (was "Reality Drawing Processor").
-- Phase-walk values established: NTSC 2-stage, PAL 2-stage, PAL-M 3-stage.
-- Zoinkity VI register reference archived and added to §7.2.
-- Nintendo Introductory Manual added to §7.2.
-- PAL active line count research initiated; partial results documented in §14.
+### 0.1 Changes Applied This Session
 
-### 1.2 Pending — Human Author
-- Final tone/style audit.
-- VDC_DSYNC find-replace pass: remove all code-blocking of VDC_DSYNC in body text (signal name, not register).
-- X1/X2/U7/U15 body text audit: verify all references correctly distinguish NTSC/PAL-M (X1, U7) from PAL (X2, U15). Flag any instance carrying the old incorrect assumption that X1/U7 is universal. §3.4 footnote ¹ is now correct; body text elsewhere may not be.
-- §7.2 tone/style audit: currently one of the more LLM-heavy sections. Descriptions are inconsistent in length and register; some parenthetical epistemic notes belong in copilot-instructions.md rather than a public reference list. See §14.4.
-- Insert approved VI_V_VIDEO and VI_H_VIDEO register entries into §3.2.
-- Insert approved 240p and 480i glossary entries.
-- Insert approved M glossary entry.
-- TOC: already complete. No action needed.
+- **LEAP_A / LEAP_B labels corrected throughout:** libdragon `vi.h` register presets confirm LEAP_A (upper bits 27:16) stores 3183 → effective L+6; LEAP_B (lower bits 11:0) stores 3182 → effective L+5. Sequence is A-B-A-B-A, not B-A-B-A-B. Corrected in §5.2.1 and LEAP glossary entry. The arithmetic was correct throughout; only the labels were inverted.
+- **libdragon `vi.h` added to §7.2:** Primary source for PAL LEAP register values (vi_pal_p and vi_pal_i presets). Added directly beneath N64brew Video Interface entry.
+- **N64brew LEAP prose error identified (not corrected in their wiki):** N64brew's explanatory note states average 5,6,5,6,5 = 5.4, yielding 27 extra clocks — which does not produce exact 15,625 Hz. Their register values are correct; their bit-assignment labels (LEAP_A / LEAP_B) are swapped. Document's arithmetic confirmed correct independently.
+- **LEAP glossary sentence repaired:** Broken embedded-quote artifact removed. fH result (15,625 Hz) restored per session flag.
+- **§4.1.1 `(may?)` resolved:** "randomly fails" confirmed as lidnariq's phrasing. Artifact removed.
+- **§4.1.1 capitalization fixed:** "Relatedly, If" → "Relatedly, if".
+- **§1.3 renamed:** "Distinctions and Hazards" → "Conventions". TOC slug updated.
+- **§6 Conversion Reference:** Second paragraph and bullet combo rewritten for clarity. Sneaky em dash removed; comma substituted.
 
-### 1.3 Pending — Research & Verification
-- PAL active line counts: see §14.1.
-- Sync leap register PAL behavior: see §14.2.
-- Framebuffer scaling note (VI_X_SCALE / VI_Y_SCALE): drafted, awaiting placement decision (§3.2 vs §4).
-- Nintendo Introductory Manual: citation added to §7.2; no body text changes required.
+### 0.2 Previous Session Notes — 2026.03.03 (Session 2)
+
+- **Stage → Cycle throughout:** "Stage" replaced with "cycle" (lowercase) as the canonical term for one step of the 4-cycle VDC bus group.
+- **H_START:** Backtick code-blocking removed from all four occurrences. Plain ALLCAPS, consistent with N64brew convention.
+- **§5.3.1 notation fix:** `f_H_ntsc` / `f_H_pal-m` corrected to `fH_NTSC` / `fH_PAL-M`.
+- **VDC_DSYNC blanking behavior: resolved.** Phase-correction hypothesis retired. Source: lidnariq, N64brew.dev Video DAC page. Research obligation closed.
+- **Figure 2d caption simplified.** Figure 2e caption updated: YOUT and VOUT identified and sourced.
+- **Glossary trimming pass completed.**
+
+### 0.3 Previous Session Notes — 2026.03.03 (Session 1)
+
+- **§1.1 Terminology:** X1/X2 wording corrected.
+- **§1.3:** Restructured. §1.3.3 Modes and §1.3.4 Hazards collapsed.
+- **§3.4:** Substantially rewritten. "Free-running" removed throughout.
+- **§3.5 / §3.6 renumbering:** All cross-references updated.
+- **§5.1 fH derivation:** `× 1,000,000` mid-chain violation corrected.
+- **§7.2 References:** Full formatting pass.
+- **Quick-Reference-LaTeX-Tables.md:** Headers expanded.
+
+## 1. Document Status
+
+### 1.1 Milestone
+
+The document has reached effective finalization: no detected language or math errors. Formatting is consistent throughout. Near-100% of remaining improvements are tag:enhancement. Preparing for:
+
+A) Peer audit submission (Robert Peip, lidnariq, Rasky, kev4cards)
+B) Spin-off draft for N64brew.dev wiki
+
+### 1.2 Open Items
+
+Cleared!
+
+### 1.3 Research Obligations
+
+**PAL LEAP behavior expansion.** Resolved. libdragon `vi.h` register presets confirm LEAP_A = L+6, LEAP_B = L+5, sequence A-B-A-B-A, producing exactly 28 extra clocks over 5 fields and exact fH = 15,625 Hz. Research obligation closed.  
+
+**S-RGB A NUS datasheet sourcing.** The S-RGB A NUS encoder (NUS-CPU(R)-01, French market) is documented in body text via the QUAKEMASTER RGB mod guide and NFGGames forum discussion. No datasheet or primary hardware documentation has been located. One further sourcing attempt is warranted before this is formally closed as unresolvable.
+
+### 1.4 PAL Active Line Counts
+
+NTSC active vertical spans are well-sourced (§11.1). PAL is not. The following is observed but not independently verified.
+
+**Unknown:**
+- Whether a PAL libultra interlaced ceiling exists equivalent to NTSC's 474.
+
+**Suggested verification paths:**
+- Build and test the 240p test suite for N64 (updates pending release as of March 2026).
+- paraLLEl-RDP printf readout of PAL framebuffer dimensions for titles of interest.
+- Expanded MiSTer signal detection pass across PAL retail library.
+
+**Leading theory:**
+- PAL developers simply never used more than 475~478 half-lines and tended to use VI scaling to fill 576 half-lines for performance reasons.
+
+[JunkerHQ - 240p Test Suite, Sega Dreamcast](https://junkerhq.net/xrgb/index.php?title=240p_test_suite#Sega_Dreamcast)
+
+Slight corroboration here; Dreamcast hardware engineers knew no one actually drew to PAL exclusive lines in the vast majority of cases and implemented hardware that limits their usage.
 
 ---
 
@@ -116,9 +133,7 @@ Code blocking in the main document applies to exactly two categories:
 
 **Signal names, pin names, chip designators, and all other technical terms are never code-blocked.** No exceptions.
 
-This means: CSYNC, BFP, HSYNC, VSYNC, FSC, FSO, FSO/5, FSEL, SCIN, VDC_DSYNC, VDC_D0–VDC_D6 are all plain text in prose.
-
-**Known error to correct:** VDC_DSYNC appears code-blocked in several locations in the main document body. This is incorrect and must be corrected in a find-replace pass by the human author.
+This means: CSYNC, BFP, HSYNC, VSYNC, FSC, FSO, FSO/5, FSEL, SCIN, VDC_DSYNC, VDC_D0–VDC_D6, H_START are all plain text in prose.
 
 ---
 
@@ -148,10 +163,12 @@ All frequencies inside derivation chains must be expressed in Hz.
 ### 7.1 Prohibited or Restricted Terms
 
 - **"Master clock"**: Do not use. f_xtal is the master crystal frequency. "System Master Clock" appears once in a header row to align with primary sources; leave it unaltered.
-- **"Beat"**: Never used. Do not insert. "Stage" is the correct term.
+- **"Beat"**: Never used. Do not insert. "Cycle" is the correct term for one step of the 4-cycle VDC bus group.
+- **"Stage"**: Retired. Replaced by "cycle" (lowercase) throughout. Do not reintroduce.
 - **"Frame"**: Avoid. Use risks corrupting mental half-line model alignment with hardware ground truth. Avoid in derivations and vertical timing contexts entirely.
 - **"Field"**: Avoid in LEAP and vertical timing derivations. The half-line model (S) is canonical. Exception: acceptable in prose when specifically describing interlaced signals. Field is markedly less ambiguous than frame.
 - **"Line" / "scanline"**: Use sparingly. Strongly prefer the atomic canonical hardware unit "half-line" (S). Scanline is acceptable where its use avoids worse repetition or ambiguity, provided the half-line model is already established in context.
+- **"Free-running"**: Do not use to describe VDC_DSYNC. The blanking behavior is now resolved and documented; the term is both imprecise and no longer needed.
 - **"K"**: Never use as a variable. Has appeared once in LLM-generated output with no definition and no legitimate referent. It is contaminant; delete on sight.
 
 ### 7.2 Canonical Vertical Frequency Terminology
@@ -185,28 +202,43 @@ On NUS-CPU-01 through NUS-CPU-07:
 
 On NUS-CPU-08 onward: single MX8350 replaces twin MX8330MCs. Derived values unaffected.
 
-**X2 is the PAL video crystal. It is not unrelated to video timing.** Any body text implying X1/U7 is universal must be corrected.
+**X2 is the PAL video crystal. It is not unrelated to video timing.** Any body text implying X1/U7 is universal must be corrected. The full document has been audited; the model is consistent throughout as of this handoff.
 
-### 8.2 VDC_DSYNC Behavior
+### 8.2 VDC_DSYNC Behavior — Resolved
 
-- VDC_DSYNC is a free-running clock at f_vi ÷ 4 during active video.
-- It does not reset at HSYNC. Line boundaries are not aligned to its 4-stage cycle.
-- When low, accompanying data lines carry synchronization and control information, not pixel color data.
-- During blanking, VDC_DSYNC may be held low for multiple consecutive VI clocks to transmit control signals including HSYNC, VSYNC, colorburst clamp, and CSYNC.
-- Stage 0 = VDC_DSYNC low (sync data); Stages 1–3 = Red, Green, Blue components.
+VDC_DSYNC going low defines cycle 0 of the 4-cycle VDC bus group. During active video it asserts low once every four VI clocks. During blanking, VDC_DSYNC is held low continuously, allowing the VI to transmit control signals (VSync, HSync, colorburst clamp, CSync) on every VI clock.
 
-**Naming:**
-- `VDC_DSYNC` is the correct name throughout (RWeick schematic label).
-- `!DSYNC` (Tim Worthington) appears once as a parenthetical alias only.
-- "DSYNC" alone is never used.
+Source: lidnariq, N64brew.dev Video DAC page — "The Video Interface relies on being able to send control signals (VSync, HSync, 'clamp'=colorburst, CSync) every VI clock during blanking by keeping the !DSYNC input low for multiple clocks in a row."
 
-### 8.3 Phase-Walk Values (L mod 4)
+The phase-correction hypothesis is retired. The blanking behavior is fully accounted for by the control signal transmission requirement. Do not reintroduce phase-walk framing.
 
-- NTSC: 3094 mod 4 = 2 (2-stage phase-walk)
-- PAL: 3178 mod 4 = 2 (2-stage phase-walk)
-- PAL-M: 3091 mod 4 = 3 (3-stage phase-walk)
+### 8.3 Naive Phase-Walk Values (L mod 4)
 
-Phase-walk is immaterial to video output.
+> Human note: This is basically bullshit. Trivia that doesn't make the cut. In actual fact, the VDC_DSYNC signal *must* remain low during blanking periods, so there is no relevance to tracking phase-walking - this isn't strictly "free-running" at all. ~Elle 
+
+- NTSC: 3094 mod 4 = 2
+- PAL: 3178 mod 4 = 2
+- PAL-M: 3091 mod 4 = 3
+
+These are arithmetic facts about line boundary alignment and remain correct. The prior framing — that VDC_DSYNC blanking behavior exists to correct this offset — is retired. The offset exists; its effect on video output is not the mechanism driving blanking behavior.
+
+Human note: This is basically bullshit. Trivia that doesn't make the cut. In actual fact, the VDC_DSYNC signal *must* remain low during blanking periods, so there is no relevance to tracking phase-walking - this isn't strictly "free-running" at all.
+
+### 8.4 ENC-NUS Output Identification
+
+YOUT, VOUT, and COUT on the ENC-NUS (U5) are identified as follows:
+
+YOUT = luminance output, S-Video Y channel
+VOUT = composite video output
+COUT = chrominance output, S-Video C channel
+
+Confirmed via three independent lines of evidence:
+
+BA7242F datasheet (Rohm): Pin table explicitly identifies pin 13 as YOUT (luminance output), pin 12 as VOUT (composite video output), pin 10 as COUT (chrominance output). Primary source — this is the actual chip.
+RWeick NUS-CPU-03 schematic (Figure 2e): YOUT, VOUT, and COUT net routing traced to Multi-AV connector pins 7 (LUMINANCE), 9 (COMPOSITE VIDEO), and 8 (CHROMINANCE) respectively.
+DENC-NUS pinout, Tim Worthington (Figure 2f): Equivalent successor chip labels the same functional pins VIDEO and LUMA explicitly.
+
+SCIN (pin 8) receives U7.FSC via R13 (4.3 kΩ) / R12 (850 Ω) divider and C21. Confirmed by schematic; corroborated by BA7242F datasheet SCIN input level specification (0.45–0.60 VP-P).
 
 ---
 
@@ -224,6 +256,8 @@ Body text uses expanded initialisms without qualification. The epistemic burden 
 - `FSO` (Frequency Synthesizer Output): Inferred from functional description; corroborated by schematics.
 - `FSO/5`: Schematic pin label (RWeick NUS-CPU-03). Reproduced verbatim; the `/` is part of the label, not a division operator.
 - `SCIN` (Subcarrier Input): Inferred from schematic position and diagnostic logic. No datasheet definition exists.
+- `YOUT` (luma output / S-Video Y): Confirmed by schematic net tracing and DENC-NUS corroboration. See §8.4.
+- `VOUT` (composite video output): Confirmed by schematic net tracing and DENC-NUS corroboration. See §8.4.
 
 ---
 
@@ -250,7 +284,7 @@ All register values are terminal-counted. Clarity is required to prevent off-by-
 - VI_H_VIDEO standard difference: 640 pixels. Source: Zoinkity.
 - "480 is a myth" is NTSC-specific (Zoinkity). 474 is the correct active span for libultra retail games.
 
-### 11.2 PAL (Partially Sourced — See §14.1)
+### 11.2 PAL (Partially Sourced — See §1.4)
 
 - Progressive output signal: 288 lines (640×288 conventional). Source: Rasky (single source, unverified).
 - Progressive observed: 237 lines (SM64 Europe, MiSTer signal detection). Not confirmed as ceiling.
@@ -277,51 +311,11 @@ Example: PAL-I 1:23:45 (5,025 s) × 37,609/45,000 ≈ 4,200.8 s ≈ 1:10:01 NTSC
 
 Consistency required across: =, ≈, ≠, <, >, +, -, ×, ÷, ±, ∈, {,}, [,]
 
-Status: complete in body text outside glossary. Glossary overhaul complete.
+Status: complete throughout. Glossary overhaul complete.
 
 ---
 
-## 14. Open Research Questions
-
-### 14.1 PAL Active Line Counts
-
-NTSC active vertical spans are well-sourced (see §11.1 and §3.2 VI_V_VIDEO). PAL is not. The following is observed but not independently verified.
-
-**Unknown:**
-- Whether a PAL libultra interlaced ceiling exists equivalent to NTSC's 474.
-- Whether 288 lines is fully drawable in PAL progressive (Rasky states 640×288 as conventional output; libdragon behavior unverified as of March 2026).
-- Whether 576 active half-lines is achievable in PAL interlaced on retail or homebrew.
-- The Dreamcast has a documented limitation of 264 lines in 288p and 512/528 lines in 576i (JunkerHQ). No equivalent N64 limitation is documented.
-- Whether Blast Corps PAL's 236-line progressive reading is a VI crop/scissor artifact or a genuine framebuffer size.
-
-**Suggested verification paths:**
-- Build and test the 240p test suite for N64 (updates pending release as of March 2026).
-- paraLLEl-RDP printf readout of PAL framebuffer dimensions for titles of interest.
-- Expanded MiSTer signal detection pass across PAL retail library.
-- Consult lidnariq or Rasky directly on PAL drawable line ceiling.
-
-### 14.2 PAL Sync Leap Register Behavior
-
-Zoinkity flags VI_H_SYNC_LEAP register behavior for PAL as uncertain and defers to experts. The document's LEAP Register entry covers the software-visible B-A-B-A-B sequence correctly but does not explain the underlying hardware mechanism. Needs expert verification. Lidnariq is the suggested source.
-
-### 14.3 X1/X2/U7/U15 Body Text Audit
-
-Following correction of §3.4 footnote ¹, a full audit pass is required on all body text references to X1, X2, U7, and U15. The old incorrect assumption was that X1/U7 is universal across all regions. The correct model is: NTSC and PAL-M use X1/U7; PAL uses X2/U15. Flag and correct any instance that does not reflect this.
-
-### 14.4 §7.2 References Audit
-
-§7.2 is currently one of the more LLM-heavy sections. Issues include:
-- Inconsistent description length and register across entries.
-- Some epistemic notes in entry descriptions that belong in copilot-instructions.md rather than a public reference list.
-- The MX8330MC datasheet entry carries a long parenthetical that should be trimmed.
-- Citation format not fully consistent across subsections.
-
-Recommend a human author pass: trim to a consistent minimal format of title, link where applicable, and one-line scope note.
-
----
-
-## 15. Repository Structure
-
+## 14. Repository Structure
 ```
 N64-Refresh-Rate-Reference/
 ├── .github/
@@ -338,9 +332,11 @@ N64-Refresh-Rate-Reference/
 └── README.md
 ```
 
-## 16. Tiny notes
+---
 
-### 16.1 Document authority
+## 15. Tiny Notes
+
+### 15.1 Document Authority
 
 The text between the following lines used to be at the end of the document (roughly. I edited it ~Elle):
 
@@ -348,7 +344,7 @@ The text between the following lines used to be at the end of the document (roug
 
 **Document Authority Chain:** Primary Sources (Official documentation, ITU standards, datasheets, patents)  
 ↓  
-Mathematical Derivations 
+Mathematical Derivations  
 ↓  
 N64_Timing_Reference.md
 
@@ -356,8 +352,7 @@ N64_Timing_Reference.md
 
 I didn't like it there anymore. But I want to keep the wording here at the end of this instruction sheet.
 
-
-### 16.1 README Refuse
+### 15.2 README Refuse
 
 ## Hardware Specifics
 
@@ -370,4 +365,4 @@ double frame_duration_ns = (37609.0 / 2250000.0) * 1e9;
 // Result: ~16,715,111.11 ns
 ```
 
-Precision is only preserved if your implementation carries it.  
+Precision is only preserved if your implementation carries it.
