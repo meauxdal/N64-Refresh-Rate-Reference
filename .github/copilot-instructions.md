@@ -102,7 +102,7 @@ Crystal stamp spreadsheet (meauxdal):
 
 ### 0.4 Previous Session Notes — 2026.03.04
 
-- **LEAP_A / LEAP_B labels corrected throughout:** libdragon `vi.h` register presets confirm LEAP_A (upper bits 27:16) stores 3183 → effective L+6; LEAP_B (lower bits 11:0) stores 3182 → effective L+5. Sequence is A-B-A-B-A, not B-A-B-A-B. Corrected in §5.2.1 and LEAP glossary entry. The arithmetic was correct throughout; only the labels were inverted.
+- **LEAP_A / LEAP_B values and sequence confirmed (2026-03-05):** libdragon `vi.h` sourced values were mis-assigned in the §0.4 note. Correct values: LEAP_A (bits 27:16) stores 3182 → effective L+5; LEAP_B (bits 11:0) stores 3183 → effective L+6. Sequence is B-A-B-A-B = 6,5,6,5,6 = 5.6 average. Hardware pattern `0x15` (0b10101) confirmed by Rasky; full sequence confirmed by lidnariq (N64brew.dev Discord, 2026-03-05). The arithmetic (28/5, 5.6 clocks, exact 15,625 Hz) was correct throughout. The N64brew.dev page error was purely in the presented sequence averaging (5,6,5,6,5 → should be 6,5,6,5,6). Registers on the wiki were never wrong. Corrected in §5.2.1 and LEAP glossary entry.
 - **libdragon `vi.h` added to §7.2:** Primary source for PAL LEAP register values (vi_pal_p and vi_pal_i presets). Added directly beneath N64brew Video Interface entry.
 - **N64brew LEAP prose error identified (not corrected in their wiki):** N64brew's explanatory note states average 5,6,5,6,5 = 5.4, yielding 27 extra clocks — which does not produce exact 15,625 Hz. Their register values are correct; their bit-assignment labels (LEAP_A / LEAP_B) are swapped. Document's arithmetic confirmed correct independently.
 - **LEAP glossary sentence repaired:** Broken embedded-quote artifact removed. fH result (15,625 Hz) restored per session flag.
@@ -147,7 +147,7 @@ Document is at v9.0. §3.1.1 clock hardware revision history is now accurate and
 
 ### 1.3 Research Obligations
 
-**PAL LEAP behavior expansion.** Resolved.
+**PAL LEAP behavior.** Fully resolved. LEAP_A (bits 27:16) stores 3182 → L+5; LEAP_B (bits 11:0) stores 3183 → L+6. Sequence B-A-B-A-B = 6,5,6,5,6 = 5.6 average = exact 28/5 clocks per 5 half-lines. Pattern `0x15` = 0b10101. Confirmed by Rasky and lidnariq (N64brew.dev Discord, 2026-03-05). The N64brew.dev wiki error was only in the averaging prose (presented 5,6,5,6,5 instead of 6,5,6,5,6); registers on the wiki page were never wrong. Research obligation closed.
 
 **S-RGB A NUS datasheet sourcing.** No datasheet or primary hardware documentation located. One further sourcing attempt warranted before formally closing.
 

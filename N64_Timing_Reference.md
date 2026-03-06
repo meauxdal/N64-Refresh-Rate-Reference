@@ -538,7 +538,7 @@ The true average line length is the sum of the base line length and this LEAP ad
 True L_avg = 3,178 + 56/3,125 = (9,931,250 + 56) / 3,125 = 9,931,306 / 3,125
 ```
 
-The LEAP mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-stage sequence (A-B-A-B-A) alternates between adding 6 clocks (LEAP_A) and 5 clocks (LEAP_B) during the vertical blanking interval, yielding the required 28/5-clock average per S half-lines.
+The LEAP mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-stage sequence (B-A-B-A-B) alternates between adding 6 clocks (LEAP_B, stored as 3183 → effective L+6) and 5 clocks (LEAP_A, stored as 3182 → effective L+5) during the vertical blanking interval, yielding the required 28/5-clock average per S half-lines. The hardware encodes this as pattern `0x15` (0b10101); confirmed by Rasky and lidnariq (N64brew.dev Discord, 2026-03-05).
 
 ```
 (6 + 5 + 6 + 5 + 6) / 5 = 28/5 (average clocks added per S half-lines)
@@ -776,7 +776,7 @@ A quick reference for terminology used in this document.
 
 * **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,091 (PAL-M). *See also: Terminal Count, VI.*
 
-* **LEAP Register:** A hardware compensation mechanism used exclusively by PAL N64 consoles. It periodically adjusts the length of a scanline by one VI clock cycle to correct for the fractional timing error that results from integer constraints in the horizontal timing registers. The adjustment follows a repeating 5-stage A-B-A-B-A sequence and allows fH to maintain the PAL standard 15,625 Hz line frequency. *See also: PAL, f_vi.*
+* **LEAP Register:** A hardware compensation mechanism used exclusively by PAL N64 consoles. It periodically adjusts the length of a scanline by one VI clock cycle to correct for the fractional timing error that results from integer constraints in the horizontal timing registers. The adjustment follows a repeating 5-stage B-A-B-A-B sequence (6,5,6,5,6 VI clocks added; LEAP_B stores 3183 → L+6, LEAP_A stores 3182 → L+5; hardware pattern `0x15` = 0b10101) and allows fH to maintain the PAL standard 15,625 Hz line frequency. *See also: PAL, f_vi.*
 
 * **M (VI Clock Multiplier):** The region-specific rational factor by which f_xtal is multiplied to produce f_vi. Values are 17/5 for NTSC and PAL-M, and 14/5 for PAL. M is a deterministic hardware ratio and does not vary; crystal tolerance affects f_xtal and propagates through the derivation chain, but M itself is fixed. *See also: Crystal Oscillator Frequency, Horizontal Scan Frequency.*
 
