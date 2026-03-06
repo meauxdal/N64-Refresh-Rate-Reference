@@ -19,9 +19,88 @@ f_xtal is derived from fS - f_xtal is a "hardware primitive" not a "true constan
 
 ---
 
-## 0. Recent Session Notes — 2026.03.04
+## 0. Recent Session Notes — 2026.03.05
 
-### 0.1 Changes Applied This Session
+### 0.1 Changes Applied This Session (v9.0)
+
+- **MX9911MC confirmed at U7 on NUS-CPU-05.** Board photo analysis and datasheet (Macronix PM0463 REV. 1.2, August 1997) confirm the MX9911MC is a functionally equivalent single-channel clock synthesizer: identical 8-pin SOP package, pin assignments, FSEL logic (High → 17/5, Low → 14/5), FSC and FSO/5 outputs, and 5 ms power-up stabilization. It is a previously undocumented N64 clock chip variant, now confirmed in production hardware and independently selected in the N64Micro community schematic. lidnariq had not previously encountered it.
+
+- **§3.1.1 rewritten.** Previous claim ("NUS-CPU-01 through NUS-CPU-07 used two separate MX8330MC chips") was demonstrably incorrect for at least NUS-CPU-05. Corrected to: U15 is MX8330MC throughout early revisions; U7 is MX8330MC on 01–04 and 07, MX9911MC on at least 05, NUS-CPU-06 unconfirmed from available photos. NUS-CPU-08+ consolidates to MX8350.
+
+- **§3.4 footnote ¹ updated.** "Twin MX8330MCs" replaced with accurate phrasing covering both chip variants.
+
+- **§3.5.2 updated.** Startup transient note extended to cover MX9911MC (same 5 ms spec).
+
+- **Glossary: Crystal Oscillator Frequency updated.** U7 chip reference no longer hardcodes MX8330MC.
+
+- **Glossary: MX8330MC updated.** Revision range claim corrected; cross-references MX9911MC.
+
+- **Glossary: MX9911MC added.** New entry documenting the chip, its confirmation context, and functional equivalence.
+
+- **§7.2 References updated.** Added: MX9911MC datasheet, Mitsumi PST91XX (U3), TI SN74LV125A (U8/LC125), N64Micro community schematic (corroborating MX9911MC selection), meauxdal crystal stamp spreadsheet.
+
+- **§7.3 Acknowledgements updated.** meauxdal (Elle) added for board photo research, crystal stamp code documentation, and MX9911MC identification.
+
+- **Source list fully deduplicated.** Organized into buckets: Broadcast Standards, Nintendo Official Docs, Schematics & Hardware, Datasheets, Patents, Board Revisions, Motherboard Images, RGB Mods, Community Docs, SDKs, Emulators/FPGA, Test ROMs, Misc.
+
+### 0.2 New Datasheets Acquired This Session
+
+All locally saved. Not all are yet cited in the document.
+
+| Part | File | Notes |
+| :--- | :--- | :--- |
+| Macronix MX9911MC | MX9911MC-datasheet.pdf | U7 on NUS-CPU-05; clock gen; now documented in §3.1.1 |
+| Mitsumi PST91XX | Mitsumi-PST91XX-datasheet.PDF | U3 voltage supervisor; PST9128 variant confirmed on 02/03 |
+| TI SN74LV125A | sn74lv125a-datasheet.pdf | U8 quad bus buffer (LC125); CSYNC buffer on early revisions |
+| Rohm BA7242F | Rohm-BA7242F ENC-NUS datasheet.pdf | ENC-NUS (U5); already in doc |
+| Rohm BA6591AF | Rohm-BA6591AF datasheet.pdf | Possible AMP-NUS candidate; not yet investigated |
+| Rohm BA6592F | Rohm-BA6592F datasheet.pdf | Possible AMP-NUS candidate; not yet investigated |
+| Rohm BA78MXXCP | Rohm-BA78MXXCP-datasheet.PDF | Voltage regulator family; possibly U13 |
+| Sharp PQ7VZ5 | Sharp PQ7VZ5 datasheet.pdf | Voltage regulator; confirmed at U13 in board photos |
+| Rohm 173425/178M18CP | 173425_ROHM_178M18CP datasheet.pdf | 178M05 family sheet; partial match |
+| NEC uPD488130/488170 | NEC uPD488130 488170 datasheet.pdf | RDRAM controller; not directly timing-relevant |
+| Rambus DRAM (LG) | Rambus DRAM datasheet LG GM73V1892AH16L GM73V1892AH17L.pdf | RDRAM speed grade variants (16L/17L); not directly timing-relevant |
+| Toshiba TC59R1809 | Toshiba TC59R1809VK TC59R1809HK.pdf | RDRAM variant |
+| SGI R4300 Spec | SGI_R4300_RISC_Processor_Specification_REV2.2.pdf | CPU-NUS die; not timing-relevant |
+
+### 0.3 New Primary Sources Acquired This Session
+
+Patents not previously in the doc or source list:
+
+| Patent | File | Notes |
+| :--- | :--- | :--- |
+| US6239810 | US6239810.*.pdf | "High performance low cost video game system" — likely core N64 system patent |
+| US6331856 | US6331856.*.pdf | "Video game system with coprocessor providing high performance" — likely core N64 patent |
+| US6022274 | US6022274.pdf | Not yet identified |
+| US20010016517 | US20010016517*.pdf | Not yet identified |
+| US4799635 | US4799635.pdf | Not yet identified |
+| US5070479 | US5070479.pdf | Not yet identified |
+
+Board scans acquired:
+- NUS-CPU-03 front and back (JPEG + XCF, very high resolution GIMP source files)
+- NUS-CPU-09-1 (PDN format)
+- Full modretro board photo set: NUS-CPU-01 through NUS-CPU-09-1, NUS-CPU(P)-01 through 03-1, NUS-CPU(R)-01
+- NUS-CPU(M)-02 board photo (Brazilian MPAL, © 1997 Nintendo, Gradiente sticker, "PRODUZIDO NA ZONA FRANCA DE MANAUS"). X1 depopulated on this unit (black screen / parts donor). U7 chip present but unreadable at available resolution. Only current MPAL board photo in the collection.
+
+RDC schematic (N64 NUS-CPU-03-04.pdf):
+- DipTrace format, authored by RDC, created 2015-04-24
+- Single schematic file covers both NUS-CPU-03 and NUS-CPU-04 (revisions similar enough to share one document)
+- Distinct from the RWeick KiCAD schematic; different source, different format, useful as cross-reference
+
+CPU-NUS pin documentation (SwimmingKittens schematics):
+- CPU-NUS-schematic1: Official Nintendo 120-pin QFP package pinout. Confirms pin names including MasterClock (input, pin 16), TClock (pin 18), SyncIn (pin 24), SyncOut (pin 21), SysAD[31:0], SysCmd[4:0], JTAG pins. Unfinished but informative.
+- CPU-NUS-schematic2: KiCAD-style symbol for the CPU-NUS, two-part layout. Cross-references schematic1.
+
+Other files noted:
+- Nintendo_64_Game_Console-BPT.pdf: Component-level chip breakdown by an Ottawa firm (BPT = Board Probe Test or similar). This was the original source of the single-MX8330MC claim that preceded MX9911MC discovery; exact part numbers in this doc helped identify further datasheet leads. May contain a chip count error or simply pre-date NUS-CPU-05.
+- NUS-101_Extra_Circuit.webp: Small auxiliary circuit board found in Pikachu N64 variants (Funtastic series). Controls Pikachu cheek illumination. Not relevant to timing; archived for completeness.
+
+Crystal stamp spreadsheet (meauxdal):
+- X1/X2 stamp code database covering NTSC, PAL, PAL-M hardware
+- Board revision component tracking (U4, U5, U7, U15, etc.)
+- Primary source for MX9911MC revision identification
+
+### 0.4 Previous Session Notes — 2026.03.04
 
 - **LEAP_A / LEAP_B labels corrected throughout:** libdragon `vi.h` register presets confirm LEAP_A (upper bits 27:16) stores 3183 → effective L+6; LEAP_B (lower bits 11:0) stores 3182 → effective L+5. Sequence is A-B-A-B-A, not B-A-B-A-B. Corrected in §5.2.1 and LEAP glossary entry. The arithmetic was correct throughout; only the labels were inverted.
 - **libdragon `vi.h` added to §7.2:** Primary source for PAL LEAP register values (vi_pal_p and vi_pal_i presets). Added directly beneath N64brew Video Interface entry.
@@ -32,7 +111,7 @@ f_xtal is derived from fS - f_xtal is a "hardware primitive" not a "true constan
 - **§1.3 renamed:** "Distinctions and Hazards" → "Conventions". TOC slug updated.
 - **§6 Conversion Reference:** Second paragraph and bullet combo rewritten for clarity. Sneaky em dash removed; comma substituted.
 
-### 0.2 Previous Session Notes — 2026.03.03 (Session 2)
+### 0.5 Previous Session Notes — 2026.03.03 (Session 2)
 
 - **Stage → Cycle throughout:** "Stage" replaced with "cycle" (lowercase) as the canonical term for one step of the 4-cycle VDC bus group.
 - **H_START:** Backtick code-blocking removed from all four occurrences. Plain ALLCAPS, consistent with N64brew convention.
@@ -41,7 +120,7 @@ f_xtal is derived from fS - f_xtal is a "hardware primitive" not a "true constan
 - **Figure 2d caption simplified.** Figure 2e caption updated: YOUT and VOUT identified and sourced.
 - **Glossary trimming pass completed.**
 
-### 0.3 Previous Session Notes — 2026.03.03 (Session 1)
+### 0.6 Previous Session Notes — 2026.03.03 (Session 1)
 
 - **§1.1 Terminology:** X1/X2 wording corrected.
 - **§1.3:** Restructured. §1.3.3 Modes and §1.3.4 Hazards collapsed.
@@ -51,24 +130,26 @@ f_xtal is derived from fS - f_xtal is a "hardware primitive" not a "true constan
 - **§7.2 References:** Full formatting pass.
 - **Quick-Reference-LaTeX-Tables.md:** Headers expanded.
 
+---
+
 ## 1. Document Status
 
 ### 1.1 Milestone
 
-The document has reached effective finalization: no detected language or math errors. Formatting is consistent throughout. Near-100% of remaining improvements are tag:enhancement. Preparing for:
-
-A) Peer audit submission (Robert Peip, lidnariq, Rasky, kev4cards)
-B) Spin-off draft for N64brew.dev wiki
+Document is at v9.0. §3.1.1 clock hardware revision history is now accurate and sourced. No detected language or math errors. Formatting consistent throughout.
 
 ### 1.2 Open Items
 
-Cleared!
+- **NUS-CPU-06 U7 chip identity:** Not confirmed from available board photos. Known possibilities: MX8330MC (as on 01–04, 07) or MX9911MC (as on 05). Flag in §3.1.1 as unconfirmed.
+- **BA6591AF / BA6592F investigation:** Are either of these AMP-NUS? Not yet determined.
+- **New patents (US6239810, US6331856, US6022274, US20010016517, US4799635, US5070479):** Not yet read or cited. US6239810 and US6331856 are likely core N64 system patents and may be citable.
+- **BU9801F (VDC-NUS) datasheet:** Still not found. All leads exhausted.
 
 ### 1.3 Research Obligations
 
-**PAL LEAP behavior expansion.** Resolved. libdragon `vi.h` register presets confirm LEAP_A = L+6, LEAP_B = L+5, sequence A-B-A-B-A, producing exactly 28 extra clocks over 5 fields and exact fH = 15,625 Hz. Research obligation closed.  
+**PAL LEAP behavior expansion.** Resolved.
 
-**S-RGB A NUS datasheet sourcing.** The S-RGB A NUS encoder (NUS-CPU(R)-01, French market) is documented in body text via the QUAKEMASTER RGB mod guide and NFGGames forum discussion. No datasheet or primary hardware documentation has been located. One further sourcing attempt is warranted before this is formally closed as unresolvable.
+**S-RGB A NUS datasheet sourcing.** No datasheet or primary hardware documentation located. One further sourcing attempt warranted before formally closing.
 
 ### 1.4 PAL Active Line Counts
 
@@ -194,13 +275,17 @@ The canonical expanded name is **Chrominance Subcarrier Frequency**. In prose, "
 
 ### 8.1 Crystal and Clock Generator
 
-On NUS-CPU-01 through NUS-CPU-07:
-- U7 (MX8330MC) is driven by crystal X1. Handles NTSC and PAL-M. FSEL high → 17/5 multiplier.
+Early revisions use two separate single-channel clock synthesizer chips:
+
+- U7 is driven by crystal X1. Handles NTSC and PAL-M. FSEL high → 17/5 multiplier.
+  - MX8330MC on NUS-CPU-01 through NUS-CPU-04, and NUS-CPU-07.
+  - MX9911MC on at least NUS-CPU-05. NUS-CPU-06 unconfirmed.
+  - MX9911MC is functionally equivalent: identical pin assignments, FSEL logic, FSC and FSO/5 outputs, 5 ms power-up stabilization. Confirmed by datasheet (PM0463 REV. 1.2, August 1997) and N64Micro community schematic.
 - U15 (MX8330MC) is driven by crystal X2. Handles PAL. FSEL low → 14/5 multiplier.
 - Each chip outputs FSC (input crystal ÷ 4, chroma subcarrier reference) and FSO (Rambus clock).
 - FSO/5 is output from a dedicated pin on each chip and drives the video domain.
 
-On NUS-CPU-08 onward: single MX8350 replaces twin MX8330MCs. Derived values unaffected.
+On NUS-CPU-08 onward: single MX8350 replaces the twin single-channel chips. Derived values unaffected.
 
 **X2 is the PAL video crystal. It is not unrelated to video timing.** Any body text implying X1/U7 is universal must be corrected. The full document has been audited; the model is consistent throughout as of this handoff.
 
@@ -212,9 +297,7 @@ Source: lidnariq, N64brew.dev Video DAC page — "The Video Interface relies on 
 
 The phase-correction hypothesis is retired. The blanking behavior is fully accounted for by the control signal transmission requirement. Do not reintroduce phase-walk framing.
 
-### 8.3 Naive Phase-Walk Values (L mod 4)
-
-> Human note: This is basically bullshit. Trivia that doesn't make the cut. In actual fact, the VDC_DSYNC signal *must* remain low during blanking periods, so there is no relevance to tracking phase-walking - this isn't strictly "free-running" at all. ~Elle 
+### 8.3 Phase-Walk Values (L mod 4)
 
 - NTSC: 3094 mod 4 = 2
 - PAL: 3178 mod 4 = 2
@@ -222,23 +305,30 @@ The phase-correction hypothesis is retired. The blanking behavior is fully accou
 
 These are arithmetic facts about line boundary alignment and remain correct. The prior framing — that VDC_DSYNC blanking behavior exists to correct this offset — is retired. The offset exists; its effect on video output is not the mechanism driving blanking behavior.
 
-Human note: This is basically bullshit. Trivia that doesn't make the cut. In actual fact, the VDC_DSYNC signal *must* remain low during blanking periods, so there is no relevance to tracking phase-walking - this isn't strictly "free-running" at all.
-
 ### 8.4 ENC-NUS Output Identification
 
-YOUT, VOUT, and COUT on the ENC-NUS (U5) are identified as follows:
+YOUT and VOUT on the ENC-NUS (U5) are identified as follows:
 
-YOUT = luminance output, S-Video Y channel
-VOUT = composite video output
-COUT = chrominance output, S-Video C channel
+- YOUT = luma output, S-Video Y channel
+- VOUT = composite video output
 
-Confirmed via three independent lines of evidence:
+Confirmed via two independent lines of evidence:
+1. RWeick NUS-CPU-03 schematic: YOUT and VOUT net routing to AV connector (Figure 2e).
+2. DENC-NUS pinout (Figure 2f, Tim Worthington): equivalent chip labels the same pins VIDEO and LUMA explicitly.
 
-BA7242F datasheet (Rohm): Pin table explicitly identifies pin 13 as YOUT (luminance output), pin 12 as VOUT (composite video output), pin 10 as COUT (chrominance output). Primary source — this is the actual chip.
-RWeick NUS-CPU-03 schematic (Figure 2e): YOUT, VOUT, and COUT net routing traced to Multi-AV connector pins 7 (LUMINANCE), 9 (COMPOSITE VIDEO), and 8 (CHROMINANCE) respectively.
-DENC-NUS pinout, Tim Worthington (Figure 2f): Equivalent successor chip labels the same functional pins VIDEO and LUMA explicitly.
+SCIN (pin 8) receives U7.FSC via R13 (4.3 kΩ) / R12 (850 Ω) divider and C21. Confirmed by schematic; values verified.
 
-SCIN (pin 8) receives U7.FSC via R13 (4.3 kΩ) / R12 (850 Ω) divider and C21. Confirmed by schematic; corroborated by BA7242F datasheet SCIN input level specification (0.45–0.60 VP-P).
+### 8.5 Other Confirmed Component Identifications
+
+| Designator | Part | Notes |
+| :--- | :--- | :--- |
+| U3 | Mitsumi PST9128 | Voltage supervisor/reset IC; confirmed on NUS-CPU-02/03 |
+| U8 | TI SN74LV125A (LC125) | Quad bus buffer; CSYNC buffering on early revisions |
+| U13 | Sharp PQ7VZ5 | Voltage regulator; confirmed in board photos |
+
+**Unresolved:**
+- AMP-NUS chip identity: BA6591AF and BA6592F (both Rohm) are candidates. Datasheets acquired; investigation pending.
+- BU9801F (VDC-NUS) datasheet: not found.
 
 ---
 
@@ -251,10 +341,11 @@ Body text uses expanded initialisms without qualification. The epistemic burden 
 - `RCP` (Reality Co-Processor): Explicit — Nintendo Introductory Manual (Nintendo of America, 1999).
 - `RDP` (Reality Display Processor): Explicit — same source. Do not use "Reality Drawing Processor"; it is incorrect.
 - `RSP` (Reality Signal Processor): Explicit — same source.
-- `FSEL` (Frequency Select): Explicit — MX8330MC datasheet.
+- `FSEL` (Frequency Select): Explicit — MX8330MC datasheet; confirmed MX9911MC datasheet.
 - `FSC` (Subcarrier Frequency): Corroborated by Nintendo diagnostics and schematics.
 - `FSO` (Frequency Synthesizer Output): Inferred from functional description; corroborated by schematics.
 - `FSO/5`: Schematic pin label (RWeick NUS-CPU-03). Reproduced verbatim; the `/` is part of the label, not a division operator.
+- `MasterClock`: CPU-NUS pin 16 per SwimmingKittens CPU-NUS pinout. The clock input to the CPU-NUS from the RCP clock domain. Distinct from f_xtal. Do not conflate.
 - `SCIN` (Subcarrier Input): Inferred from schematic position and diagnostic logic. No datasheet definition exists.
 - `YOUT` (luma output / S-Video Y): Confirmed by schematic net tracing and DENC-NUS corroboration. See §8.4.
 - `VOUT` (composite video output): Confirmed by schematic net tracing and DENC-NUS corroboration. See §8.4.

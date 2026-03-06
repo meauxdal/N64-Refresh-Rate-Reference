@@ -162,7 +162,11 @@ Hardware constants derived from f_xtal and the Video Interface (VI) registers.
 
 #### 3.1.1 Clock Generator Hardware Revisions  
 
-Early revisions (NUS-CPU-01 through NUS-CPU-07, 1996-1998) used two separate MX8330MC chips: U7 (NTSC/PAL-M) with FSEL (Frequency Select) tied high → 17/5 multiplier, and U15 (PAL) with FSEL tied low → 14/5 multiplier. Later revisions (NUS-CPU-08 onward, 1999+) consolidated these into a single MX8350 dual-channel chip with equivalent output frequencies and timing characteristics.  
+Early revisions used two separate single-channel clock synthesizer chips at U7 and U15. U15 (PAL clock, FSEL low → 14/5 multiplier, driven by X2) is MX8330MC across all confirmed early revisions. U7 (NTSC/PAL-M clock, FSEL high → 17/5 multiplier, driven by X1) is MX8330MC on NUS-CPU-01 through NUS-CPU-04 and NUS-CPU-07, and MX9911MC on at least NUS-CPU-05; NUS-CPU-06 U7 is unconfirmed from available board photos.
+
+The MX9911MC is a Macronix single-channel clock synthesizer (P/N PM0463, dated August 1997) that is functionally equivalent to the MX8330MC: identical pin assignments, FSEL logic, FSC and FSO/5 outputs, and 5 ms power-up stabilization time. Its appearance at U7 on NUS-CPU-05 production hardware, and its independent selection as the U7-equivalent in the N64Micro community board design, confirm it as a transparent drop-in substitution. No timing derivations are affected.
+
+Later revisions (NUS-CPU-08 onward, 1999+) consolidated both channels into a single MX8350 dual-channel chip with equivalent output frequencies and timing characteristics.  
 
 ![Figure 1a](/figures/fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: MX8350 datasheet*  
@@ -229,7 +233,7 @@ CSYNC (Composite Sync) and BFP (Burst Flag Pulse) are generated downstream by th
 ![Figure 2e](/figures/fig17_ENC-NUS.png)  
 *ENC-NUS (U5) in circuit - YOUT (luma, S-Video Y channel) and VOUT (composite video) outputs; SCIN (Subcarrier Input, pin 8) receives U7.FSC (f_xtal ÷ 4) via R13/R12 divider network. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
 
-¹ Later revisions use a single MX8350 in place of twin MX8330MCs. f_xtal derivations are equivalent. On PAL consoles, U15 (MX8330MC) is driven by crystal X2 to produce the PAL video clock; X1 drives U7 for NTSC and PAL-M. Both crystals feed into the same architectural model; the derivations in §5 are rooted in the respective regional crystal in each case.  
+¹ Later revisions use a single MX8350 in place of the twin single-channel chips (MX8330MC or MX9911MC at U7; MX8330MC at U15). f_xtal derivations are equivalent across all variants. On PAL consoles, U15 (MX8330MC) is driven by crystal X2 to produce the PAL video clock; X1 drives U7 for NTSC and PAL-M. Both crystals feed into the same architectural model; the derivations in §5 are rooted in the respective regional crystal in each case.  
 
 ² The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite. Each implementation performs the same DAC/encoding function; see Figures 2f and 2g below.  
 
@@ -267,7 +271,7 @@ Values derived in §5 are exact by construction, representing irreducible fracti
 ![Figure 1b](/figures/fig12_mx8330mc_rev_e.png)  
 *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient. Source: MX8330MC datasheet*  
 
-The MX8330MC requires an approximately 5 millisecond stabilization period after power-on before FSO reaches steady operation. This occurs during the IPL startup sequence, prior to the first visible scanline.  
+The MX8330MC and its functional equivalent MX9911MC both require an approximately 5 millisecond stabilization period after power-on before FSO reaches steady operation. This occurs during the IPL startup sequence, prior to the first visible scanline.  
 
 
 ### 3.6 Diagnostics  
@@ -692,7 +696,10 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * [Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001 REV A)](https://drive.google.com/drive/folders/1kGlB2TyX7CsmPnSyzpxGcSKpJ1F-ywal) - Block diagrams; boot sequence; oscilloscope timing verification.  
 * [Macronix MX8350 Datasheet](https://www.datasheets360.com/part/detail/mx8350/-7133688394404043430/) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies.  
 * [Macronix MX8330MC Datasheet](https://www.datasheets360.com/part/detail/mx8330mc/-2428964985180354578/) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4, confirmed as color subcarrier), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
+* [Macronix MX9911MC Datasheet](https://www.macronix.com) (P/N PM0463 REV. 1.2, August 1997) - Single-channel clock synthesizer; confirmed functional equivalent to MX8330MC; identical FSEL logic, FSC and FSO/5 outputs, 5 ms power-up stabilization; confirmed at U7 on NUS-CPU-05.  
 * [Rohm BA7242F Datasheet](URL) - ENC-NUS (U5) encoder IC; YOUT (pin 13) luminance, VOUT (pin 12) composite video, COUT (pin 10) chrominance; SCIN input level 0.45–0.60 VP-P corroborating R13/R12 attenuation; NT/PAL pin logic (HIGH = NTSC, LOW = PAL).
+* [Mitsumi PST91XX Datasheet](https://www.alldatasheet.com/datasheet-pdf/view/93083/MITSUMI/PST9128.html) - Voltage supervisor/reset IC; PST9128 variant identified at U3 on NUS-CPU-02/03 boards.  
+* [Texas Instruments SN74LV125A Datasheet](https://www.ti.com/product/SN74LV125A) - Quadruple bus buffer with 3-state outputs; identified as U8 (LC125) on early N64 revisions; CSYNC buffer path on NUS-CPU-01 through NUS-CPU-03.
 * [ITU-R Recommendation BT.470-6](https://www.itu.int/rec/R-REC-BT.470/en) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies.  
 * [ITU-R Recommendation BT.1700](https://www.itu.int/rec/R-REC-BT.1700/en) - Composite video signal levels, timing, sync pulses.  
 * [ITU-R Recommendation BT.1701](https://www.itu.int/rec/R-REC-BT.1701/en) - Horizontal/vertical timing for composite video.  
@@ -705,6 +712,8 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * [Rodrigo Copetti - Nintendo 64 Architecture - A Practical Analysis](https://www.copetti.org/writings/consoles/nintendo-64/) - General hardware overview; encoder revision corroboration.  
 * [Zoinkity - VI Settings Pastebin](https://web.archive.org/web/20260119215039/https://pastebin.com/pJG5SBnW) - 237/474 line libultra behavior; VI reverse-engineering details.  
 * [Link83 et al - ModRetro Forums - N64 Motherboard Revisions](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history; component changes; video encoder chip progression across revisions; board scans.  
+* [N64Micro Community Schematic (bitbuilt.net)](https://bitbuilt.net/forums/threads/open64-a-work-in-progress-open-source-n64-motherboard-recreation.6874/) - Community miniaturized N64 board design; independently selects MX9911MC at U7 alongside MX8330MC, corroborating functional equivalence of both chips.  
+* [meauxdal - N64 Crystal Stamp Codes & Board Revision Spreadsheet](https://docs.google.com/spreadsheets/d/1A0djJNITvrgbucCVMT6spz2m31yxDv8idIDtCiyBgVs/edit?gid=0#gid=0) - X1/X2 crystal oscillator stamp code database; board revision component tracking across NTSC, PAL, and PAL-M hardware; primary source for MX9911MC revision identification.  
 * [kwyjibo, Link83 et al - NFGGames Forum - NUS-CPU(R)-01 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community documentation of the French PAL console, NUS-CPU(R)-01 board, and S-RGB A encoder.  
 * [Link83 et al - NFGGames Forum - Datasheet Links Thread](https://nfggames.com/forum2/index.php?topic=3525.0) - Community identification of BA7242F as ENC-NUS match; source of datasheet link.
 * [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identifies the NUS-CPU(R)-01 motherboard; documents the S-RGB A pinout for RGB restoration; confirms DENC-NUS' unsuitability for RGB output.  
@@ -729,6 +738,7 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * Robert Peip (FPGAzumSpass) for auditing and corroboration of `VI_V_CURRENT` behaviour.  
 * Rasky for cross-referencing register naming against N64brew convention.  
 * kev4cards for research leads and additional auditing and refinement.  
+* meauxdal (Elle) for board photo research, crystal oscillator stamp code documentation, and identification of MX9911MC at U7 on NUS-CPU-05 production hardware.  
 
 ---
 
@@ -746,7 +756,7 @@ A quick reference for terminology used in this document.
 
 * **Colorburst:** *See Chrominance Subcarrier Frequency.*
 
-* **Crystal Oscillator Frequency (f_xtal):** The principal high-frequency crystal oscillator signal that drives the N64's Reality Co-Processor (RCP). All video timing is derived from this signal through integer multiplication and division. On NUS-CPU-01 through NUS-CPU-07, f_xtal is produced by U7 (MX8330MC) from crystal X1 for NTSC and PAL-M, and by U15 (MX8330MC) from crystal X2 for PAL. VI clock (f_vi) equals f_xtal multiplied by the region-specific factor M (17/5 for NTSC and PAL-M; 14/5 for PAL). f_xtal is the hardware primitive from which N64 video timing is wholly derived.  
+* **Crystal Oscillator Frequency (f_xtal):** The principal high-frequency crystal oscillator signal that drives the N64's Reality Co-Processor (RCP). All video timing is derived from this signal through integer multiplication and division. On early revisions, f_xtal is produced at U7 (MX8330MC or MX9911MC, depending on revision; see §3.1.1) from crystal X1 for NTSC and PAL-M, and at U15 (MX8330MC) from crystal X2 for PAL. VI clock (f_vi) equals f_xtal multiplied by the region-specific factor M (17/5 for NTSC and PAL-M; 14/5 for PAL). f_xtal is the hardware primitive from which N64 video timing is wholly derived.  
 
 * **CSYNC (Composite Sync):** A signal generated by the VDC-NUS (U4) that combines horizontal sync (HSYNC) and vertical sync (VSYNC) into a single waveform. CSYNC is passed to the ENC-NUS encoder (U5) and embedded in the final composite video output, allowing a display to lock to the signal's horizontal and vertical timing simultaneously. *See also: VSYNC, BFP.*
 
@@ -770,9 +780,11 @@ A quick reference for terminology used in this document.
 
 * **M (VI Clock Multiplier):** The region-specific rational factor by which f_xtal is multiplied to produce f_vi. Values are 17/5 for NTSC and PAL-M, and 14/5 for PAL. M is a deterministic hardware ratio and does not vary; crystal tolerance affects f_xtal and propagates through the derivation chain, but M itself is fixed. *See also: Crystal Oscillator Frequency, Horizontal Scan Frequency.*
 
-* **MX8330MC:** A single-channel Macronix clock synthesizer IC. In early N64 revisions (NUS-CPU-01 through NUS-CPU-07), two MX8330MC chips were used: U7 (NTSC/PAL-M, FSEL high → 17/5 multiplier) driven by crystal X1, and U15 (PAL, FSEL low → 14/5 multiplier) driven by crystal X2. Each chip outputs FSC (its input crystal ÷ 4, the chroma subcarrier reference) and FSO (the Rambus clock); the chip additionally outputs FSO/5 from a dedicated pin to drive the video domain. *See also: MX8350, Crystal Oscillator Frequency.*  
+* **MX8330MC:** A single-channel Macronix clock synthesizer IC. In early N64 revisions, two single-channel clock synthesizer chips were used at U7 and U15. U15 (PAL, FSEL low → 14/5 multiplier, driven by X2) is MX8330MC across all confirmed revisions. U7 (NTSC/PAL-M, FSEL high → 17/5 multiplier, driven by X1) is MX8330MC on NUS-CPU-01 through NUS-CPU-04 and NUS-CPU-07, but MX9911MC on at least NUS-CPU-05 (see MX9911MC). Each chip outputs FSC (its input crystal ÷ 4, the chroma subcarrier reference) and FSO (the Rambus clock); the chip additionally outputs FSO/5 from a dedicated pin to drive the video domain. *See also: MX9911MC, MX8350, Crystal Oscillator Frequency.*  
 
-* **MX8350:** A dual-channel Macronix clock synthesizer that replaced the twin MX8330MC configuration in later N64 revisions (NUS-CPU-08 onward, 1999+). It consolidates both NTSC/PAL-M and PAL clock synthesis with equivalent output frequencies. Derived values are unaffected by this revision. *See also: MX8330MC.*  
+* **MX8350:** A dual-channel Macronix clock synthesizer that replaced the twin single-channel chip configuration in later N64 revisions (NUS-CPU-08 onward, 1999+). It consolidates both NTSC/PAL-M and PAL clock synthesis with equivalent output frequencies. Derived values are unaffected by this revision. *See also: MX8330MC, MX9911MC.*  
+
+* **MX9911MC:** A single-channel Macronix clock synthesizer IC (P/N PM0463 REV. 1.2, dated August 1997). Functionally equivalent to the MX8330MC: identical 8-pin SOP package, pin assignments, FSEL logic (High → 17/5 multiplier, Low → 14/5 multiplier), FSC (crystal ÷ 4) and FSO/5 outputs, and 5 ms power-up stabilization time. Confirmed at U7 on NUS-CPU-05 production hardware; independently selected as the U7-equivalent in the N64Micro community board design, corroborating its status as a transparent substitution. No timing derivations are affected. *See also: MX8330MC, Crystal Oscillator Frequency.*  
 
 * **NTSC (National Television System Committee):** The broadcast video standard used in North America, Japan, South Korea, and parts of Central America. Precisely, the standard name is NTSC-M (so-called due to combination of System M (a monochrome broadcast standard) and NTSC color specification). Defines a 525-line, approximately 59.94 Hz interlaced signal. On the N64, the NTSC crystal is 315/22 MHz (exact), the VI clock multiplier is 17/5, and there are 3,094 VI clocks per line. *See PAL, PAL-M.*  
 
