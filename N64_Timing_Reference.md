@@ -50,8 +50,8 @@ Video Modes:
 
 Scan Types:  
 
-* **Progressive (P)**: 526 half-lines per frame (counted sequentially) (PAL: 626)  
-* **Interlaced (I)**: 525 half-lines per field (alternating odd/even) (PAL: 625)  
+* **Progressive (P)**: Lines drawn sequentially each vertical scan  
+* **Interlaced (I)**: Lines drawn in alternating fields across two successive vertical scans  
 
 ### 1.1 Terminology
 
@@ -82,7 +82,7 @@ Parenthetical annotations clarify numerical representations:
 
 #### 1.3.1 Counting Units
 
-**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines; progressive scans sequentially, interlaced alternates odd/even fields. This document favors the half-line model throughout: it aligns with hardware register logic, yields consistent rational fractions, and avoids ambiguity introduced by "line" and "frame" terminology. The ~0.12 Hz difference between NTSC progressive and interlaced rates is not arbitrary; it is the arithmetic consequence of the additional half-line in the divisor (526 vs 525). See §5.1.
+**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modelling where feasible. Adherence aligns with hardware register logic, yields consistent rational fractions, and avoids ambiguity introduced by "line" and "frame" terminology. See §5.1.  
 
 #### 1.3.2 Registers
 
@@ -807,11 +807,12 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 
 ### 7.3 Acknowledgements
 
-* A thread on videogameperfection.com for the initial spark of curiosity.  
+* [A post by awe444 on videogameperfection.com](https://videogameperfection.com/forums/topic/nintendo-64-de-blur/page/2/#post-12502) for the initial spark of curiosity.  
 * lidnariq for PAL-M colorburst correction (§5.3), VDC_DSYNC behavior analysis (§3.2, §3.4), ±30 ppm crystal tolerance figure (§3.5.2), month decode suggestion (§3.5.1.2), VI timing map (Figure 3), experimental observations of dynamic chroma modulation and left-pixel blanking failure under `VI_BURST` / H_START overlap (§4.1.1), and extensive derivation auditing.  
 * Robert Peip (FPGAzumSpass) for auditing and corroboration of `VI_V_CURRENT` behaviour.  
 * Rasky for cross-referencing register naming against N64brew convention.  
 * kev4cards for research leads and additional auditing and refinement.  
+* grav and Mielke for sharing rare MPAL motherboard images.
 
 ---
 
@@ -849,7 +850,7 @@ A quick reference for terminology used in this document.
 
 * **Horizontal Scan Frequency (fH):** The number of horizontal lines transmitted per second, expressed in Hz. Derived as f_vi ÷ L. Also referred to as line frequency. *See also: L, fV.*
 
-* **Interlaced (I):** A scan method in which lines are interleaved across two successive vertical scans. Half-lines are output in alternating stripes of even, then odd (262.5 lines per vertical scan in NTSC and PAL-M interlaced modes). Each vertical scan is a field in broadcast terminology. S is set to an odd integer (525 for NTSC and PAL-M; 625 for PAL), and the VI hardware offsets the vertical sync position by half a line on every other vertical scan. fV represents the rate of each individual vertical scan. *See also: Progressive, Half-line, fV.*
+* **Interlaced (I):** A scan method in which lines are interleaved across two successive vertical scans in alternating stripes of even-odd (262.5 lines per vertical scan in NTSC and PAL-M interlaced modes). The VI offsets vertical sync by one half-line on every other scan, each constituting a field in broadcast terminology. fV represents the rate of each individual vertical scan. *See also: Progressive, Half-line, fV.*
 
 * **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,091 (PAL-M). *See also: Terminal Count, VI.*
 
