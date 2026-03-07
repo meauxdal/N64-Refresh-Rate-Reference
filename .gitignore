@@ -1,9 +1,4 @@
-/ignore
-/tools/__pycache__
+/.ignore
 /.vs
-/custom n64 pcb/
-/unused
-/cust_pcb
-/references
-/schematics
-Notes_20260216.txt
+/tools/__pycache__
+directory_stucture*.txt
