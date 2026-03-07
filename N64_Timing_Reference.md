@@ -291,7 +291,8 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | |
+| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | Launch window consoles with identical X1/X2 codes |
+| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | Launch window consoles with identical X1/X2 codes |
 | NUS-CPU-02 | D143C6 | D147B6 | Mar 1996 | Feb 1996 | |
 | NUS-CPU-02 | D143K6 | D147K6 | Oct 1996 | Oct 1996 | |
 | NUS-CPU-03 | D143A6 | D147A6 | Jan 1996 | Jan 1996 | |
@@ -331,7 +332,7 @@ AT-cut crystals are effectively commodity parts; grade and cut determine the exa
 | Unit | Nickname | Progressive (Hz) | Interlaced (Hz) | Offset (P) | Offset (I) |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | Unit #1 (NUS-CPU-03, RGB-modded) | Daily driver | 59.82771 | 59.94166 | +26.8 ppm | +26.7 ppm |
-| Unit #2 (NUS-CPU-03, RGB-modded) | Junk unit | 59.82731 | 59.94126 | +20.1 ppm | +20.0 ppm |
+| Unit #2 (NUS-CPU-04, RGB-modded) | Junk unit | 59.82731 | 59.94126 | +20.1 ppm | +20.0 ppm |
 
 Both fall within the predicted tolerance window. The ppm offset within each unit is essentially identical across progressive and interlaced modes, as expected: both rates derive from the same crystal. The differing offsets between units reflect normal unit-to-unit crystal variance. Aggregate second-order variance factors (temperature, aging, supply voltage) require a larger sample to characterize more precisely.
 
