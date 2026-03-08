@@ -293,8 +293,8 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | Launch window consoles with identical X1/X2 codes |
-| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | Launch window consoles with identical X1/X2 codes |
+| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | Two units confirmed; identical codes |
+| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | |
 | NUS-CPU-02 | D143C6 | D147B6 | Mar 1996 | Feb 1996 | |
 | NUS-CPU-02 | D143K6 | D147K6 | Oct 1996 | Oct 1996 | |
 | NUS-CPU-03 | D143A6 | D147A6 | Jan 1996 | Jan 1996 | |
@@ -302,31 +302,35 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 | NUS-CPU-03 | D143G6 | D147F6 | Jul 1996 | Jun 1996 | |
 | NUS-CPU-03 | D143H6 | D147F6 | Aug 1996 | Jun 1996 | |
 | NUS-CPU-04 | D143H6 | D147J6 | Aug 1996 | Sep 1996 | |
+| NUS-CPU-04 | D143L6I | D147J7 | Nov 1996 | Sep 1997 | I-suffix on X1 |
 | NUS-CPU-04 | D143J7 | D147J7 | Sep 1997 | Sep 1997 | |
 | NUS-CPU-04 | D143K7 | D147K7 | Oct 1997 | Oct 1997 | |
-| NUS-CPU-04 | D143L6I | D147J7 | Nov 1996 | Sep 1997 | I-suffix on X1 |
 | NUS-CPU-05 | D143D8 | D147M7I | Apr 1998 | Dec 1997 | Provisional; U7 MX9911MC; revision inferred from chip and date |
+| NUS-CPU-05 | D143G8 | D147G8I | Jul 1998 | Jul 1998 | I-suffix on X2 |
 | NUS-CPU-05 | D143G8 | D147H8 | Jul 1998 | Aug 1998 | |
-| NUS-CPU-05 | D143G9 | D147H9 | Jul 1999 | Aug 1999 | U15 = MX8330MC |
 | NUS-CPU-05 | D143J8 | D147J8 | Sep 1998 | Sep 1998 | |
 | NUS-CPU-05 | D143K8 | D147K8 | Oct 1998 | Oct 1998 | |
-| NUS-CPU-05 or 05-1 | D143L8 | D147K8 | Nov 1998 | Oct 1998 | Revision marking not visible; U15 MX9911MC confirmed |
+| NUS-CPU-05 | D143G9 | D147H9 | Jul 1999 | Aug 1999 | AVDC-NUS and MAV-NUS both observed |
+| NUS-CPU-05-1 | D143L8 | D147K8 | Nov 1998 | Oct 1998 | Revision marking not visible; U15 MX9911MC confirmed |
+| NUS-CPU-06 | - | - | - | - | Board image available; stamp codes obscured by glare |
 | NUS-CPU-06? | D143K8 | D147M8 | Oct 1998 | Dec 1998 | Revision unconfirmed; U7 MX9911MC; date consistent with 06 |
 | NUS-CPU-07 | - | - | - | - | Board image available; stamp codes obscured by glare |
-| NUS-CPU-08 | D143F9 | D147F9 | Jun 1999 | Jun 1999 | MX8350 present |
+| NUS-CPU-08 | D143F9 | D147F9 | Jun 1999 | Jun 1999 | MX8350 present in 08 onward |
 | NUS-CPU-08 | D143H9 | D147J9 | Aug 1999 | Sep 1999 | X2 year inferred |
 | NUS-CPU-08 | D143L9 | D147L9 | Nov 1999 | Nov 1999 | |
 | NUS-CPU-08-1 | D143H9 | D147H9 | Aug 1999 | Aug 1999 | |
 | NUS-CPU-08-1 | D143K9I | D147K9I | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
-| NUS-CPU-09 | - | - | - | - | Available image illegible |
+| NUS-CPU-09 | D143J0 | D147J0 | Sep 2000 | Sep 2000 | |
+| NUS-CPU-09 | D143J0I | D147K0 | Sep 2000 | Oct 2000 | I-suffix on X1 |
 | NUS-CPU-09-1 | D143K0I | D147L0 | Oct 2000 | Nov 2000 | I-suffix on X1 |
 | NUS-CPU(R)-01 | D177G7 | D147E7 | Jul 1997 | May 1997 | PAL, NUS-001(FRA) |
 | NUS-CPU(P)-01 | D177J7 | D147J7 | Sep 1997 | Sep 1997 | PAL |
+| NUS-CPU(P)-01 | D177G8 | D147M7I | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
 | NUS-CPU(P)-02 | D177J9 | D147J9I | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
 | NUS-CPU(M)-01 | D143G6 | D147G6 | Jul 1996 | Jul 1996 | PAL-M; two MX8330MCs confirmed |
 | NUS-CPU(M)-02 | removed | D147F7 | - | Jun 1997 | PAL-M; X1 absent on this unit |
 | NUS-CPU(M)-02? | D143G7 | D147E7 | Jul 1997 | May 1997 | PAL-M; provisional; revision marking not visible |
-| NUS-CPU(M)-05-1 | (M)143G0 | D147F0I | Jul 2000 | Jun 2000 | PAL-M; circular-M manufacturer on X1; I-suffix on X2 |
+| NUS-CPU(M)-05-1 | (M)143G0 | D147F0I | Jul 2000 | Jun 2000 | PAL-M; circular-M marking on X1; I-suffix on X2 |
 
 X1 and X2 date codes on individual boards cluster tightly, typically within one to two months of each other. This is consistent with batch component sourcing and provides independent corroboration of the decode. The crystal date progression across revisions also tracks known board revision chronology: NUS-CPU-01 through -04 uniformly yield 1996-1997 dates; NUS-CPU-05 yields 1998-1999; NUS-CPU-08 onward yields 1999-2000. The MHz field is self-evident from the regional clock frequency; the month and year fields are validated by this revision-anchored progression. The decode is therefore strongly self-corroborating across the current corpus.  
 
@@ -801,6 +805,11 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * [Mike Wooding - ATV Compendium (BATC)](https://batc.org.uk/wp-content/uploads/ATVCompendium.pdf) - PAL-M fS = 227.25 × fH relationship.  
 * [Martin Hinner - VGA/PAL](https://martin.hinner.info/vga/pal.html) - PAL video timing specification (sourced from R. Salmon, sci.engr.television.broadcast, 1996).  
 * [Alan Pemberton - World TV Standards](https://web.archive.org/web/20160512200958/http://www.pembers.freeserve.co.uk/World-TV-Standards/) - Detailed information on broadcast standards; HBI and VBI visualizations.  
+* [David - EEVblog Forums - Nintendo 64 Game Console Teardown](https://www.eevblog.com/forum/blog/eevblog-491-nintendo-64-game-console-teardown/25/) - Chip progression by board revision; AVDC-NUS RGB tap rationale; AVDC-NUS/MAV-NUS shared pinout observation.  
+* [Pacal - BitBuilt 2022 Summer Building Competition - Odyssey 64](https://bitbuilt.net/forums/threads/2022-contest-entry-odyssey-64.5061/) - NUS-CPU-05 board; D143G8/D147G8I crystal stamps.  
+* [Miceeno - BitBuilt Forums - N64 Expansion Paks RAM Part Numbers](https://bitbuilt.net/forums/threads/n64-expansion-paks-ram-part-numbers.3943/post-44749) - NUS-CPU-05 board; D143G9/D147H9; MAV-NUS on confirmed NUS-CPU-05.  
+* [Chunky-Soups - Reddit r/n64](https://www.reddit.com/r/n64/comments/1awwnao/does_this_n64_have_any_raritysignificance/) - NUS-CPU-09 board; D143J0/D147J0; MAV-NUS BU9906F confirmed.  
+* [jasnetinfo.com - N64 RGB Install Guide](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; D143G7/D147E7; circular-M marking on X1.  
 
 #### 7.2.1 Personal resources
 
