@@ -154,7 +154,7 @@ Hardware constants derived from f_xtal and the Video Interface (VI) registers.
 ![Figure 1](/figures/fig1_clock_gen_schematic.png)  
 *N64 Clock Generation Circuits - U7 & U15 (Macronix MX8330MC). Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
 
-> Some later N64 revisions replaced the U7 MX8330MC with the pin-compatible Macronix MX9911MC. Still later revisions consolidated both clocks into a single MX8350 dual-channel synthesizer (see §3.1.1).  
+> Some later N64 revisions replaced one or both MX8330MCs with the pin-compatible Macronix MX9911MC. Still later revisions consolidated both clocks into a single MX8350 dual-channel synthesizer (see §3.1.1).  
 
 * NTSC Clock Precision: 315/22 MHz (exact) (≈ 14.3181818182 MHz)  
 * PAL Clock Precision: 17,734,475 Hz (exact) = 17.734475 MHz  
@@ -162,7 +162,7 @@ Hardware constants derived from f_xtal and the Video Interface (VI) registers.
 
 #### 3.1.1 Clock Generator Hardware Revisions  
 
-Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce f_vi. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. X1 varies by region: 315/22 MHz for NTSC and PAL-M; 17,734,475 Hz for PAL. U7 is MX8330MC on NUS-CPU-01 through NUS-CPU-04 and NUS-CPU-07, and MX9911MC on at least NUS-CPU-05 and 05-1 (NUS-CPU-06 and NUS-CPU-07 U7 use likely but not confirmed).
+Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce f_vi. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. X1 varies by region: 315/22 MHz for NTSC and PAL-M; 17,734,475 Hz for PAL. U7 is MX8330MC on NUS-CPU-01 through NUS-CPU-04, and MX9911MC on NUS-CPU-05 and NUS-CPU-05-1. U7 chip identity on NUS-CPU-06 and NUS-CPU-07 is not confirmed from available board photos. On NUS-CPU-05, U15 retains MX8330MC; on NUS-CPU-05-1, U15 appears to be MX9911MC. See §3.5.1.1 for visual identification.
 
 The MX9911MC is a Macronix single-channel clock synthesizer (P/N PM0463, Aug 1997) that is pin- and function-compatible with the MX8330MC: identical pinout, FSEL logic, FSC and FSO/5 outputs, and 5 ms power-up stabilization.  
 
@@ -275,7 +275,7 @@ X1 and X2 stamp codes follow the format `DFFFMY(I)`, where:
 
 | Field | Description                                                                        |
 | :---  | :---                                                                               |
-| `D`   | Almost always `D`. Theorized to be manufacturer prefix (Daishinku)                 |  
+| `D`   | Almost always `D`, occasional `(M)`, in one MPAL example `circular-M` and `D` are adjacent |  
 | `FFF` | Frequency in abbreviated MHz (e.g. 143 = 14.3 MHz, 147 = 14.7 MHz, 177 = 17.7 MHz) |
 | `M`   | Month of manufacture (A-M, skipping I; A = January through M = December)           |  
 | `Y`   | Last digit of year of manufacture (e.g. 6 = 1996, 0 = 2000)                        |  
@@ -283,7 +283,9 @@ X1 and X2 stamp codes follow the format `DFFFMY(I)`, where:
 
 The I-skip in the month field is consistent with standard alphanumeric date code convention, where I is omitted to avoid ambiguity with the numeral 1. The "I" character has been observed as an appended suffix on some codes after an otherwise complete valid code (e.g. D143L6I, D147J9I, D143K9I, D147F0I); its meaning is not established. It appears across X1 and X2 independently, across multiple revisions and years, with no observable clustering by revision, region, or date, consistent with a grade, inspection, or batch marker applied at the component level.  
 
-The decode convention is consistent across all three regional crystal frequencies (14.3 MHz, 14.7 MHz, 17.7 MHz) and across the full known production span of the hardware (1996-2000). The circular-M manufacturer observed on some PAL-M boards follows the same format; establishing the convention as industry-wide rather than manufacturer-specific.  
+The decode convention is consistent across all three regional crystal frequencies (14.3 MHz, 14.7 MHz, 17.7 MHz) and across the full known production span of the hardware (1996-2000). 
+
+> The circular-M marking observed on some PAL-M boards is still under investigation; one plausible expansion is that it refers to MPAL-specific crystals in order to distinguish these X1 units from NTSC ICs.
 
 ##### 3.5.1.3 X1 and X2 Stamp Codes by Revision
 
@@ -301,13 +303,15 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 | NUS-CPU-03 | D143H6 | D147F6 | Aug 1996 | Jun 1996 | |
 | NUS-CPU-04 | D143H6 | D147J6 | Aug 1996 | Sep 1996 | |
 | NUS-CPU-04 | D143J7 | D147J7 | Sep 1997 | Sep 1997 | |
+| NUS-CPU-04 | D143K7 | D147K7 | Oct 1997 | Oct 1997 | |
 | NUS-CPU-04 | D143L6I | D147J7 | Nov 1996 | Sep 1997 | I-suffix on X1 |
-| NUS-CPU-05 | D143D8 | D147M7I | Apr 1998 | Dec 1997 | Provisional; MX9911MC present; revision inferred from chip and date |
+| NUS-CPU-05 | D143D8 | D147M7I | Apr 1998 | Dec 1997 | Provisional; U7 MX9911MC; revision inferred from chip and date |
 | NUS-CPU-05 | D143G8 | D147H8 | Jul 1998 | Aug 1998 | |
-| NUS-CPU-05 | D143G9 | D147H9 | Jul 1999 | Aug 1999 | |
+| NUS-CPU-05 | D143G9 | D147H9 | Jul 1999 | Aug 1999 | U15 = MX8330MC |
 | NUS-CPU-05 | D143J8 | D147J8 | Sep 1998 | Sep 1998 | |
 | NUS-CPU-05 | D143K8 | D147K8 | Oct 1998 | Oct 1998 | |
-| NUS-CPU-06? | D143K8 | D147M8 | Oct 1998 | Dec 1998 | Revision unconfirmed; MX9911MC present; date consistent with 06 |
+| NUS-CPU-05 or 05-1 | D143L8 | D147K8 | Nov 1998 | Oct 1998 | Revision marking not visible; U15 MX9911MC confirmed |
+| NUS-CPU-06? | D143K8 | D147M8 | Oct 1998 | Dec 1998 | Revision unconfirmed; U7 MX9911MC; date consistent with 06 |
 | NUS-CPU-07 | - | - | - | - | Board image available; stamp codes obscured by glare |
 | NUS-CPU-08 | D143F9 | D147F9 | Jun 1999 | Jun 1999 | MX8350 present |
 | NUS-CPU-08 | D143H9 | D147J9 | Aug 1999 | Sep 1999 | X2 year inferred |
@@ -320,7 +324,8 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 | NUS-CPU(P)-01 | D177J7 | D147J7 | Sep 1997 | Sep 1997 | PAL |
 | NUS-CPU(P)-02 | D177J9 | D147J9I | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
 | NUS-CPU(M)-01 | D143G6 | D147G6 | Jul 1996 | Jul 1996 | PAL-M; two MX8330MCs confirmed |
-| NUS-CPU(M)-02 | removed | D147F7 | - | Jun 1997 | PAL-M; X1 depopulated; X2 ~75-80% confidence |
+| NUS-CPU(M)-02 | removed | D147F7 | - | Jun 1997 | PAL-M; X1 absent on this unit |
+| NUS-CPU(M)-02? | D143G7 | D147E7 | Jul 1997 | May 1997 | PAL-M; provisional; revision marking not visible |
 | NUS-CPU(M)-05-1 | (M)143G0 | D147F0I | Jul 2000 | Jun 2000 | PAL-M; circular-M manufacturer on X1; I-suffix on X2 |
 
 X1 and X2 date codes on individual boards cluster tightly, typically within one to two months of each other. This is consistent with batch component sourcing and provides independent corroboration of the decode. The crystal date progression across revisions also tracks known board revision chronology: NUS-CPU-01 through -04 uniformly yield 1996-1997 dates; NUS-CPU-05 yields 1998-1999; NUS-CPU-08 onward yields 1999-2000. The MHz field is self-evident from the regional clock frequency; the month and year fields are validated by this revision-anchored progression. The decode is therefore strongly self-corroborating across the current corpus.  
@@ -876,7 +881,7 @@ A quick reference for terminology used in this document.
 
 * **S (Half-Lines per Vertical Scan):** Symbol for the total half-line count per vertical scan cycle, as programmed via the `VI_V_TOTAL` register. The effective value is `VI_V_TOTAL` + 1 (terminal-count convention). S / 2 gives the number of full scanlines. Values are 526 / 525 (NTSC and PAL-M progressive / interlaced) and 626 / 625 (PAL). *See also: Half-line, Terminal Count.*
 
-* **S-Video:** Two-channel analog video interface that carries luminance (Y) and chrominance (C) as separate signals, mitigating chroma/luma quality loss via composite's single-channel muxing. On N64 hardware, S-Video output is generated natively by the DENC-NUS, AVDC-NUS, and MAV-NUS encoder variants. The VDC-NUS + ENC-NUS two-chip path found on NUS-CPU-01 through NUS-CPU-04 produces composite and S-Video, but not RGB without modification.  
+* **S-Video:** Two-channel analog video interface that carries luminance (Y) and chrominance (C) as separate signals, mitigating chroma/luma quality loss via composite's single-channel muxing. On N64 hardware, S-Video output is generated natively by the DENC-NUS, AVDC-NUS, and MAV-NUS encoder variants. RGB is available between the VDC-NUS and ENC-NUS but is not routed to the AV connector without modification.  
 
 * **Terminal Count:** A register convention used by the N64's Video Interface in which the stored value is one less than the effective hardware count. To derive the actual number of clocks or half-lines, add 1 to the register value: effective half-lines = `VI_V_TOTAL` + 1; effective clocks per line = `VI_H_TOTAL` + 1. Timing derivations in this document apply this correction before calculation.  
 
