@@ -292,7 +292,7 @@ The I-skip in the month field is consistent with standard alphanumeric date code
 
 The decode convention is consistent across all three regional crystal frequencies (14.3 MHz, 14.7 MHz, 17.7 MHz) and across the full known production span of the hardware (1996-2000). 
 
-⁴ The circular-M (`Ⓜ`) marking observed on some PAL-M boards is still under investigation; one plausible expansion is an `M`PAL-specific marking (using an available glyph) in order to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (D143K7 could be either NTSC or PAL-M, whereas the presence of Ⓜ disambiguates). 
+⁴ The circular-M (`Ⓜ`) marking observed on some PAL-M boards is still under investigation; one plausible expansion is an `M`PAL-specific marking (using an available glyph) in order to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (D143K7 could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). 
 
 ⁵ Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place* of `D`.
 
@@ -339,18 +339,18 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 | NUS-CPU-08-1 | D143K9I | D147K9I | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
 | NUS-CPU-09 | D143J0 | D147J0 | Sep 2000 | Sep 2000 | |
 | NUS-CPU-09 | D143J0I | D147K0 | Sep 2000 | Oct 2000 | I-suffix on X1 |
-| NUS-CPU-09-1 | D143H0I | D147H0 | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1; PIF-NUS A0027 EA (wk 27, 2000); CPU-NUS A 0002XK020 (wk 2, 2000); RCP-NUS 9949KK008 (wk 49, 1999); RDRAM36 9949KU621; AMP-NUS (M) 90.6 (Matsushita brand logo, confirmed by Prominos); TI LV125A 9AK DE6J; MAV-NUS RS5C382 9MS 9Y; MX8350MC 43B TA245201 |
+| NUS-CPU-09-1 | D143H0I | D147H0 | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1; PIF-NUS A0027 EA ( `0027` NEC datecode convention: wk 27, 2000); CPU-NUS A 0002XK020 (wk 2, 2000); RCP-NUS 9949KK008 (wk 49, 1999); RDRAM36 9949KU621; AMP-NUS `Ⓜ` 90.6 (`Ⓜ` here is the Matsushita brand logo, confirmed by Prominos); TI LV125A 9AK DE6J; MAV-NUS RS5C382 9MS 9Y; MX8350MC 43B TA245201 |
 | NUS-CPU-09-1 | D143K0I | D147L0 | Oct 2000 | Nov 2000 | I-suffix on X1 |
 | NUS-CPU(R)-01 | D177G7 | D147E7 | Jul 1997 | May 1997 | PAL, NUS-001(FRA) |
 | NUS-CPU(P)-01 | D177J7 | D147J7 | Sep 1997 | Sep 1997 | PAL; modretro_13 |
 | NUS-CPU(P)-01 | D177G8 | D147M7I | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
 | NUS-CPU(P)-02 | D177J9 | D147J9I | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
-| NUS-CPU(P)-02? | D177J9 | - | Sep 1999 | - | ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS 9940E (`9940`, likely YYWW: Oct 99); (P)-03 not excluded |
+| NUS-CPU(P)-02? | D177J9 | - | Sep 1999 | - | ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS 9940E (wk 40, 1999); (P)-03 not excluded |
 | NUS-CPU(P)-03-1 | - | - | - | - | ID: modretro_14. Board image available; stamp codes illegible |
 | NUS-CPU(M)-01 | D143G6 | D147G6 | Jul 1996 | Jul 1996 | PAL-M; two MX8330MCs confirmed |
 | NUS-CPU(M)-02 | removed | D147F7 | - | Jun 1997 | PAL-M; X1 absent on this unit |
 | NUS-CPU(M)-02? | D143G7 | D147E7 | Jul 1997 | May 1997 | PAL-M; provisional; revision marking not visible |
-| NUS-CPU(M)-05-1 | (M)143G0 | D147F0I | Jul 2000 | Jun 2000 | PAL-M; Ⓜ marking on X1; I-suffix on X2 |
+| NUS-CPU(M)-05-1 | (M)143G0 | D147F0I | Jul 2000 | Jun 2000 | PAL-M; `Ⓜ` marking on X1; I-suffix on X2 |
 
 X1 and X2 date codes on individual boards cluster tightly, typically within one to two months of each other. This is consistent with batch component sourcing and provides independent corroboration of the decode. The crystal date progression across revisions also tracks known board revision chronology: NUS-CPU-01 through -04 uniformly yield 1996-1997 dates; NUS-CPU-05 yields 1998-1999; NUS-CPU-08 onward yields 1999-2000. The MHz field is self-evident from the regional clock frequency; the month and year fields are validated by this revision-anchored progression. The decode is therefore strongly self-corroborating across the current corpus.  
 
