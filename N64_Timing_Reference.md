@@ -810,6 +810,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | Figure 5a | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Electronic Solutions, [Installing RGB Converter v2 on Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | Figure 5b | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal oscillators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
 | Figure 6 | `fig29_raster_scan_progressive_ian_harvey.png` | *Progressive raster scan: electron beam traversal, horizontal retrace, and vertical retrace (Source: Ian Harvey, Wikimedia Commons, [CC0](https://commons.wikimedia.org/wiki/File:Raster-scan.svg))* |  
+| Figure 7 | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
 
 ### 7.2 References
 
@@ -860,9 +861,9 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of rare MPAL model, shared by Mielke (MiSTer FPGA Discord).
 * [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of rare MPAL model, shared by grav (Discord64 Discord).
 * [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of rare 09-1 model, shared by Aringon (Video Game Preservation Collective Discord).
-* [Console Mods - SNES Model Differences](consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.
+* [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.
 
-![S-RGB A in SNS-CPU-RGB-01](/figures/fig33_S-RGB_A-SNS.png)  
+![Figure 7](/figures/fig33_S-RGB_A-SNS.png)  
 *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))*
 
 #### 7.2.1 Personal resources
