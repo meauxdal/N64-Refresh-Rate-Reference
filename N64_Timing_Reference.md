@@ -162,11 +162,9 @@ Hardware constants derived from f_xtal and the Video Interface (VI) registers.
 
 #### 3.1.1 Clock Generator Hardware Revisions  
 
-Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce f_vi. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. X1 varies by region: 315/22 MHz for NTSC and PAL-M; 17,734,475 Hz for PAL. U7 is MX8330MC on NUS-CPU-01 through NUS-CPU-04, and MX9911MC on NUS-CPU-05 and NUS-CPU-05-1. U7 chip identity on NUS-CPU-06 and NUS-CPU-07 is not confirmed from available board photos. U15 on NUS-CPU-07 is MX8330MC per ChipWorks professional teardown (NUS-CPU-07 Annotated PCB, Rev 1.0, Nov 2000); U7 is not annotated in that document and is unconfirmed. On NUS-CPU-05, U15 retains MX8330MC; NUS-CPU-05-1 includes *at least* one MX9911MC (at U7), but may also include another at U15. See §3.5.1.1 for visual identification.
+Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce f_vi. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. X1 varies by region: 315/22 MHz for NTSC and PAL-M; 17,734,475 Hz for PAL. U7 is MX8330MC on NUS-CPU-01 through NUS-CPU-04, and MX9911MC on NUS-CPU-05 and NUS-CPU-05-1. U7 chip identity on NUS-CPU-06 and NUS-CPU-07 is not confirmed from available board photos. U15 on NUS-CPU-07 is MX8330MC per ChipWorks professional teardown (NUS-CPU-07 Annotated PCB, Rev 1.0, Nov 2000); U7 is not annotated in that document and is unconfirmed. On NUS-CPU-05, U15 retains MX8330MC; NUS-CPU-05-1 includes *at least* one MX9911MC (at U7), but may also include another at U15. See §3.5.1.1 for visual identification. MX9911MC is also confirmed at U7 on at least one NUS-CPU(P)-01 unit (`D177G8`/`D147M7I`), implying a similar changeover timeline.  
 
-The MX9911MC is a Macronix single-channel clock synthesizer that is pin- and function-compatible with the MX8330MC: identical pinout, FSEL logic, FSC and FSO/5 outputs, and 5 ms power-up stabilization.  
-
-Later revisions (NUS-CPU-08 onward, 1999+) consolidated video clock generation into a single MX8350 dual-channel chip with identical outputs.  
+The MX9911MC is a Macronix single-channel clock synthesizer that is pin- and function-compatible with the MX8330MC: identical pinout, FSEL logic, FSC and FSO/5 outputs, and 5 ms power-up stabilization. Later revisions (NUS-CPU-08 onward, 1999+) consolidated video clock generation into a single MX8350 dual-channel chip.  
  
 ![Figure 1a](/figures/fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: MX8350 datasheet*  
@@ -283,16 +281,16 @@ X1 and X2 stamp codes follow the format `(P)(D)FFFMY(I)`, where:
 | :---  | :---                                                                                      |  
 | `P`   | Always `Ⓜ`. Only yet observed on some PAL-M units⁴                                  |  
 | `D`   | Always `D`⁵                                                                               |  
-| `FFF` | Frequency in abbreviated MHz (e.g. 143 = 14.3 MHz, 147 = 14.7 MHz, 177 = 17.7 MHz)        |  
-| `M`   | Month of manufacture (A-M, skipping I; A = January through M = December)                  |  
-| `Y`   | Last digit of year of manufacture (e.g. 6 = 1996, 0 = 2000)                               |  
+| `FFF` | Frequency in abbreviated MHz (e.g. `143` = 14.3 MHz, `147` = 14.7 MHz, `177` = 17.7 MHz)        |  
+| `M`   | Month of manufacture (`A`-`M`, skipping `I`. `A`: January; through `M`: December)                  |  
+| `Y`   | Last digit of year of manufacture (e.g. `6` = 1996, `0` = 2000)                               |  
 | `I`   | Always `I`. Uncommon; appears without obvious pattern; meaning not established            |  
 
-The I-skip in the month field is consistent with standard alphanumeric date code convention, where I is omitted to avoid ambiguity with the numeral 1. The "I" character has been observed as an appended suffix on some codes after an otherwise complete valid code (e.g. D143L6I, D147J9I, D143K9I, D147F0I); its meaning is not established. It appears across X1 and X2 independently, across multiple revisions and years, with no observable clustering by revision, region, or date, consistent with a grade, inspection, or batch marker applied at the component level.  
+The I-skip in the month field is a noted date code convention, where `I` is omitted to avoid ambiguity with numeral `1`. The `I` character is observed as suffix on some codes after an otherwise complete code (e.g. `D143L6I`, `D147J9I`, `D143K9I`, `D147F0I`); its meaning is not known. It appears across X1 and X2 independently, across multiple revisions and years, with no observable clustering by revision, region, or date, consistent with a grade, inspection, or batch marker applied at the component level.  
 
 The decode convention is consistent across all three regional crystal frequencies (14.3 MHz, 14.7 MHz, 17.7 MHz) and across the full known production span of the hardware (1996-2000). 
 
-⁴ The circular-M (`Ⓜ`) marking observed on some PAL-M boards is still under investigation; one plausible expansion is an `M`PAL-specific marking (using an available glyph) in order to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (D143K7 could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). 
+⁴ The circular-M (`Ⓜ`) marking observed on some PAL-M boards is still under investigation; one plausible expansion is an `M`PAL-specific marking (using an available glyph) in order to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (`D143K7` could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). 
 
 ⁵ Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place* of `D`.
 
@@ -308,51 +306,59 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | Two units confirmed; identical codes |
-| NUS-CPU-01 | D143B6 | D147B6 | Feb 1996 | Feb 1996 | |
-| NUS-CPU-02 | D143C6 | D147B6 | Mar 1996 | Feb 1996 | |
-| NUS-CPU-02 | D143F6 | D147E6 | Jun 1996 | May 1996 | ID: TexasToTheWorld_01 |
-| NUS-CPU-02 | D143K6 | D147K6 | Oct 1996 | Oct 1996 | |
-| NUS-CPU-03 | D143A6 | D147A6 | Jan 1996 | Jan 1996 | |
-| NUS-CPU-03 | D143F6 | D147E6 | Jun 1996 | May 1996 | |
-| NUS-CPU-03 | D143G6 | D147F6 | Jul 1996 | Jun 1996 | |
-| NUS-CPU-03 | D143H6 | D147F6 | Aug 1996 | Jun 1996 | |
-| NUS-CPU-04 | D143H6 | D147J6 | Aug 1996 | Sep 1996 | |
-| NUS-CPU-04 | D143L6I | D147J7 | Nov 1996 | Sep 1997 | I-suffix on X1 |
-| NUS-CPU-04 | D143J7 | D147J7 | Sep 1997 | Sep 1997 | |
-| NUS-CPU-04 | D143K7 | D147K7 | Oct 1997 | Oct 1997 | |
-| NUS-CPU-05 | D143D8 | D147M7I | Apr 1998 | Dec 1997 | Provisional; U7 MX9911MC; revision inferred from chip and date |
-| NUS-CPU-05 | D143G8 | D147G8I | Jul 1998 | Jul 1998 | I-suffix on X2 |
-| NUS-CPU-05 | D143G8 | D147H8 | Jul 1998 | Aug 1998 | |
-| NUS-CPU-05 | D143J8 | D147J8 | Sep 1998 | Sep 1998 | |
-| NUS-CPU-05 | D143K8 | D147K8 | Oct 1998 | Oct 1998 | |
-| NUS-CPU-05 | D143G9 | D147H9 | Jul 1999 | Aug 1999 | AVDC-NUS and MAV-NUS both observed on NUS-CPU-05 units |
-| NUS-CPU-05-1 | D143L8 | D147K8 | Nov 1998 | Oct 1998 | Revision marking not visible; U15 MX9911MC confirmed |
-| NUS-CPU-06 | - | - | - | - | ID: modretro_15. Board image available; stamp codes illegible |
-| NUS-CPU-06? | D143D9 | - | Apr 1999 | - | ID: lightslab_01. MX9911MC confirmed; X2 not visible; date and chip consistent with 06 |
-| NUS-CPU-06? | D143K8 | D147M8 | Oct 1998 | Dec 1998 | Revision unconfirmed; U7 MX9911MC; date consistent with 06 |
-| NUS-CPU-07 | - | - | - | - | Board image available; stamp codes illegible |
-| NUS-CPU-08 | D143F9 | D147F9 | Jun 1999 | Jun 1999 | MX8350 present in 08 onward |
-| NUS-CPU-08 | D143H9 | D147J9 | Aug 1999 | Sep 1999 | X2 year inferred |
-| NUS-CPU-08 | D143L9 | D147L9 | Nov 1999 | Nov 1999 | |
-| NUS-CPU-08-1 | D143H9 | D147H9 | Aug 1999 | Aug 1999 | |
-| NUS-CPU-08-1 | D143K9I | D147K9I | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
-| NUS-CPU-09 | D143J0 | D147J0 | Sep 2000 | Sep 2000 | |
-| NUS-CPU-09 | D143J0I | D147K0 | Sep 2000 | Oct 2000 | I-suffix on X1 |
-| NUS-CPU-09-1 | D143H0I | D147H0 | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1; PIF-NUS A0027 EA ( `0027` NEC datecode convention: wk 27, 2000); CPU-NUS A 0002XK020 (wk 2, 2000); RCP-NUS 9949KK008 (wk 49, 1999); RDRAM36 9949KU621; AMP-NUS `Ⓜ` 90.6 (`Ⓜ` here is the Matsushita brand logo, confirmed by Prominos); TI LV125A 9AK DE6J; MAV-NUS RS5C382 9MS 9Y; MX8350MC 43B TA245201 |
-| NUS-CPU-09-1 | D143K0I | D147L0 | Oct 2000 | Nov 2000 | I-suffix on X1 |
-| NUS-CPU(R)-01 | D177G7 | D147E7 | Jul 1997 | May 1997 | PAL, NUS-001(FRA) |
-| NUS-CPU(P)-01 | D177J7 | D147J7 | Sep 1997 | Sep 1997 | PAL; modretro_13 |
-| NUS-CPU(P)-01 | D177G8 | D147M7I | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
-| NUS-CPU(P)-02 | D177J9 | D147J9I | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
-| NUS-CPU(P)-02? | D177J9 | - | Sep 1999 | - | ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS 9940E (wk 40, 1999); (P)-03 not excluded |
-| NUS-CPU(P)-03-1 | - | - | - | - | ID: modretro_14. Board image available; stamp codes illegible |
-| NUS-CPU(M)-01 | D143G6 | D147G6 | Jul 1996 | Jul 1996 | PAL-M; two MX8330MCs confirmed |
-| NUS-CPU(M)-02 | removed | D147F7 | - | Jun 1997 | PAL-M; X1 absent on this unit |
-| NUS-CPU(M)-02? | D143G7 | D147E7 | Jul 1997 | May 1997 | PAL-M; provisional; revision marking not visible |
-| NUS-CPU(M)-05-1 | (M)143G0 | D147F0I | Jul 2000 | Jun 2000 | PAL-M; `Ⓜ` marking on X1; I-suffix on X2 |
+| NUS-CPU-01 | `D143A6` | `D147B6` | Jan 1996 | Feb 1996 | ID: Prominos_01 *(Initial configuration: CPU-NUS; RCP-NUS; 2x RDRAM18-NUS A; VDC-NUS; ENC-NUS; BU9480F; AMP-NUS; 2x MX8330MC; Sharp PQ7VZ5 (marking: `7VZ5`); TI SN74LVC125 (marking: `LC125`))* |
+| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 |  [Photo by Yaca2671, CC BY-SA 3.0 (Wikimedia)](https://commons.wikimedia.org/w/index.php?curid=5777930) |
+| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 |  ID: modretro_01 |
+| NUS-CPU-02 | `D143B6` | `D147C6` | Feb 1996 | Mar 1996 | |
+| NUS-CPU-02 | `D143C6` | `D147B6` | Mar 1996 | Feb 1996 | |
+| NUS-CPU-02 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | ID: cy_01 |
+| NUS-CPU-02 | `D143K6` | `D147K6` | Oct 1996 | Oct 1996 | |
+| NUS-CPU-03 | `D143A6` | `D147A6` | Jan 1996 | Jan 1996 | *CPU-NUS A and VDC-NUS A are introduced mid-03 run with no board rev. bump* |
+| NUS-CPU-03 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | |
+| NUS-CPU-03 | `D143G6` | `D147F6` | Jul 1996 | Jun 1996 | |
+| NUS-CPU-03 | `D143H6` | `D147F6` | Aug 1996 | Jun 1996 | |
+| NUS-CPU-03 | `D143L6` | `D147L6` | Nov 1996 | Nov 1996 | ID: Prominos_03 |
+| NUS-CPU-04 | `D143H6` | `D147J6` | Aug 1996 | Sep 1996 | |
+| NUS-CPU-04 | `D143L6I` | `D147J7` | Nov 1996 | Sep 1997 | I-suffix on X1 |
+| NUS-CPU-04 | `D143J7` | `D147J7` | Sep 1997 | Sep 1997 | ID: Prominos_04 |
+| NUS-CPU-04 | `D143K7` | `D147K7` | Oct 1997 | Oct 1997 | |
+| NUS-CPU-05 | `D143G8` | `D147G8I` | Jul 1998 | Jul 1998 | I-suffix on X2 *(U7 MX9911MC likely present on [05, 07] inclusive. U1 AVDC-NUS is a positive identifier of NUS-CPU-05; however U1 may be either AVDC-NUS (earlier serials) or MAV-NUS (later serials))* |
+| NUS-CPU-05 | `D143G8` | `D147H8` | Jul 1998 | Aug 1998 | |
+| NUS-CPU-05 | `D143J8` | `D147J8` | Sep 1998 | Sep 1998 | |
+| NUS-CPU-05 | `D143K8` | `D147K8` | Oct 1998 | Oct 1998 | |
+| NUS-CPU-05 | `D143L8` | `D147L8` | Nov 1998 | Nov 1998 | ID: Prominos_05 |
+| NUS-CPU-05 | `D143G9` | `D147H9` | Jul 1999 | Aug 1999 | |
+| NUS-CPU-05-1 | `D143C9` | `D147C9` | Mar 1999 | Mar 1999 | ID: Prominos_05-1 |
+| NUS-CPU-05-1? | `D143L8` | `D147K8` | Nov 1998 | Oct 1998 | Revision not visible; U7+U15 both MX9911MC (never seen on pre-05-1 boards) |
+| NUS-CPU-06 | - | - | - | - | Board image available; stamp codes illegible |
+| NUS-CPU-07 | - | - | - | - | Board images available; stamp codes illegible |
+| NUS-CPU-08 | `D143F9` | `D147F9` | Jun 1999 | Jun 1999 | *MX8350 present in 08 onward* |
+| NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08; I-suffix on both |
+| NUS-CPU-08 | `D143H9` | `D147J9` | Aug 1999 | Sep 1999 | X2 year inferred |
+| NUS-CPU-08 | `D143L9` | `D147L9` | Nov 1999 | Nov 1999 | |
+| NUS-CPU-08-1 | `D143H9` | `D147H9` | Aug 1999 | Aug 1999 | |
+| NUS-CPU-08-1 | `D143K9` | `D147J9` | Oct 1999 | Sep 1999 | ID: Prominos_08-1 |
+| NUS-CPU-08-1 | `D143K9I` | `D147K9I` | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
+| NUS-CPU-09 | `D143J0` | `D147H0` | Sep 2000 | Aug 2000 | ID: Prominos_09 |
+| NUS-CPU-09 | `D143J0` | `D147J0` | Sep 2000 | Sep 2000 | |
+| NUS-CPU-09 | `D143J0I` | `D147K0` | Sep 2000 | Oct 2000 | I-suffix on X1 |
+| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1. All visible IC marks with likely decodes: `PIF-NUS A0027 EA` (`0027` NEC date code convention: wk 27, 2000); `CPU-NUS A 0002XK020` (wk 2, 2000); `RCP-NUS 9949KK008` (wk 49, 1999); `RDRAM36 9949KU621`; `AMP-NUS Ⓜ 90.6`⁶; `TI LV125A 9AK DE6J`; `MAV-NUS RS5C382 9MS 9Y`; `MX8350MC 43B TA245201` |
+| NUS-CPU-09-1 | `D143K0I` | `D147L0` | Oct 2000 | Nov 2000 | I-suffix on X1 |
+| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: kwyjibo_01 |
+| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01 |
+| NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; modretro_13 |
+| NUS-CPU(P)-01 | `D177G8` | `D147M7I` | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
+| NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
+| NUS-CPU(P)-02? | `D177J9` | - | Sep 1999 | - | PAL; ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS (marking: `9940 E`; date code: wk 40, 1999); (P)-03 not excluded. U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`; wk 21, 1999?); only non-Texas Instruments part observed at U8 in corpus |
+| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_14. Board image available; stamp codes illegible *(MX8350 present.)* |
+| NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01; two MX8330MCs confirmed |
+| NUS-CPU(M)-02 | removed | `D147F7` | - | Jun 1997 | PAL-M; ID: gbonifa_01; X1+U6 absent (junk unit) |
+| NUS-CPU(M)-02? | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: jasnet_01; revision not visible. Markings: `1997 Nintendo`; `PIF(M)-NUS 9739 D`; `VDC-NUS A BU9801F 727 120`; `ENC-NUS 735 161`; `9480F 7935`; `MX8330MC TEC0968L` (2x); `AMP-NUS 726 180`; `TA78M05F 7I`; `287C` |
+| NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
 
 X1 and X2 date codes on individual boards cluster tightly, typically within one to two months of each other. This is consistent with batch component sourcing and provides independent corroboration of the decode. The crystal date progression across revisions also tracks known board revision chronology: NUS-CPU-01 through -04 uniformly yield 1996-1997 dates; NUS-CPU-05 yields 1998-1999; NUS-CPU-08 onward yields 1999-2000. The MHz field is self-evident from the regional clock frequency; the month and year fields are validated by this revision-anchored progression. The decode is therefore strongly self-corroborating across the current corpus.  
+
+⁶ The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo (confirmed by Prominos). It is unrelated the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote ⁴).  
 
 #### 3.5.2 X1 Oscillator Tolerance
 
@@ -375,7 +381,7 @@ Values derived in §5 are exact by construction, representing irreducible fracti
 MX8330MC and MX9911MC clock generators require an approximately 5 millisecond stabilization period after power-on before FSO reaches steady operation and the derived VI clock domain stabilizes. This occurs during the IPL startup sequence, prior to the first visible scanline. This behavior is not accounted for in the MX8350 datasheet. 
 
 ![Figure 1c](/figures/fig25_mx8330mc_macro_prominos.jpg)  
-*MX8330MC (U7); 8-pin SOP package; lot code TEB61102. Source: Prominos (VGPC Discord)*  
+*MX8330MC (U7); 8-pin SOP package; lot code TEB61102. Source: Prominos (Video Game Preservation Collective Discord)*  
 
 
 ### 3.6 Diagnostics  
@@ -776,8 +782,8 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 | :--- | :--- | :--- |  
 | Figure 1 | `fig1_clock_gen_schematic.png` | *N64 Clock Generation Circuits - U7 (NTSC/PAL-M) and U15 (PAL) (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
 | Figure 1a | `fig6_mx8350_table.png` | *MX8350 output frequencies for NTSC/PAL/MPAL configurations (Source: MX8350 datasheet)* |  
-| Figure 1b | `fig8_mx8330MC_table.png` | *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient (Source: MX8330MC datasheet)* |  
-| Figure 1c | `fig25_mx8330mc_macro_prominos.jpg` | *MX8330MC (U7); 8-pin SOP package; lot code TEB61102 (Source: Prominos, VGPC Discord)* |  
+| Figure 1b | `fig8_mx8330MC_table.png` | *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient (Source: [MX8330MC datasheet](/references/Macronix-MX8330MC-ocr.pdf))* |  
+| Figure 1c | `fig25_mx8330mc_macro_prominos.jpg` | *MX8330MC (U7); 8-pin SOP package; lot code TEB61102 (Source: Prominos, Video Game Preservation Collective Discord, (imgur.com)[https://imgur.com/a/YpyuRET])* |  
 | Figure 2 | `fig2_rcp_schematic.png` | *RCP-NUS Pinout showing VDC (Video Digital Complex) Timing Outputs (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
 | Figure 2a | `fig9_rcp_vdc_schematic.png` | *Video Digital Complex (VDC) pin assignments showing 7-bit digital video output (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
 | Figure 2b | `fig13_n64videosys.png` | *N64 Video System - 4-cycle VDC bus protocol, VDC_DSYNC waveform, and byte contents (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
@@ -786,7 +792,7 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 | Figure 2e | `fig17_ENC-NUS.png` | *ENC-NUS (U5) in circuit - YOUT (luma/S-Video Y) and VOUT (composite video) outputs; SCIN subcarrier input via R13/R12 divider (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
 | Figure 2f | `fig15_denc-nus.png` | *DENC-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
 | Figure 2g | `fig16_mav-nus.png` | *MAV-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
-| Figure 2h | `fig27_n64rgb_vdc_serial_to_parallel_worthington.png` | *VDC bus serial-to-parallel protocol; 4-cycle byte structure with sync and RGB channel contents (Source: Tim Worthington, RGB Video DAC for Nintendo 64, Revision 0, 27/1/07)* |  
+| Figure 2h | `fig27_n64rgb_vdc_serial_to_parallel_worthington.png` | *VDC bus serial-to-parallel protocol; 4-cycle byte structure with sync and RGB channel contents (Source: Tim Worthington, [RGB Video DAC for Nintendo 64, Revision 0, 27/1/07](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc))* |  
 | Figure 2i | `fig28_n64-nus-03_video_output_circuit_worthington.png` | *NUS-CPU-03 video output circuit: VDC-NUS (U4, BU9801F) to ENC-NUS (U5); R13/R12 divider; RGB output resistors; LUMINANCE/COMPOSITE/CHROMINANCE outputs (Source: Tim Worthington, GameSX Wiki, N64 RGB NTSC, [gamesx.com](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc))* |
 | Figure 3 | `fig3_n64_default_libdragon_240p_timing.png` | *N64 VI Timing Diagram (NTSC Progressive) (Source: lidnariq via ares emulator Discord server; reverse-engineered via hardware probing)* |  
 | Figure 4  | `fig22_VI_BURST-overlapping-H_START_devwizard.png` | *`VI_BURST` overlapping H_START (Source: devwizard / N64brew.dev Discord [youtube.com mirror](https://youtu.be/hSFQPQb00ns))*  |  
@@ -835,18 +841,19 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * [Martin Hinner - VGA/PAL](https://martin.hinner.info/vga/pal.html) - PAL video timing specification (sourced from R. Salmon, sci.engr.television.broadcast, 1996).  
 * [Alan Pemberton - World TV Standards](https://web.archive.org/web/20160512200958/http://www.pembers.freeserve.co.uk/World-TV-Standards/) - Detailed information on broadcast standards; HBI and VBI visualizations.  
 * [David - EEVblog Forums - Nintendo 64 Game Console Teardown](https://www.eevblog.com/forum/blog/eevblog-491-nintendo-64-game-console-teardown/25/) - Chip progression by board revision; AVDC-NUS RGB tap rationale; AVDC-NUS/MAV-NUS shared pinout observation.  
-* [Pacal - BitBuilt 2022 Summer Building Competition - Odyssey 64](https://bitbuilt.net/forums/threads/2022-contest-entry-odyssey-64.5061/) - NUS-CPU-05 board; D143G8/D147G8I crystal stamps.  
-* [Miceeno - BitBuilt Forums - N64 Expansion Paks RAM Part Numbers](https://bitbuilt.net/forums/threads/n64-expansion-paks-ram-part-numbers.3943/post-44749) - NUS-CPU-05 board; D143G9/D147H9; MAV-NUS on confirmed NUS-CPU-05.  
-* [Chunky-Soups - Reddit r/n64](https://www.reddit.com/r/n64/comments/1awwnao/does_this_n64_have_any_raritysignificance/) - NUS-CPU-09 board; D143J0/D147J0; MAV-NUS BU9906F confirmed.  
-* [jasnetinfo.com - N64 RGB Install Guide](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; D143G7/D147E7; circular-M marking on X1.  
+* [Pacal - BitBuilt 2022 Summer Building Competition - Odyssey 64](https://bitbuilt.net/forums/threads/2022-contest-entry-odyssey-64.5061/) - NUS-CPU-05 board; `D143G8`/`D147G8I` crystal stamps.  
+* [Miceeno - BitBuilt Forums - N64 Expansion Paks RAM Part Numbers](https://bitbuilt.net/forums/threads/n64-expansion-paks-ram-part-numbers.3943/post-44749) - NUS-CPU-05 board; `D143G9`/`D147H9`; MAV-NUS on NUS-CPU-05.  
+* [Chunky-Soups - Reddit r/n64](https://www.reddit.com/r/n64/comments/1awwnao/does_this_n64_have_any_raritysignificance/) - NUS-CPU-09 board; `D143J0`/`D147J0`; MAV-NUS BU9906F confirmed.  
+* [JASNet Soluções em Eletrônica - N64 RGB Install Guide](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; `ⓂD143G7`/`D147E7`; `Ⓜ` marking on X1.  
+* [Prominos - N64 Motherboard Images](https://imgur.com/a/YpyuRET) - Collection of high quality N64 motherboard images including rare NUS-CPU(R)-01 model, shared by Prominos (Video Game Preservation Collective Discord)
+* [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of rare MPAL model, shared by Mielke (MiSTer FPGA Discord)
+* [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of rare MPAL model, shared by grav (Discord64 Discord)
+* [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of rare 09-1 model, shared by Aringon (Video Game Preservation Collective Discord)
+
 
 #### 7.2.1 Personal resources
 
-
 * [N64 Motherboard Images Collection](https://imgur.com/a/B4uPSNF) - Collection of N64 motherboard images with source links. Some boards are damaged, trimmed, modified, or otherwise altered.
-* [N64 Revision Tracking Spreadsheet](https://docs.google.com/spreadsheets/d/1pKR-xMioo0IvgLt7C37m1Ec76nDnTFJ0) - Work-in-progress database of X1/X2 crystal oscillator stamp codes and decoded frequencies; includes component tracking and board revision information.
-
-
 
 ### 7.3 Acknowledgements
 
@@ -856,7 +863,7 @@ For mathematically precise conversions. Each fraction in §6.2 is fully reduced 
 * Robert Peip (FPGAzumSpass) for auditing and corroboration of `VI_V_CURRENT` behaviour.  
 * Rasky for cross-referencing register naming against N64brew convention.  
 * kev4cards for several research leads, refinement, and general auditing.  
-* grav, Mielke, Prominos, and Aringon for sharing MPAL, NUS-001(FRA), NUS-CPU-09-1 and other rare motherboard images.  
+* grav, Mielke, Prominos, and Aringon for sharing motherboard images including rare MPAL, NUS-001(FRA), and NUS-CPU-09-1 examples.
 
 ---
 

@@ -4,7 +4,7 @@
 
 $$\begin{array}{|l|c|c|c|c|}
 \hline
-\text{Mode} & \text{f\_xtal} & \text{M} & \text{L} & \text{S} \\
+\text{Mode} & f_{\text{xtal}} & \text{M} & \text{L} & \text{S} \\
 \hline
 \text{NTSC Progressive}  & 315/22 \text{ MHz} & 17/5 & 3094 & 526 \\
 \text{NTSC Interlaced}   & 315/22 \text{ MHz} & 17/5 & 3094 & 525 \\
