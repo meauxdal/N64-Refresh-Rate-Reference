@@ -295,13 +295,13 @@ The decode convention is consistent across all three regional crystal frequencie
 
 ⁴ The meaning of the circular-M (`Ⓜ`) marking observed on some PAL-M boards is unconfirmed. One plausible expansion is an `M`PAL-specific marking (using an available glyph) applied to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (e.g. `D143K7` could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). 
 
-⁵ Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place* of `D`.
+⁵ Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place of* `D`.
 
 ![Figure 5b](/figures/fig23_X1_(M)143G0_stamp_code.png)  
 *`Ⓜ` marking visible on some PAL-M X1 crystal oscillators. Source: Mielke - MiSTer FPGA Discord*  
 
 ![Figure 5a](/figures/fig24_X1_(M)D143G7_stamp_code.png)  
-*Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking. Source: JASNet Electronic Solutions*  
+*Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking. Source: JASNet Soluções em Eletrônica*  
 
 ##### 3.5.1.3 X1 and X2 Stamp Codes by Revision
 
@@ -807,7 +807,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | Figure 2j | `fig30_snes_video_path_DarthCloud.png` | *S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage; RGB, LUMA, C.VIDEO, and CHROMA outputs (Source: DarthCloud, SNS-CPU-RGB-02 Video Circuit, 2009, [web.archive.com](https://web.archive.org/web/20260218142532/https://i36.photobucket.com/albums/e36/DarthCloud/snes_video_path.png))* |  
 | Figure 3 | `fig3_n64_default_libdragon_240p_timing.png` | *N64 VI Timing Diagram (NTSC Progressive) (Source: lidnariq via ares emulator Discord server; [reverse-engineered via hardware probing](/figures/fig3_n64_default_libdragon_240p_timing.png))* |  
 | Figure 4  | `fig22_VI_BURST-overlapping-H_START_devwizard.png` | *`VI_BURST` overlapping H_START (Source: devwizard / N64brew.dev Discord [youtube.com mirror](https://youtu.be/hSFQPQb00ns))*  |  
-| Figure 5a | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Electronic Solutions, [Installing RGB Converter v2 on Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
+| Figure 5a | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Installing RGB Converter v2 on Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | Figure 5b | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal oscillators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
 | Figure 6 | `fig29_raster_scan_progressive_ian_harvey.png` | *Progressive raster scan: electron beam traversal, horizontal retrace, and vertical retrace (Source: Ian Harvey, Wikimedia Commons, [CC0](https://commons.wikimedia.org/wiki/File:Raster-scan.svg))* |  
 | Figure 7 | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |

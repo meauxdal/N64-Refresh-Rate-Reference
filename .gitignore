@@ -1,4 +1,6 @@
-/.ignore
-/.vs
-/tools/__pycache__
-directory_stucture*.txt
+.github/
+.ignore/
+.vs/
+tools/__pycache__
+dir*.txt
+
