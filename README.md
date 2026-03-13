@@ -1,5 +1,7 @@
 # N64 Video Timing Reference
 
+> Update 2026-03-12: This document is a work in progress. New primary source information has been made available; errors will be corrected. Both NTSC signals and PAL progressive values should be correct already. LEAP behavior may need slight corrections per primary sources. PAL interlaced and MPAL values pending correction. 
+
 Documenting exact refresh rates for Nintendo 64 hardware. Values are derived from targeted broadcast standards, oscillator math, and register logic. Fractions are carried through all calculations for maximum precision.  
 
 ## Quick Reference
