@@ -737,7 +737,7 @@ Super Mario 64 (1996):
 
 ```
 HSYNC(3177, 21)  ->  L_base = 3178,  pattern = 0b10101
-LEAP(3183, 3182) ->  first leap register (effective) = 3184 (+6), second leap register (effective) = 3183 (+5)
+LEAP(3183, 3182) ->  first leap value (effective) = 3184 (+6), second leap value (effective) = 3183 (+5)
 
 Bit pattern applied (bit=1->first, bit=0->second):
 slot 1 (1) -> first:  +6
@@ -754,7 +754,7 @@ Animal Forest (どうぶつの森, Dōbutsu no Mori) (2001):
 
 ```
 HSYNC(3177, 23)  ->  L_base = 3178,  pattern = 0b10111
-LEAP(3183, 3181) ->  first leap register (effective) = 3184 (+6), second leap register (effective) = 3182 (+4)
+LEAP(3183, 3181) ->  first leap value (effective) = 3184 (+6), second leap value (effective) = 3182 (+4)
 
 Bit pattern applied (bit=1->first, bit=0->second):
 slot 1 (1) -> first:  +6
@@ -1149,7 +1149,7 @@ A quick reference for terminology used in this document.
 
 * **Interlaced (I):** A scan method in which lines are interleaved across two successive vertical scans in alternating stripes of even-odd (262.5 lines per vertical scan in NTSC and PAL-M interlaced modes). The VI offsets vertical sync by one half-line on every other scan, each constituting a field in broadcast terminology. fV represents the rate of each individual vertical scan. *See also: Progressive, Half-line, fV.*
 
-* **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,091 (PAL-M). *See also: Terminal Count, VI.*
+* **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,090 (PAL-M progressive) / 3,089 (PAL-M interlaced). *See also: Terminal Count, VI.*
 
 * **LEAP Register:** A hardware compensation mechanism used for fractional L adjustments in non-NTSC regions. It periodically adjusts the length of a scanline to correct for the fractional timing error that results from integer constraints in the horizontal timing registers. In PAL-M's case, the correction to NTSC standards is imperfect. *See also: PAL, PAL-M, f_vi.*
 
