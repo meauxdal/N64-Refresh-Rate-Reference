@@ -1,7 +1,5 @@
 # N64 Refresh Rate Reference  
 
-> Update 2026-03-12: This document is a work in progress. New primary source information has been made available; errors will be corrected. Both NTSC signals and PAL progressive values should be correct already. LEAP behavior may need slight corrections per primary sources. PAL interlaced and MPAL values pending correction. 
-
 Reference for Nintendo 64 video refresh rates and timing specifications across all supported video modes. 
 
 ---
@@ -84,7 +82,7 @@ Parenthetical annotations clarify numerical representations:
 
 #### 1.3.1 Counting Units
 
-**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modelling where feasible. Adherence aligns with hardware register logic, yields consistent rational fractions, and avoids ambiguity introduced by "line" and "frame" terminology. See §5.1.  
+**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modelling in an attempt to avoid "line" ambiguity in vertical contexts. See §5.1.  
 
 #### 1.3.2 Registers
 
@@ -95,12 +93,12 @@ The document uses N64brew naming conventions throughout. SDK equivalents are not
 | `VI_V_TOTAL` | `VI_V_SYNC_REG` | `0x04400018` | Terminal half-line count; effective half-lines = REG + 1 |
 | `VI_H_TOTAL` | `VI_H_SYNC_REG` | `0x0440001C` | Terminal VI clock count per scanline; effective clocks = REG + 1 |
 | `VI_H_TOTAL_LEAP` | `VI_H_SYNC_LEAP_REG` | `0x04400020` | LEAP_A [bits 27:16] and LEAP_B [bits 11:0] alternate scanline lengths for PAL compensation |
-| `VI_V_CURRENT` | `VI_V_CURRENT_LINE_REG` | `0x04400010` | Current half-line; increments by 2 per line |
+| `VI_V_CURRENT` | `VI_V_CURRENT_LINE_REG` | `0x04400010` | Current half-line; increments by 2 per scanline |
 | `VI_BURST` | `VI_BURST_REG` | `0x04400014` | Color burst gate timing |
 | `VI_H_VIDEO` | `VI_H_VIDEO_REG` | `0x04400024` | Active video horizontal start/end |
 | `VI_V_VIDEO` | `VI_V_VIDEO_REG` | `0x04400028` | Active video vertical start/end |
 
-All registers are terminal-counted; add 1 to derive the effective count. LEAP and hardware jitter affect the duration of individual half-lines but do not change the nominal half-line count. Interlaced VSYNC is automatically offset by 0.5 lines per field. See §5.2.1 for LEAP details.  
+All registers are terminal-counted; add 1 to derive the effective count. Interlaced VSYNC is automatically offset by 0.5 lines per field. See §5.2.1 for details regarding the leap adjustment mechanism.  
  
 ---
 
@@ -110,14 +108,14 @@ All registers are terminal-counted; add 1 to derive the effective count. LEAP an
 
 The table lists refresh rates (fV) for all video modes. The fully reduced fractions shown below serve as reference values for the remainder of this text  
 
-| Mode  | Scan Type   | Refresh Rate (fV, Hz)       | Refresh Rate (fV, Hz, .10f)   |  
-| :---  | :---        | :---                        | :---                          |  
-| NTSC  | Progressive | 2,250,000 / 37,609          | 59.8261054535                 |  
-| NTSC  | Interlaced  | 60,000 / 1,001              | 59.9400599401                 |  
-| PAL   | Progressive | 15,625 / 313                | 49.9201277955                 |  
-| PAL   | Interlaced  | 50 / 1                      | 50 (exact)                    |  
-| PAL-M | Progressive | 6,953,850,000 / 116,249,419 | 59.8183634793                 |  
-| PAL-M | Interlaced  | 185,436,000 / 3,094,091     | 59.9323032193                 |  
+| Mode  | Scan Type   | Refresh Rate (fV, Hz)        | Refresh Rate (fV, Hz, .10f)   |  
+| :---  | :---        | :---                         | :---                          |  
+| NTSC  | Progressive | 2,250,000 / 37,609           | 59.8261054535                 |  
+| NTSC  | Interlaced  | 60,000 / 1,001               | 59.9400599401                 |  
+| PAL   | Progressive | 15,625 / 313                 | 49.9201277955                 |  
+| PAL   | Interlaced  | 50 / 1                       | 50 (exact)                    |  
+| PAL-M | Progressive | 17,384,625,000 / 290,532,671 | 59.8370742270                 |  
+| PAL-M | Interlaced  | 272,700,000 / 4,547,257      | 59.9702194092                 |  
 
 > These values correspond to the derivations in §5.  
 
@@ -142,7 +140,7 @@ Hardware constants and register mapping.
 
 ### 3.1 Fundamental Constants  
 
-Hardware constants derived from f_xtal and the Video Interface (VI) registers.  
+Hardware constants derived from f_xtal and the Video Interface (VI) registers. L and S below are effective values. 
 
 | Mode              | Crystal Frequency (f_xtal) | Multiplier (M) | VI Clocks / Line (L) | Half-Lines (S) | `VI_V_TOTAL` |  
 | :---              | :---                       | :---           | :---                 | :---           | :---         |  
@@ -150,8 +148,8 @@ Hardware constants derived from f_xtal and the Video Interface (VI) registers.
 | NTSC Interlaced   | 14.3181818182 MHz          | 17 / 5         | 3094                 | 525            | `0x20C`      |  
 | PAL Progressive   | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 626            | `0x271`      |  
 | PAL Interlaced    | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 625            | `0x270`      |  
-| PAL-M Progressive | 14.3024475524 MHz          | 17 / 5         | 3091                 | 526            | `0x20D`      |  
-| PAL-M Interlaced  | 14.3024475524 MHz          | 17 / 5         | 3091                 | 525            | `0x20C`      |  
+| PAL-M Progressive | 14.3024475524 MHz          | 17 / 5         | 3090                 | 526            | `0x20D`      |  
+| PAL-M Interlaced  | 14.3024475524 MHz          | 17 / 5         | 3089                 | 525            | `0x20C`      |  
 
 ![Figure 1](/figures/fig1_clock_gen_schematic.png)  
 *N64 Clock Generation Circuits - U7 & U15 (Macronix MX8330MC). Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
@@ -171,7 +169,7 @@ The MX9911MC is a Macronix single-channel clock synthesizer that is pin- and fun
 ![Figure 1a](/figures/fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: MX8350 datasheet*  
 
-> While the MX8350 datasheet lists the MPAL crystal as 14.302446 MHz, the correct value (derived from the canonically defined PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this error is not indicated by sources. For precision and correctness, all derivations in this document use the fractional form. See §5.3.  
+> While the MX8350 datasheet lists the PAL-M crystal as 14.302446 MHz, the correct value (derived from the canonically defined PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this error is not indicated by sources. For precision and correctness, all derivations in this document use the fractional form. See §5.3.  
 
 ### 3.2 Video Interface (VI) Register Mapping  
 
@@ -192,8 +190,8 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 > VI registers operate on terminal counts; all derived timing values use the hardware-consistent half-line model described in §1.
 
 * `VI_V_TOTAL` (`0x04400018`): The register stores a terminal half-line count; effective number of half-lines per frame is equal to `VI_V_TOTAL` + 1.  
-* `VI_H_TOTAL` (`0x0440001C`): The register stores a terminal VI clock count (per full scanline); effective clocks per line is equal to `VI_H_TOTAL` + 1.  
-* `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments by 2 per line. In interlaced mode, bit 0 toggles each field to indicate odd or even lines. Libdragon uses this register to determine which lines require redrawing in 480i mode.  
+* `VI_H_TOTAL` (`0x0440001C`): The register stores a terminal VI clock count (per full scanline); effective clocks per scanline is equal to `VI_H_TOTAL` + 1.  
+* `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments by 2 per full scanline. In interlaced mode, bit 0 toggles each field to indicate odd or even lines. Libdragon uses this register to determine which lines require redrawing in 480i mode.  
 * `VI_H_VIDEO` (`0x04400024`): Defines the horizontal start and end of the active video window in VI pixels.  
 * `VI_V_VIDEO` (`0x04400028`): Defines the vertical start and end of the active video window in half-lines.  
 
@@ -203,11 +201,14 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 
 Timing values in this section are calculated from the fundamental constants in §3.1. fH is line frequency; fV is vertical scan frequency (refresh rate). Values are derived from fH and half-line count S. Progressive modes use the full half-line count, interlaced modes offset vertical sync by 0.5 lines per field.  
 
-| Mode  | fH (Hz, .10f)                 | fH (Hz)                 | Progressive fV (Hz)  | Interlaced fV (Hz) |  
-| :---- | :---                          | :---                    | :---                 | :---               |  
-| NTSC  | 15,734.2657342657             | 2250000/143             | 2250000/37609        | 60000/1001         |  
-| PAL   | 15,625 (exact)                | 15625/1                 | 15625/313            | 50/1               |  
-| PAL-M | 15,732.2295950572             | 6953850000/442013       | 6953850000/116249419 | 185436000/3094091  |  
+| Mode      | fH (Hz, .10f)                 | fH (Hz)                         | fV (Hz)                      | 
+| :----     | :---                          | :---                            | :---                         |
+| NTSC-P    | 15,734.2657342657             | 2250000/143                     | 2250000/37609                | 
+| NTSC-I    | 15,734.2657342657             | 2250000/143                     | 60000/1001                   |
+| PAL-P     | 15,625 (exact)                | 15625/1                         | 15625/313                    | 
+| PAL-I     | 15,625 (exact)                | 15625/1                         | 50/1                         |
+| PAL-M-P   | 15,737.1505217050             | 4,572,156,375,000 / 290,532,671 | 17,384,625,000 / 290,532,671 | 
+| PAL-M-I   | 15,742.1825949138             | 71,583,750,000 / 4,547,257      | 272,700,000 / 4,547,257      | 
 
 ### 3.4 Hardware Signal Path
 
@@ -416,7 +417,7 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 ### 4.1 Signal Parameters by Mode  
 
-The following table defines the relationship between VI clock rate (f_vi) and the resulting display timing. See §3.1 for crystal frequencies and register values; fully reduced refresh rate fractions and line frequencies are in §3.3.  
+The following table defines the relationship between VI clock rate (f_vi) and the resulting display timing. See §3.1 for crystal frequencies and register values; fully reduced refresh rate fractions and line frequencies are in §3.3. Values are effective.  
 
 | Mode    | f_vi (VI Clock)      | L (Clocks / Line) | S (Half-Lines) | fV (Refresh Rate) |  
 | :---    | :---                 | :---              | :---           | :---              |  
@@ -424,8 +425,8 @@ The following table defines the relationship between VI clock rate (f_vi) and th
 | NTSC-I  | 48.6818181818 MHz    | 3094              | 525            | 59.9400599401 Hz  |  
 | PAL-P   | 49.65653 MHz (exact) | 3178              | 626            | 49.9201277955 Hz  |  
 | PAL-I   | 49.65653 MHz (exact) | 3178              | 625            | 50 Hz (exact)     |  
-| PAL-M-P | 48.6283216783 MHz    | 3091              | 526            | 59.8183634793 Hz  |  
-| PAL-M-I | 48.6283216783 MHz    | 3091              | 525            | 59.9323032193 Hz  |  
+| PAL-M-P | 48.6283216783 MHz    | 3090              | 526            | 59.8370742270 Hz  |  
+| PAL-M-I | 48.6283216783 MHz    | 3089              | 525            | 59.9702194092 Hz  |  
 
 > f_vi for PAL-M is derived as exactly 6,953,850,000 ÷ 143 Hz. The slight deviation in NTSC-equivalent timing (≈ 0.0129407959%) is a hardware constraint caused by the requirement of an integer value for the Clocks ÷ Line (L) register.  
 
@@ -461,7 +462,12 @@ NTSC (Progressive and Interlaced)
 * VI clock frequency: 48.6818181818 MHz (5355/110 MHz)  
 * Color subcarrier: 3.5795454545 MHz (315/88 MHz)  
 * VI clock multiplier: 17/5 (3.4)  
-* LEAP register: Not used (`0x00`)  
+* Leap compensation: 
+1. Baseline L (terminal-counted) is `3093` 
+2. `LEAP_A`, `LEAP_B` is `3093`, `3093`, 
+3. Pattern: `0x00` = `0b00000` = `0-0-0-0-0` = 0
+
+> No fractional adjustment.
 
 PAL (Progressive and Interlaced)  
 
@@ -469,18 +475,47 @@ PAL (Progressive and Interlaced)
 * VI clock frequency: 49,656,530 Hz (exact)  
 * Color subcarrier: 4,433,618.75 Hz (exact) (17,734,475/4 Hz)  
 * VI clock multiplier: 14/5 (2.8)  
-* LEAP register: Used to maintain exact 15625 Hz line frequency  
-* LEAP pattern: 5-stage sequence (6-5-6-5-6 pattern) extends scanline duration during blanking periods
+* Leap compensation pattern 1 (e.g. Super Mario 64): 
 
-PAL-M (Progressive and Interlaced)  
+1. Baseline L (terminal-counted) is `3177`
+1. `LEAP_A`, `LEAP_B` is `3183`, `3182`, 
+3. Pattern 1: `0x15` = `0b10101` = `6-5-6-5-6` = 28
+4. 28/5 = 5.6 average additional VI clocks per scanline
+
+* Leap compensation pattern 2 (e.g. Animal Forest): 
+
+1. Baseline L (terminal-counted) is `3177`
+2. `LEAP_A`, `LEAP_B` is `3183, 3181`, 
+3. Pattern 2: `0x17` = `0b10111` = `6-6-6-4-6` = 28
+4. 28/5 = 5.6 average additional VI clocks per scanline
+
+> The pattern expansion assumes MSB-first ordering.
+
+PAL-M Progressive  
 
 * Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)  
 * VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)  
 * Color subcarrier: 511,312,500 / 143 Hz (exact) (≈ 3,575,611.8881118881 Hz ≈ 3.5756118881 MHz)  
 * VI clock multiplier: 17 / 5 (3.4)  
-* LEAP register: Not used (`0x00`)  
+* Leap compensation:
 
-> The VI requires an integer clock count per line; 3091 is the nearest integer to the exact value of 3,090.6, producing the line frequency given above.  
+1. Baseline L (terminal-counted) is `3089` 
+2. `LEAP_A`, `LEAP_B` is `3097`, `3098`
+3. Pattern: `0x04` = `0b00100` = `9-9-8-9-9` = 44
+4. 44/5 = 8.8 average additional VI clocks per scanline
+
+PAL-M Interlaced  
+
+* Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)  
+* VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)  
+* Color subcarrier: 511,312,500 / 143 Hz (exact) (≈ 3,575,611.8881118881 Hz ≈ 3.5756118881 MHz)  
+* VI clock multiplier: 17 / 5 (3.4)  
+* Leap compensation: 
+
+1. Baseline L (terminal) is `3088` 
+2. `LEAP_A`, `LEAP_B` is `3100`, `3100`
+3. Pattern: `0x00` = `0b00000` = `12-12-12-12-12` = 60
+4. 60/5 = 12 additional clocks per scanline
 
 #### 4.2.1 Subcarrier Frequency Relationships  
 
@@ -496,7 +531,7 @@ All N64 video modes adhere to broadcast standard relationships between subcarrie
 
 *Standard fS to fH ratios. Source: Wooding, M., The Amateur TV Compendium, p. 55*  
 
-PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to an integer number of VI clocks per line. The exact colorburst frequency is 3,575,611 + 127/143 Hz. This remainder propagates through the derivation chain. The hardware resolves this by rounding to 3091 VI clocks per line, producing an fH of approximately 15,732.23 Hz rather than the NTSC-standard 15,734.27 Hz. The canonical fV values in this document are derived from the exact fractional colorburst frequency carried through each step; see §5.3 for full derivation.  
+PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to an integer number of VI clocks per line. The exact colorburst frequency is 3,575,611 + 127/143 Hz. This remainder propagates through the derivation chain. The hardware resolves this by rounding to 3090 (progressive) or 3089 (interlaced) VI clocks per line, producing an fH of approximately 15,732.23 Hz rather than the NTSC-standard 15,734.27 Hz. The canonical fV values in this document are derived from the exact fractional colorburst frequency carried through each step; see §5.3 for full derivation.  
 
 > The subcarrier reference signal is delivered to the ENC-NUS encoder (U5) via the SCIN pin (pin 8), which receives the U7.FSC output through a 4.3 kΩ ÷ 820 Ω resistor divider and coupling capacitor C21. This is the hardware path by which the crystal-derived fS enters the analog encode stage. See Figure 2e, §3.4, *ENC-NUS (U5) in circuit*.  
 
@@ -514,7 +549,7 @@ Constants:
 Color burst frequency: f_colorburst (fS) = 315/88 MHz  (≈ 3.5795454545 MHz)
 Crystal frequency: f_xtal = 4 × f_colorburst = 315/22 MHz  (≈ 14.3181818182 MHz)
 VI clock multiplier: M = 17 / 5
-VI clocks per line (full scanlines): L = 3,094
+VI clocks per scanline (base): L = 3,094
 Total half-lines (progressive): S_prog = 526
 Total half-lines (interlaced): S_int = 525
 ```
@@ -524,10 +559,11 @@ Video clock frequency:
 ```
 f_vi = f_xtal × M
      = (315/22) × (17/5) MHz
-     = (315 × 17)/(22 × 5) 
-     = 5,355/110  
-     = 1,071/22  (reduced)
-     ≈ 48.6818181818 MHz  
+     = (315 × 17) / (22 × 5)
+     = 5,355 / 110
+     = 1,071 / 22  (reduced)
+     ≈ 48,681,818.1818181818 Hz
+     ≈ 48.6818181818 MHz
 ```
 
 Horizontal scan frequency:
@@ -544,102 +580,119 @@ fH = f_vi / L
 
 Vertical scan frequency (progressive):
 
-*Progressive: 526 half-lines per vertical scan cycle, scanned sequentially.*  
+*Progressive: 526 half-lines per vertical scan cycle, scanned sequentially.*
 
 ```
-fV_prog  = fH / (S_prog / 2)  
-         = (2,250,000 / 143) / (526 / 2) Hz  
-         = (2,250,000 / 143) / 263  
-         = 2,250,000 / (143 × 263)  
-         = 2,250,000 / 37,609  (canonical value)  
-         ≈ 59.8261054535 Hz  
+fV_prog = fH / (S_prog / 2)
+        = (2,250,000 / 143) / (526 / 2) Hz
+        = (2,250,000 / 143) / 263
+        = 2,250,000 / (143 × 263)
+        = 2,250,000 / 37,609  (canonical value)
+        ≈ 59.8261054535 Hz
 ```
 
 Vertical scan frequency (interlaced):
 
-*Interlaced: 525 half-lines per vertical scan cycle, alternating between odd and even fields.*  
+*Interlaced: 525 half-lines per vertical scan cycle, alternating between odd and even fields.*
 
 ```
-fV_int  = fH / (S_int / 2)
-        = (2,250,000 / 143) / (525 / 2) Hz
-        = (2,250,000 × 2) / (143 × 525)
-        = 4,500,000 / 75,075
-        = 60,000 / 1,001  (canonical value)  
-        ≈ 59.9400599401 Hz  
+fV_int = fH / (S_int / 2)
+       = (2,250,000 / 143) / (525 / 2) Hz
+       = (2,250,000 × 2) / (143 × 525)
+       = 4,500,000 / 75,075
+       = 60,000 / 1,001  (canonical value)
+       ≈ 59.9400599401 Hz
 ```
 
 *The relationship between the progressive and interlaced rates is a direct arithmetic consequence of the half-line count. Both values derive from the same colorburst root:*
+
 ```
 fH      = 2,250,000 / 143 Hz  (derived above)
 fV_int  = fH / (525/2) = 60,000 / 1,001      ≈ 59.9400599401 Hz
 fV_prog = fH / (526/2) = 2,250,000 / 37,609  ≈ 59.8261054535 Hz
 ```
 
-*The divisor (total half-lines ÷ 2) is the only variable. The ~0.12 Hz gap between the two rates is entirely and exactly the consequence of the single additional half-line in the progressive frame structure. See §1.3.*  
+*The divisor (total half-lines ÷ 2) is the only variable. The ~0.12 Hz gap between the two rates is entirely and exactly the consequence of the single additional half-line in the progressive vertical scan cycle. See §1.3.*
 
-### 5.2 PAL Derivation  
+### 5.1.1 NTSC Leap Adjustment
 
-Constants:  
+The NTSC configuration programs HSYNC(`3093`, `0`) and LEAP(`3093`, `3093`) (terminal-counted).
 
-```  
-Color burst frequency: f_colorburst (fS) = 17,734,475 / 4 Hz  (= 4.43361875 MHz)  
-Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (= 17.734475 MHz)  
-VI clock multiplier: M = 14 / 5  
-VI clocks per line (full scanlines): L = 3,178  
-Total half-lines (progressive): S_prog = 626  
-Total half-lines (interlaced): S_int = 625  
-```  
+```
+L_base = 3,094  VI clocks per scanline, base
+first  = 3,094  effective  (register value 3,093 + 1)
+second = 3,094  effective  (register value 3,093 + 1)
+```
 
-Video clock frequency:  
+Pattern `0x00` (`0b00000`) selects the second value on every VSYNC. As first = second = L_base, every VSYNC is uniform: no half-line extension occurs. The `VI_H_TOTAL_LEAP` register produces no correction. fH is therefore exact from L alone, with no leap adjustment required.
 
-```  
-f_vi = f_xtal × M  
-     = 17,734,475 × (14/5) Hz  
-     = (17,734,475 × 14) / 5  
-     = 248,282,650 / 5  
-     = 49,656,530 Hz  
-     = 49.65653 MHz  (exact)  
-```  
+*This contrasts with PAL-M interlaced, which also programs pattern `0x00` with first = second, but with both values set above L_base. See §5.3.2.1.*
 
-Horizontal scan frequency:  
+---
 
-*Without LEAP compensation, the theoretical line frequency would be:*  
+### 5.2 PAL Derivation
 
-```  
-fH (theoretical) = f_vi / L  
-                 = 49,656,530 / 3,178 Hz  
-                 = 24,828,265 / 1,589  (reduced)  
-                 ≈ 15,625.0881057269 Hz  
-```  
+Constants:
 
-*The LEAP register compensates for this error by adding fractional VI clocks during VSYNC, resulting in an exact line frequency of 15,625 Hz. The ~5.64 ppm frequency error corresponds to a fractional excess of 0.01792 VI clocks per line (0.01792 ÷ 3178 ≈ 5.64 ppm), which accumulates to 5.6 clocks per vertical scan cycle. See §5.2.1.*  
+```
+Color burst frequency: f_colorburst (fS) = 17,734,475 / 4 Hz  (= 4.43361875 MHz)
+Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (= 17.734475 MHz)
+VI clock multiplier: M = 14 / 5
+VI clocks per scanline: L = 3,178
+Total half-lines (progressive): S_prog = 626
+Total half-lines (interlaced): S_int = 625
+```
 
-```  
-fH = 15,625 / 1 Hz  (canonical value)  
-   = 15,625 Hz  (exact)  
-```  
+Video clock frequency:
 
-Vertical scan frequency (progressive):  
+```
+f_vi = f_xtal × M
+     = 17,734,475 × (14/5) Hz
+     = (17,734,475 × 14) / 5
+     = 248,282,650 / 5
+     = 49,656,530 Hz
+     = 49.65653 MHz  (exact)
+```
 
-```  
-fV_prog  =  fH / (S_prog / 2)  
-         = 15,625 / (626 / 2) Hz  
-         = 15,625 / 313  (canonical value)  
-         ≈ 49.9201277955 Hz  
-```  
+Horizontal scan frequency:
 
-Vertical scan frequency (interlaced):  
+*Without leap compensation, the theoretical line frequency would be:*
 
-```  
-fV_int  = fH / (S_int / 2)  
-        = 15,625 / (625 / 2) Hz  
-        = (15,625 × 2) / 625  
-        = 31,250 / 625  
-        = 50 / 1  (canonical value)  
-        = 50 Hz  (exact)  
-```  
+```
+fH (theoretical) = f_vi / L
+                 = 49,656,530 / 3,178 Hz
+                 = 24,828,265 / 1,589  (reduced)
+                 ≈ 15,625.0881057269 Hz
+```
 
-### 5.2.1 PAL Phase Synchronization and LEAP
+*Under the LEAP register mapping described in §5.2.1.1, the hardware compensates for this error by adding fractional VI clocks during VSYNC, yielding an exact line frequency of 15,625 Hz. The mapping is established by logical inference; see §5.2.1.1.*
+
+```
+fH = 15,625 / 1 Hz  (canonical value)
+   = 15,625 Hz  (exact)
+```
+
+Vertical scan frequency (progressive):
+
+```
+fV_prog = fH / (S_prog / 2)
+        = 15,625 / (626 / 2) Hz
+        = 15,625 / 313  (canonical value)
+        ≈ 49.9201277955 Hz
+```
+
+Vertical scan frequency (interlaced):
+
+```
+fV_int = fH / (S_int / 2)
+       = 15,625 / (625 / 2) Hz
+       = (15,625 × 2) / 625
+       = 31,250 / 625
+       = 50 / 1  (canonical value)
+       = 50 Hz  (exact)
+```
+
+### 5.2.1 PAL Leap Adjustment
 
 The N64 VI maintains the exact 15,625 Hz line frequency (fH) required for the PAL standard. The uncompensated line period (L = 3,178) produces a theoretical frequency of 49,656,530 / 3,178 ≈ 15,625.0881 Hz. To achieve the standard, the average number of VI clocks per line must be exactly:
 
@@ -647,101 +700,276 @@ The N64 VI maintains the exact 15,625 Hz line frequency (fH) required for the PA
 L_avg = f_vi / fH = 49,656,530 / 15,625 = 9,931,306 / 3,125
 ```
 
-The hardware corrects for the 56/3,125 fractional error using the LEAP mechanism, which adds an average of 28/5 VI clocks per S half-lines. For PAL interlaced (S = 625), the average adjustment per line is therefore:
+The hardware corrects for the 56/3,125 fractional error using the leap mechanism, which adds an average of 28/5 VI clocks per VSYNC. For PAL interlaced (S = 625), the average adjustment per line is therefore:
+
 ```
-LEAP adjustment per line = (28/5) / (S/2) = (28/5) / (625/2) = 56/3,125 VI clocks
+Leap adjustment per line = (28/5) / (S/2) = (28/5) / (625/2) = 56/3,125 VI clocks
 ```
 
-The true average line length is the sum of the base line length and this LEAP adjustment. This confirms that the hardware mechanism exactly matches the required theoretical value:
+The true average line length is the sum of the base line length and this leap adjustment. This confirms that the hardware mechanism exactly matches the required theoretical value:
 
 ```
 True L_avg = 3,178 + 56/3,125 = (9,931,250 + 56) / 3,125 = 9,931,306 / 3,125
 ```
 
-The LEAP mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-stage sequence (B-A-B-A-B) alternates between adding 6 clocks (LEAP_B, stored as 3183 → effective L+6) and 5 clocks (LEAP_A, stored as 3182 → effective L+5) during the vertical blanking interval, yielding the required 28/5-clock average per S half-lines. The hardware encodes this as pattern `0x15` (0b10101); confirmed by Rasky and lidnariq (N64brew.dev Discord, 2026-03-05).
+The leap mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-VSYNC sequence alternates between two extended line lengths during the vertical blanking interval, yielding the required 28/5-clock average per VSYNC. See §5.2.1.1 for register values, pattern variants, and the epistemic status of the bit mapping.
 
 ```
-(6 + 5 + 6 + 5 + 6) / 5 = 28/5 (average clocks added per S half-lines)
-
 fH = f_vi / (L + (28/5) / (S/2))
    = f_vi / (L + 56/3,125)
    = 49,656,530 / (9,931,306 / 3,125)
    = (49,656,530 / 9,931,306) × 3,125
    = 5 × 3,125
-   = 15,625 Hz (exact)
+   = 15,625 Hz  (exact)
 ```
 
 > These additions occur only during the vertical blanking interval and do not affect active video timing. The sequence is encoded in the `VI_H_TOTAL_LEAP` register.
 
+### 5.2.1.1 PAL Leap Pattern and Bit Mapping
+
+*Certainy regarding respective LEAP register naming is not established. "First" and "second" corresponding with order of appearance in decompilation source are used until nomenclature is reconciled.* 
+
+> Two interpretations of the pattern field were considered: bit=1 selecting the first listed register value, or bit=0 selecting it. The second interpretation fails for both known PAL configurations, producing totals of 27 and 22 where 28 is required.
+
+At least two distinct PAL leap configurations appear across the N64 production run. The Nintendo SDK OS revision coinciding with these changes is not yet identified. 
+
+Super Mario 64 (1996):  
+
+```
+HSYNC(3177, 21)  ->  L_base = 3178,  pattern = 0b10101
+LEAP(3183, 3182) ->  first leap register (effective) = 3184 (+6), second leap register (effective) = 3183 (+5)
+
+Bit pattern applied (bit=1->first, bit=0->second):
+slot 1 (1) -> first:  +6
+slot 2 (0) -> second: +5
+slot 3 (1) -> first:  +6
+slot 4 (0) -> second: +5
+slot 5 (1) -> first:  +6
+
+Total extra over 5-VSYNC cycle: 6 + 5 + 6 + 5 + 6 = 28
+Average per VSYNC: 28 / 5
+```
+
+Animal Forest (どうぶつの森, Dōbutsu no Mori) (2001):  
+
+```
+HSYNC(3177, 23)  ->  L_base = 3178,  pattern = 0b10111
+LEAP(3183, 3181) ->  first leap register (effective) = 3184 (+6), second leap register (effective) = 3182 (+4)
+
+Bit pattern applied (bit=1->first, bit=0->second):
+slot 1 (1) -> first:  +6
+slot 2 (1) -> first:  +6
+slot 3 (1) -> first:  +6
+slot 4 (0) -> second: +4
+slot 5 (1) -> first:  +6
+
+Total extra over 5-VSYNC cycle: 6 + 6 + 6 + 4 + 6 = 28
+Average per VSYNC: 28 / 5
+```
+
+The average is identical. The fH derivation in §5.2 therefore holds for both configurations:
+
+```
+Leap adjustment per line = (28/5) / (S/2)
+                              = (28/5) / (625/2)
+                              = 56 / 3,125
+
+L_avg = 3,178 + 56/3,125
+      = (9,931,250 + 56) / 3,125
+      = 9,931,306 / 3,125
+
+fH = f_vi / L_avg
+   = 49,656,530 / (9,931,306 / 3,125)
+   = (49,656,530 × 3,125) / 9,931,306
+   = 155,176,656,250 / 9,931,306
+   = 15,625 Hz  (exact)
+```
+
+The timing result is unchanged regardless of pattern used; only the distribution of additions within the 5-VSYNC cycle differs. It is not currently understood why the pattern was updated in later revisions of the SDK. 
+
+---
+
 ### 5.3 PAL-M Derivation
 
-Constants:  
+Constants:
 
-```  
-Color burst frequency: f_colorburst (fS) = 511,312,500 / 143 Hz (≈ 3,575,611.8881118881 Hz) (≈ 3.5756118881 MHz)  
-                                        (= 3,575,611 + 127/143 Hz) (per lidnariq; see §7.3)  
-Crystal frequency: f_xtal = 4 × f_colorburst = 2,045,250,000 / 143 Hz (≈ 14,302,447.5524475524 Hz) (≈ 14.3024475524 MHz)  
-VI clock multiplier: M = 17 / 5  
-VI clocks per line (full scanlines): L = 3,091  
-Total half-lines (progressive): S_prog = 526  
-Total half-lines (interlaced): S_int = 525  
-```  
+```
+Color burst frequency: f_colorburst (fS) = 511,312,500 / 143 Hz  (≈ 3,575,611.8881118881 Hz)
+Crystal frequency: f_xtal = 4 × f_colorburst = 2,045,250,000 / 143 Hz  (≈ 14,302,447.5524475524 Hz)
+VI clock multiplier: M = 17 / 5
+Total lines (progressive): S_prog = 526
+Total lines (interlaced): S_int = 525
+```
 
-Video clock frequency:  
+Video clock frequency:
 
-```  
-f_vi = f_xtal × M  
-     = (2,045,250,000 / 143) × (17 / 5) Hz  
-     = (2,045,250,000 × 17) / (143 × 5)  
-     = 34,769,250,000 / 715  
+```
+f_vi = f_xtal × M
+     = (2,045,250,000 / 143) × (17 / 5) Hz
+     = (2,045,250,000 × 17) / (143 × 5)
+     = 34,769,250,000 / 715
      = 6,953,850,000 / 143  (canonical value)
-     ≈ 48,628,321.6783 Hz  
-     ≈ 48.6283216783 MHz  
-```  
+     ≈ 48,628,321.6783216783 Hz 
+     ≈ 48.6283216783 MHz
+     
+```
 
-Horizontal scan frequency:  
-
-```  
-fH = f_vi / L  
-       = (6,953,850,000 / 143) / 3,091 Hz  
-       = 6,953,850,000 / (143 × 3,091)  
-       = 6,953,850,000 / 442,013  (canonical value)  
-       ≈ 15,732.2295950572 Hz  
-```  
-
-Vertical scan frequency (progressive):  
-
-```  
-fV_prog = fH / (S_prog / 2)  
-        = (6,953,850,000 / 442,013) / 263 Hz 
-        = 6,953,850,000 / (442,013 × 263)  
-        = 6,953,850,000 / 116,249,419  (canonical value)  
-        ≈ 59.8183634793 Hz  
-```  
-
-Vertical scan frequency (interlaced):  
-
-```  
-fV_int = fH / (S_int / 2)  
-       = (6,953,850,000 / 442,013) / (525 / 2) Hz  
-       = (6,953,850,000 × 2) / (442,013 × 525)  
-       = 13,907,700,000 / 232,056,825  
-       = 185,436,000 / 3,094,091  (canonical value)  
-       ≈ 59.9323032193 Hz  
-```  
-
-#### 5.3.1 Derived Error Analysis  
-
-PAL-M timing deviation from NTSC derives from the 127/143 fractional remainder in the colorburst definition and the integer constraint L = 3,091.  
+### 5.3.1 PAL-M Progressive Derivation
 
 ```
-fH_NTSC  = 2,250,000 / 143          ≈ 15,734.2657342657 Hz  
-fH_PAL-M = 6,953,850,000 / 442,013  ≈ 15,732.2295950572 Hz  
-
-deviation = ((fH_NTSC - fH_PAL-M) / fH_NTSC) × 100
-          = (2.0361392085 / 15,734.2657342657) × 100  
-          = 0.0129407959%  
+VI clocks per line (base): L_base = 3,090
 ```
+
+*Without leap compensation, the theoretical line frequency would be:*
+
+```
+fH (theoretical) = f_vi / L_base
+                 = (6,953,850,000 / 143) / 3,090 Hz
+                 = 6,953,850,000 / (143 × 3,090)
+                 = 6,953,850,000 / 441,870
+                 = 1,158,975,000 / 73,645  (reduced)
+                 ≈ 15,737.0621468927 Hz
+```
+
+*The LEAP register (partially) compensates for this error. See §5.3.1.1.*
+
+```
+fH = 4,572,156,375,000 / 290,532,671  (canonical value)
+   ≈ 15,737.1505217050 Hz
+```
+
+Vertical scan frequency (progressive):
+
+```
+fV_prog = fH / (S_prog / 2)
+        = (4,572,156,375,000 / 290,532,671) / (526 / 2) Hz
+        = (4,572,156,375,000 / 290,532,671) / 263
+        = 4,572,156,375,000 / (290,532,671 × 263)
+        = 4,572,156,375,000 / 76,410,092,473
+        = 17,384,625,000 / 290,532,671  (canonical value)
+        ≈ 59.8370742270 Hz
+```
+
+### 5.3.1.1 PAL-M Progressive Leap Adjustment
+
+The PAL-M progressive configuration programs HSYNC(`3089`, `4`) and LEAP(`3097`, `3098`). Terminal-counted:
+
+```
+L_base = 3,090  VI clocks per line, base
+first  = 3,098  effective  (register value 3,097 + 1)
+second = 3,099  effective  (register value 3,098 + 1)
+```
+
+The bit mapping established in §5.2.1.1 applies. Pattern `0x04` (`0b00100`) distributes one first-value fire and four second-value fires across a repeating 5-VSYNC cycle:
+
+```
+slot 1 (0) -> second: +9
+slot 2 (0) -> second: +9
+slot 3 (1) -> first:  +8
+slot 4 (0) -> second: +9
+slot 5 (0) -> second: +9
+
+Total extra over 5-VSYNC cycle: 4 × 9 + 1 × 8 = 44
+Average extra per VSYNC: 44 / 5
+```
+
+```
+Leap adjustment per line = (44/5) / (S_prog / 2)
+                              = (44/5) / (526 / 2)
+                              = (44/5) / 263
+                              = 44 / 1,315
+
+L_avg = 3,090 + 44/1,315
+      = (3,090 × 1,315 + 44) / 1,315
+      = (4,063,350 + 44) / 1,315
+      = 4,063,394 / 1,315
+
+fH = f_vi / L_avg
+   = (6,953,850,000 / 143) / (4,063,394 / 1,315)
+   = (6,953,850,000 × 1,315) / (143 × 4,063,394)
+   = 9,144,322,500,000 / 581,065,342
+   = 4,572,156,375,000 / 290,532,671  (canonical value)
+   ≈ 15,737.1505217050 Hz
+```
+
+*The NTSC broadcast target is 2,250,000/143 Hz (≈ 15,734.2657342657 Hz). PAL-M progressive fH exceeds this by approximately 2.8848 Hz; fH after leap correction does not achieve the targeted broadcast standard.*
+
+> PAL-M progressive leap fires unevenly within its 5-VSYNC cycle: four VSYNCs carry one second-value line (+9 clocks) and one VSYNC carries one first-value line (+8 clocks). The canonical fH and fV are time-averaged across all five VSYNCs.
+
+---
+
+### 5.3.2 PAL-M Interlaced Derivation
+
+```
+VI clocks per line (base): L_base = 3,089
+```
+
+*Without leap compensation, the theoretical line frequency would be:*
+
+```
+fH (theoretical) = f_vi / L_base
+                 = (6,953,850,000 / 143) / 3,089 Hz
+                 = 6,953,850,000 / (143 × 3,089)
+                 = 6,953,850,000 / 441,727  (reduced)
+                 ≈ 15,742.6271626032 Hz
+```
+
+*The LEAP register (partially) compensates for this error. See §5.3.2.1.*
+
+```
+fH = 71,583,750,000 / 4,547,257  (canonical value)
+   ≈ 15,742.1825949138 Hz
+```
+
+Vertical scan frequency (interlaced):
+
+```
+fV_int = fH / (S_int / 2)
+       = (71,583,750,000 / 4,547,257) / (525 / 2) Hz
+       = (71,583,750,000 × 2) / (4,547,257 × 525)
+       = 143,167,500,000 / 2,387,309,925
+       = 272,700,000 / 4,547,257  (canonical value)
+       ≈ 59.9702194092 Hz
+```
+
+### 5.3.2.1 PAL-M Interlaced Leap Adjustment
+
+The PAL-M interlaced configuration programs HSYNC(`3088`, `0`) and LEAP(`3100`, `3100`). Terminal-counted: 
+
+```
+L_base = 3,089  VI clocks per line, base
+first  = 3,101  effective  (register value 3,100 + 1)
+second = 3,101  effective  (register value 3,100 + 1)
+```
+
+Pattern `0x00` (`0b00000`) selects the second value on every VSYNC. As first = second, the pattern value is immaterial: one line per VSYNC is unconditionally extended by 12 VI clocks.
+
+```
+Extra clocks per VSYNC: 3,101 - 3,089 = 12
+```
+
+```
+Leap adjustment per line = 12 / (S_int / 2)
+                              = 12 / (525 / 2)
+                              = 24 / 525
+                              = 8 / 175
+
+L_avg = 3,089 + 8/175
+      = (3,089 × 175 + 8) / 175
+      = (540,575 + 8) / 175
+      = 540,583 / 175
+
+fH = f_vi / L_avg
+   = (6,953,850,000 / 143) / (540,583 / 175)
+   = (6,953,850,000 × 175) / (143 × 540,583)
+   = 1,216,923,750,000 / 77,303,369
+   = 71,583,750,000 / 4,547,257  (canonical value)
+   ≈ 15,742.1825949138 Hz
+```
+
+*PAL-M interlaced fH exceeds the NTSC broadcast target by approximately 7.9169 Hz. Unlike the progressive case, the +12 clock injection is uniform across every VSYNC; there is no cycle averaging.*
+
+> The +12 clock interlaced injection and the +8/+9 progressive cycle are distinct configurations with distinct base line lengths. Neither achieves broadcast-exact NTSC fH. PAL-M is the only N64 region whose interlaced and progressive modes program different LEAP register values.
 
 ---
 
@@ -761,26 +989,25 @@ For general conversions.
 
 | From \ To | NTSC-P | NTSC-I | PAL-P | PAL-I | PAL-M-P | PAL-M-I |  
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |  
-| NTSC-P  | 1.00000 | 0.99810 | 1.19844 | 1.19652 | 1.00013 | 0.99823 |  
-| NTSC-I  | 1.00190 | 1.00000 | 1.20072 | 1.19880 | 1.00203 | 1.00013 |  
-| PAL-P   | 0.83442 | 0.83283 | 1.00000 | 0.99840 | 0.83453 | 0.83294 |  
-| PAL-I   | 0.83576 | 0.83417 | 1.00160 | 1.00000 | 0.83586 | 0.83427 |  
-| PAL-M-P | 0.99987 | 0.99797 | 1.19828 | 1.19637 | 1.00000 | 0.99810 |  
-| PAL-M-I | 1.00178 | 0.99987 | 1.20056 | 1.19865 | 1.00190 | 1.00000 |  
-
+| NTSC-P   | 1.00000 | 0.99810 | 1.19844 | 1.19652 | 0.99982 | 0.99760 |
+| NTSC-I   | 1.00190 | 1.00000 | 1.20072 | 1.19880 | 1.00172 | 0.99950 |
+| PAL-P    | 0.83442 | 0.83283 | 1.00000 | 0.99840 | 0.83427 | 0.83242 |
+| PAL-I    | 0.83576 | 0.83417 | 1.00160 | 1.00000 | 0.83560 | 0.83375 |
+| PAL-M-P  | 1.00018 | 0.99828 | 1.19866 | 1.19674 | 1.00000 | 0.99778 |
+| PAL-M-I  | 1.00241 | 1.00050 | 1.20132 | 1.19940 | 1.00223 | 1.00000 |
 
 ### 6.2 Exact Fractional Conversions  
 
 For mathematically precise conversions. Fractions are fully reduced and traceable to the canonical values in §2.  
 
-| From \ To | NTSC Progressive | NTSC Interlaced | PAL Progressive | PAL Interlaced | PAL-M Progressive | PAL-M Interlaced |  
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- |  
-| NTSC-P  | 1/1             | 525/526         | 45072/37609         | 45000/37609         | 15455/15453           | 2704625/2709426     |  
-| NTSC-I  | 526/525         | 1/1             | 30048/25025         | 1200/1001           | 1625866/1622565       | 15455/15453         |  
-| PAL-P   | 37609/45072     | 25025/30048     | 1/1                 | 625/626             | 581247095/696497616   | 386761375/464331744 |  
-| PAL-I   | 37609/45000     | 1001/1200       | 626/625             | 1/1                 | 116249419/139077000   | 3094091/3708720     |  
-| PAL-M-P | 15453/15455     | 1622565/1625866 | 696497616/581247095 | 139077000/116249419 | 1/1                   | 525/526             |  
-| PAL-M-I | 2709426/2704625 | 15453/15455     | 464331744/386761375 | 3708720/3094091     | 526/525               | 1/1                 |  
+| From \ To | NTSC-P | NTSC-I | PAL-P | PAL-I | PAL-M-P | PAL-M-I |
+|---|---|---|---|---|---|---|
+| NTSC-P | 1/1 | 526/525 | 37609/45072 | 37609/45000 | 4064139/4063394 | 159378/158995 |
+| NTSC-I | 525/526 | 1/1 | 25025/30048 | 1001/1200 | 8112825/8126788 | 31815/31799 |
+| PAL-P | 45072/37609 | 30048/25025 | 1/1 | 626/625 | 348248808/290532671 | 27313632/22736285 |
+| PAL-I | 45000/37609 | 1200/1001 | 625/626 | 1/1 | 347692500/290532671 | 5454000/4547257 |
+| PAL-M-P | 4063394/4064139 | 8126788/8112825 | 290532671/348248808 | 290532671/347692500 | 1/1 | 8126788/8108745 |
+| PAL-M-I | 158995/159378 | 31799/31815 | 22736285/27313632 | 4547257/5454000 | 8108745/8126788 | 1/1 |
 
 ---
 
@@ -821,6 +1048,8 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Nintendo 64 Online Manuals - Programming Manual (OS 2.0J)](https://ultra64.ca/files/documentation/online-manuals/man/pro-man/start/index.html) - Memory-mapped I/O; VI mode definitions; system programming reference.  
 * [Nintendo 64 Programming Manual (D.C.N. NUS-06-0030-001 REV G)](https://ultra64.ca/files/documentation/nintendo/Nintendo_64_Programming_Manual_NU6-06-0030-001G_HQ.pdf) - Detailed timing tables.  
 * [Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001 REV A)](https://drive.google.com/drive/folders/1kGlB2TyX7CsmPnSyzpxGcSKpJ1F-ywal) - Block diagrams; boot sequence; oscilloscope timing verification.  
+* [Super Mario 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) - Early libultra-defined Video Interface configurations
+* [Animal Forest Decompilation - VI modes (GitHub)](https://github.com/zeldaret/af/tree/main/lib/ultralib/src/vimodes) - Later libultra-defined Video Interface configurations
 * [Macronix MX8330MC Datasheet](/references/Macronix-MX8330MC-ocr.pdf) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4 color subcarrier output), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
 * [Macronix MX8350 Datasheet](/references/Macronix-MX8350-ocr.pdf) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
 * [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer; functional equivalent to MX8330MC.    
@@ -860,8 +1089,8 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Chunky-Soups - Reddit r/n64](https://www.reddit.com/r/n64/comments/1awwnao/does_this_n64_have_any_raritysignificance/) - NUS-CPU-09 board; `D143J0`/`D147J0`; MAV-NUS BU9906F confirmed.  
 * [JASNet Soluções em Eletrônica - N64 RGB Install Guide (Portuguese)](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; `ⓂD143G7`/`D147E7`; `Ⓜ` marking on X1.  
 * [Prominos - N64 Motherboard Images](https://imgur.com/a/YpyuRET) - Collection of high quality N64 motherboard images including rare NUS-CPU(R)-01 model, shared by Prominos (Video Game Preservation Collective Discord).
-* [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of rare MPAL model, shared by Mielke (MiSTer FPGA Discord).
-* [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of rare MPAL model, shared by grav (Discord64 Discord).
+* [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of rare PAL-M model, shared by Mielke (MiSTer FPGA Discord).
+* [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of rare PAL-M model, shared by grav (Discord64 Discord).
 * [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of rare 09-1 model, shared by Aringon (Video Game Preservation Collective Discord).
 * [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.
 
@@ -880,7 +1109,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * Robert Peip (FPGAzumSpass) for auditing and corroboration of `VI_V_CURRENT` behaviour.  
 * Rasky for cross-referencing register naming against N64brew convention.  
 * kev4cards for several research leads, refinement, and general auditing.  
-* grav, Mielke, Prominos, and Aringon for sharing motherboard images including rare MPAL, NUS-001(FRA), and NUS-CPU-09-1 examples.
+* grav, Mielke, Prominos, and Aringon for sharing motherboard images including rare PAL-M, NUS-001(FRA), and NUS-CPU-09-1 examples.
 
 ---
 
@@ -922,7 +1151,7 @@ A quick reference for terminology used in this document.
 
 * **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,091 (PAL-M). *See also: Terminal Count, VI.*
 
-* **LEAP Register:** A hardware compensation mechanism used exclusively by PAL N64 consoles. It periodically adjusts the length of a scanline by one VI clock cycle to correct for the fractional timing error that results from integer constraints in the horizontal timing registers. The adjustment follows a repeating 5-stage B-A-B-A-B sequence (6,5,6,5,6 VI clocks added; LEAP_B stores 3183 → L+6, LEAP_A stores 3182 → L+5; hardware pattern `0x15` = 0b10101) and allows fH to maintain the PAL standard 15,625 Hz line frequency. *See also: PAL, f_vi.*
+* **LEAP Register:** A hardware compensation mechanism used for fractional L adjustments in non-NTSC regions. It periodically adjusts the length of a scanline to correct for the fractional timing error that results from integer constraints in the horizontal timing registers. In PAL-M's case, the correction to NTSC standards is imperfect. *See also: PAL, PAL-M, f_vi.*
 
 * **M (VI Clock Multiplier):** The region-specific rational factor by which f_xtal is multiplied to produce f_vi. Values are 17/5 for NTSC and PAL-M, and 14/5 for PAL. M is a deterministic hardware ratio and does not vary; crystal tolerance affects f_xtal and propagates through the derivation chain, but M itself is fixed. *See also: Crystal Oscillator Frequency, Horizontal Scan Frequency.*
 
@@ -936,7 +1165,7 @@ A quick reference for terminology used in this document.
 
 * **PAL (Phase Alternating Line):** Broadcast video standard used across Europe, Australia, New Zealand, and much of Africa and Asia. 625-line, 50 Hz interlaced signal with a chroma subcarrier of exactly 4,433,618.75 Hz. On the N64, the PAL crystal is 17.734475 MHz (exact), the VI clock multiplier is 14/5, and LEAP register use is required to maintain standard 15,625 Hz line frequency. *See also NTSC, PAL-M.*  
 
-* **PAL-M (MPAL):** A distinct Brazilian broadcast standard that combines PAL-derived color encoding with an NTSC-derived line rate. The "M" in PAL-M refers to CCIR System M. The chroma subcarrier is 511,312,500/143 Hz (containing a 127/143 fractional remainder), the crystal is 2,045,250,000/143 Hz, and there are 3,091 VI clocks per line. Commonly referred to as MPAL; less commonly, PAL/M.  *See also NTSC, PAL.*
+* **PAL-M (MPAL):** A distinct Brazilian broadcast standard that combines PAL-derived color encoding with an NTSC-derived line rate. The "M" in PAL-M refers to CCIR System M. The chroma subcarrier is 511,312,500/143 Hz (containing a 127/143 fractional remainder), the crystal is 2,045,250,000/143 Hz, and there are 3,090 VI clocks per line in progressive modes (3089 when interlaced). Commonly referred to as MPAL; less commonly, PAL/M.  *See also NTSC, PAL.*
 
 * **Progressive (P):** A scan method in which all lines of a vertical scan are transmitted sequentially in a single pass. Half-lines per vertical scan (S) must be even in progressive modes (526, 626). fV represents the rate of each complete vertical scan. In full scanline units, 526 half-lines corresponds to 263 scanlines: 240 active and 23 vertical blanking. *See also: Interlaced, Half-line, fV.*
 

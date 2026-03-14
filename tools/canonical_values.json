@@ -42,23 +42,28 @@
         }
     },
     "PAL-M": {
-        "line_frequency": {
-            "numerator": 6953850000,
-            "denominator": 442013
-        },
-        "vi_clock_divider": 3091,
         "progressive": {
+            "vi_clock_divider": 3090,
             "half_lines": 526,
+            "line_frequency": {
+                "numerator": 4572156375000,
+                "denominator": 290532671
+            },
             "refresh_rate": {
-                "numerator": 6953850000,
-                "denominator": 116249419
+                "numerator": 17384625000,
+                "denominator": 290532671
             }
         },
         "interlaced": {
+            "vi_clock_divider": 3089,
             "half_lines": 525,
+            "line_frequency": {
+                "numerator": 71583750000,
+                "denominator": 4547257
+            },
             "refresh_rate": {
-                "numerator": 185436000,
-                "denominator": 3094091
+                "numerator": 272700000,
+                "denominator": 4547257
             }
         }
     }

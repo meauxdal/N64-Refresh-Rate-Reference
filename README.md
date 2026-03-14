@@ -1,19 +1,17 @@
 # N64 Video Timing Reference
 
-> Update 2026-03-12: This document is a work in progress. New primary source information has been made available; errors will be corrected. Both NTSC signals and PAL progressive values should be correct already. LEAP behavior may need slight corrections per primary sources. PAL interlaced and MPAL values pending correction. 
-
 Documenting exact refresh rates for Nintendo 64 hardware. Values are derived from targeted broadcast standards, oscillator math, and register logic. Fractions are carried through all calculations for maximum precision.  
 
 ## Quick Reference
 
-| Mode  | Scan Type   | Resolution | Refresh Rate (Hz) | Exact Refresh Rate (Hz)     |  
-| ---   | ---         | ---        | ---               | ---                         |  
-| NTSC  | Progressive | 640x240p   | 59.8261054535     | 2,250,000 / 37,609          |   
-| NTSC  | Interlaced  | 640x480i   | 59.9400599401     | 60,000 / 1,001              |  
-| PAL   | Progressive | 640x288p   | 49.9201277955     | 15,625 / 313                |  
-| PAL   | Interlaced  | 640x576i   | 50 (exact)        | 50 / 1                      |  
-| PAL-M | Progressive | 640x240p   | 59.8183634793     | 6,953,850,000 / 116,249,419 |  
-| PAL-M | Interlaced  | 640x480i   | 59.9323032193     | 185,436,000 / 3,094,091     |   
+| Mode  | Scan Type   | Resolution | Refresh Rate (Hz) | Exact Refresh Rate (Hz)      |  
+| ---   | ---         | ---        | ---               | ---                          |  
+| NTSC  | Progressive | 640x240p   | 59.8261054535     | 2,250,000 / 37,609           |   
+| NTSC  | Interlaced  | 640x480i   | 59.9400599401     | 60,000 / 1,001               |  
+| PAL   | Progressive | 640x288p   | 49.9201277955     | 15,625 / 313                 |  
+| PAL   | Interlaced  | 640x576i   | 50 (exact)        | 50 / 1                       |  
+| PAL-M | Progressive | 640x240p   | 59.8370742270     | 17,384,625,000 / 290,532,671 |  
+| PAL-M | Interlaced  | 640x480i   | 59.9702194092     | 272,700,000 / 4,547,257      |   
 
 ---
 
