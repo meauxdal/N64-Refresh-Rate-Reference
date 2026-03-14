@@ -57,14 +57,14 @@ Scan Types:
 
 **Vertical scan frequency (fV)**, expressed in Hz, is the rate of vertical synchronization pulses. Precisely, fV measures the reciprocal of the VSYNC period, measured from the rising edge of one VSYNC pulse to the next rising edge. Where used in this document, "refresh rate" refers to this value. In progressive modes, fV represents frame frequency; in interlaced modes, fV represents field frequency.  
 
-All video timing derives from a single physical source: a quartz crystal oscillator (X1), whose frequency is designated f_xtal. The VI clock (f_vi) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). fH follows by dividing f_vi by L, the integer VI clock count per horizontal line. fV follows by dividing fH by S/2, the number of full scanlines.  
+All video timing derives from a single physical source: a quartz crystal oscillator (X1), whose frequency is designated f_xtal. The VI clock (f_vi) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). fH follows by dividing f_vi by L, the integer VI clock count per horizontal line. fV follows by dividing fH by the number of full scanlines (S/2, where S is the vertical half-line count).  
 
 ```
 f_vi = f_xtal × M
 fH   = f_vi / L
 fV   = fH / (S / 2)
 
-fV   = (f_xtal × M) / (L × S / 2)
+fV   = (f_xtal × M) / (L × (S / 2))
 ```
 
 All VI timing frequencies are rational derivatives of f_xtal.  
@@ -82,7 +82,7 @@ Parenthetical annotations clarify numerical representations:
 
 #### 1.3.1 Counting Units
 
-**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modelling in an attempt to avoid "line" ambiguity in vertical contexts. See §5.1.  
+**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modelling in an attempt to align with hardware register logic and avoid "line" ambiguity in vertical contexts. See §5.1.  
 
 #### 1.3.2 Registers
 
