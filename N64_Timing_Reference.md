@@ -35,10 +35,15 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
     * [§7.2 References](#72-references)
     * [§7.3 Acknowledgements](#73-acknowledgements)
 * [§8 Glossary](#8-glossary)
+* [Appendix A: X1 and X2 Crystal Stamp Code Table](#appendix-a-x1-and-x2-stamp-code-table)
 
 ---
 
 ## 1. Introduction  
+
+![Figure 9](/figures/fig35_NUS-CPU-01_Prominos.jpg)  
+*Nintendo 64 motherboard (NUS-CPU-01) showing the Nintendo Reality Coprocessor (RCP-NUS, U9) and NEC VR4300 (CPU_NUS, U10). The Video Interface (VI), part of the RCP, generates composite video timing for NTSC, PAL, and PAL-M output modes.*  
+
 
 The Nintendo 64 **Video Interface (VI)** supports three television standards (**NTSC**, **PAL**, and **PAL-M**), each with both **progressive** and **interlaced** scan modes, resulting in six video timing configurations. This document provides exact timing values derived from hardware specifications, with presented results expressed in irreducible fractions and high-precision decimals.  
 
@@ -53,11 +58,11 @@ Scan Types:
 * **Progressive (P)**: Lines drawn sequentially each vertical scan  
 * **Interlaced (I)**: Lines drawn in alternating fields across two successive vertical scans  
 
-### 1.1 Terminology
+### 1.1 Terminology  
 
 **Vertical scan frequency (fV)**, expressed in Hz, is the rate of vertical synchronization pulses. Precisely, fV measures the reciprocal of the VSYNC period, measured from the rising edge of one VSYNC pulse to the next rising edge. Where used in this document, "refresh rate" refers to this value. In progressive modes, fV represents frame frequency; in interlaced modes, fV represents field frequency.  
 
-All video timing derives from a single physical source: a quartz crystal oscillator (X1), whose frequency is designated f_xtal. The VI clock (f_vi) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). fH follows by dividing f_vi by L, the integer VI clock count per horizontal line. fV follows by dividing fH by the number of full scanlines (S/2, where S is the vertical half-line count).  
+All video timing derives from a single physical source: a quartz crystal oscillator (X1), whose frequency is designated **f_xtal**. The VI clock (**f_vi**) is produced by multiplying f_xtal by a region-specific rational multiplier M (17/5 for NTSC and PAL-M; 14/5 for PAL). **fH** (horizontal scan frequency) follows by dividing f_vi by **L**, the integer VI clock count per horizontal line. **fV** follows by dividing fH by the number of full scanlines (S/2, where **S** is the vertical half-line count).  
 
 ```
 f_vi = f_xtal × M
@@ -82,7 +87,7 @@ Parenthetical annotations clarify numerical representations:
 
 #### 1.3.1 Counting Units
 
-**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modelling in an attempt to align with hardware register logic and avoid "line" ambiguity in vertical contexts. See §5.1.  
+**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modeling in an attempt to align with hardware register logic and avoid "line" ambiguity in vertical contexts. See §5.1.  
 
 #### 1.3.2 Registers
 
@@ -98,7 +103,10 @@ The document uses N64brew naming conventions throughout. SDK equivalents are not
 | `VI_H_VIDEO` | `VI_H_VIDEO_REG` | `0x04400024` | Active video horizontal start/end |
 | `VI_V_VIDEO` | `VI_V_VIDEO_REG` | `0x04400028` | Active video vertical start/end |
 
-All registers are terminal-counted; add 1 to derive the effective count. Interlaced VSYNC is automatically offset by 0.5 lines per field. See §5.2.1 for details regarding the leap adjustment mechanism.  
+All registers are terminal-counted; add 1 to the register value to derive the effective count. Interlaced VSYNC is automatically offset by 0.5 lines per field. See §5.2.1 for details regarding the leap adjustment mechanism.  
+
+![Figure 8](/figures/fig34_US6331856-pp46-47.png)  
+*Video Interface (VI) register layout from U.S. Patent 6,331,856 (sheets 46–47). These diagrams show the VI control and timing registers, including vertical and horizontal sync, active video windows, burst timing, scaling, and the current line counter. The HSYNC leap register provides alternating scanline durations (LEAP_A, LEAP_B) used for PAL timing compensation.*
  
 ---
 
@@ -121,7 +129,7 @@ The table lists refresh rates (fV) for all video modes. The fully reduced fracti
 
 ### 2.2 Resolution  
 
-In the context of contemporary retail software, the N64 outputs four fixed video signals:  
+In the context of contemporary retail software, the N64 outputs four distinct raster formats:  
 
 | Signal | Scan Type   | Resolution |  
 | :---   | :---        | :---       |  
@@ -189,10 +197,10 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 
 > VI registers operate on terminal counts; all derived timing values use the hardware-consistent half-line model described in §1.
 
-* `VI_V_TOTAL` (`0x04400018`): The register stores a terminal half-line count; effective number of half-lines per frame is equal to `VI_V_TOTAL` + 1.  
+* `VI_V_TOTAL` (`0x04400018`): The register stores a terminal half-line count; effective number of half-lines per vertical scan is equal to `VI_V_TOTAL` + 1.  
 * `VI_H_TOTAL` (`0x0440001C`): The register stores a terminal VI clock count (per full scanline); effective clocks per scanline is equal to `VI_H_TOTAL` + 1.  
-* `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments by 2 per full scanline. In interlaced mode, bit 0 toggles each field to indicate odd or even lines. Libdragon uses this register to determine which lines require redrawing in 480i mode.  
-* `VI_H_VIDEO` (`0x04400024`): Defines the horizontal start and end of the active video window in VI pixels.  
+* `VI_V_CURRENT` (`0x04400010`): Reports the current half-line count; increments by 2 per full scanline. In interlaced mode, bit 0 toggles each field to indicate odd or even lines.  
+* `VI_H_VIDEO` (`0x04400024`): Defines the horizontal start and end of the active video window in VI pixels (L/4).  
 * `VI_V_VIDEO` (`0x04400028`): Defines the vertical start and end of the active video window in half-lines.  
 
 > For interlaced modes, S is set to an odd integer (525 or 625). The VI hardware automatically offsets the vertical sync position by 0.5 lines every other field.  
@@ -201,7 +209,7 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 
 Timing values in this section are calculated from the fundamental constants in §3.1. fH is line frequency; fV is vertical scan frequency (refresh rate). Values are derived from fH and half-line count S. Progressive modes use the full half-line count, interlaced modes offset vertical sync by 0.5 lines per field.  
 
-| Mode      | fH (Hz, .10f)                 | fH (Hz)                         | fV (Hz)                      | 
+| Mode      | fH (decimal, Hz)              | fH (fraction, Hz)               | fV (Hz)                      | 
 | :----     | :---                          | :---                            | :---                         |
 | NTSC-P    | 15,734.2657342657             | 2250000/143                     | 2250000/37609                | 
 | NTSC-I    | 15,734.2657342657             | 2250000/143                     | 60000/1001                   |
@@ -308,63 +316,37 @@ The decode convention is consistent across all three regional crystal frequencie
 
 ##### 3.5.1.3 X1 and X2 Stamp Codes by Revision  
 
-The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X1 is the video clock crystal; X2 is not involved in video timing derivations. Both are included because their date clustering on individual boards provides independent corroboration of the decode convention. See §7.2.1 for the crystal stamp code spreadsheet.  
+The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X1 is the video clock crystal; X2 is not involved in video timing derivations. Both are included because their date clustering on individual boards provides independent corroboration of the decode convention.  See §7.2.1 for links.See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. 
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
 | :--- | :--- | :--- | :--- | :--- | :--- |  
-| NUS-CPU-01 | `D143A6` | `D147B6` | Jan 1996 | Feb 1996 | ID: Prominos_01 *(Initial configuration: CPU-NUS; RCP-NUS; 2x RDRAM18-NUS A; VDC-NUS; ENC-NUS; BU9480F; AMP-NUS; 2x MX8330MC; Sharp PQ7VZ5 (marking: `7VZ5`); TI SN74LVC125 (marking: `LC125`))* |  
-| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | [Photo by Yaca2671, CC BY-SA 3.0 (Wikimedia)](https://commons.wikimedia.org/w/index.php?curid=5777930) |
-| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | ID: modretro_01 |  
-| NUS-CPU-02 | `D143B6` | `D147C6` | Feb 1996 | Mar 1996 | |  
-| NUS-CPU-02 | `D143C6` | `D147B6` | Mar 1996 | Feb 1996 | |  
-| NUS-CPU-02 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | ID: cy_01 |  
-| NUS-CPU-02 | `D143K6` | `D147K6` | Oct 1996 | Oct 1996 | |  
-| NUS-CPU-03 | `D143A6` | `D147A6` | Jan 1996 | Jan 1996 | *CPU-NUS A and VDC-NUS A are introduced mid-03 run with no board rev. bump* |
-| NUS-CPU-03 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | |
-| NUS-CPU-03 | `D143G6` | `D147F6` | Jul 1996 | Jun 1996 | |
-| NUS-CPU-03 | `D143H6` | `D147F6` | Aug 1996 | Jun 1996 | |
+| NUS-CPU-01 | `D143B6` | `D147B6` | Jan 1996 | Feb 1996 | ID: Prominos_01 |
+| NUS-CPU-02 | `D143B6` | `D147C6` | Feb 1996 | March 1996 | ID: Prominos_02 |  
 | NUS-CPU-03 | `D143L6` | `D147L6` | Nov 1996 | Nov 1996 | ID: Prominos_03 |
-| NUS-CPU-04 | `D143H6` | `D147J6` | Aug 1996 | Sep 1996 | |
-| NUS-CPU-04 | `D143L6I` | `D147J7` | Nov 1996 | Sep 1997 | I-suffix on X1 |
 | NUS-CPU-04 | `D143J7` | `D147J7` | Sep 1997 | Sep 1997 | ID: Prominos_04 |
-| NUS-CPU-04 | `D143K7` | `D147K7` | Oct 1997 | Oct 1997 | |
-| NUS-CPU-05 | `D143G8` | `D147G8I` | Jul 1998 | Jul 1998 | I-suffix on X2 *(U7 MX9911MC likely present on [05, 07] inclusive. U1 AVDC-NUS is a positive identifier of NUS-CPU-05; however U1 may be either AVDC-NUS (earlier serials) or MAV-NUS (later serials))* |
-| NUS-CPU-05 | `D143G8` | `D147H8` | Jul 1998 | Aug 1998 | |
-| NUS-CPU-05 | `D143J8` | `D147J8` | Sep 1998 | Sep 1998 | |
-| NUS-CPU-05 | `D143K8` | `D147K8` | Oct 1998 | Oct 1998 | |
 | NUS-CPU-05 | `D143L8` | `D147L8` | Nov 1998 | Nov 1998 | ID: Prominos_05 |
-| NUS-CPU-05 | `D143G9` | `D147H9` | Jul 1999 | Aug 1999 | |
 | NUS-CPU-05-1 | `D143C9` | `D147C9` | Mar 1999 | Mar 1999 | ID: Prominos_05-1 |
-| NUS-CPU-05-1? | `D143L8` | `D147K8` | Nov 1998 | Oct 1998 | Revision not visible; U7+U15 both MX9911MC (never seen on pre-05-1 boards) |
-| NUS-CPU-06 | - | - | - | - | Board image available; stamp codes illegible |
-| NUS-CPU-07 | - | - | - | - | Board images available; stamp codes illegible |
-| NUS-CPU-08 | `D143F9` | `D147F9` | Jun 1999 | Jun 1999 | *MX8350 present in 08 onward* |
-| NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08; I-suffix on both |
-| NUS-CPU-08 | `D143H9` | `D147J9` | Aug 1999 | Sep 1999 | X2 year inferred |
-| NUS-CPU-08 | `D143L9` | `D147L9` | Nov 1999 | Nov 1999 | |
-| NUS-CPU-08-1 | `D143H9` | `D147H9` | Aug 1999 | Aug 1999 | |
+| NUS-CPU-06 | - | - | - | - | ID: modretro_15; 1 board image available; stamp codes illegible |
+| NUS-CPU-07 | - | - | - | - | ID: modretro_07; 2 board images available; stamp codes illegible |
+| NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08 |
 | NUS-CPU-08-1 | `D143K9` | `D147J9` | Oct 1999 | Sep 1999 | ID: Prominos_08-1 |
-| NUS-CPU-08-1 | `D143K9I` | `D147K9I` | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
 | NUS-CPU-09 | `D143J0` | `D147H0` | Sep 2000 | Aug 2000 | ID: Prominos_09 |
-| NUS-CPU-09 | `D143J0` | `D147J0` | Sep 2000 | Sep 2000 | |
-| NUS-CPU-09 | `D143J0I` | `D147K0` | Sep 2000 | Oct 2000 | I-suffix on X1 |
-| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1. All visible IC marks with likely decodes: `PIF-NUS A0027 EA` (`0027` NEC date code convention: wk 27, 2000); `CPU-NUS A 0002XK020` (wk 2, 2000); `RCP-NUS 9949KK008` (wk 49, 1999); `RDRAM36 9949KU621`; `AMP-NUS Ⓜ 90.6`⁶; `TI LV125A 9AK DE6J`; `MAV-NUS RS5C382 9MS 9Y`; `MX8350MC 43B TA245201` |
-| NUS-CPU-09-1 | `D143K0I` | `D147L0` | Oct 2000 | Nov 2000 | I-suffix on X1 |
-| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: kwyjibo_01 |
+| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01 |
 | NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01 |
-| NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; modretro_13 |
-| NUS-CPU(P)-01 | `D177G8` | `D147M7I` | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
-| NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
-| NUS-CPU(P)-02? | `D177J9` | - | Sep 1999 | - | PAL; ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS (marking: `9940 E`; date code: wk 40, 1999); (P)-03 not excluded. U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`; wk 21, 1999?); only non-Texas Instruments part observed at U8 in corpus |
-| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_14. Board image available; stamp codes illegible *(MX8350 present.)* |
-| NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01; two MX8330MCs confirmed |
-| NUS-CPU(M)-02 | removed | `D147F7` | - | Jun 1997 | PAL-M; ID: gbonifa_01; X1+U6 absent (junk unit) |
-| NUS-CPU(M)-02? | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: jasnet_01; revision not visible. Markings: `1997 Nintendo`; `PIF(M)-NUS 9739 D`; `VDC-NUS A BU9801F 727 120`; `ENC-NUS 735 161`; `9480F 7935`; `MX8330MC TEC0968L` (2x); `AMP-NUS 726 180`; `TA78M05F 7I`; `287C` |
+| NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; ID: modretro_13 |
+| NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; ID: modretro_14 |
+| NUS-CPU(P)-03 | - | - | - | - | PAL; no board image yet located |
+| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_14; 1 board image available; stamp codes illegible. |
+| NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01 |
+| NUS-CPU(M)-02 | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: jasnet_01; revision inferred |
+| NUS-CPU(M)-03 | - | - | - | - | PAL; no board image yet located |
+| NUS-CPU(M)-04 | - | - | - | - | PAL; no board image yet located |
+| NUS-CPU(M)-05 | - | - | - | - | PAL; no board image yet located |
 | NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
 
 X1 and X2 date codes on individual boards cluster tightly, typically within one to two months of each other. This is consistent with batch component sourcing and provides independent corroboration of the decode. The crystal date progression across revisions also tracks known board revision chronology: NUS-CPU-01 through -04 uniformly yield 1996-1997 dates; NUS-CPU-05 yields 1998-1999; NUS-CPU-08 onward yields 1999-2000. The MHz field is self-evident from the regional clock frequency; the month and year fields are validated by this revision-anchored progression. The decode is therefore strongly self-corroborating across the current corpus.  
 
-⁶ The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo (confirmed by Prominos). It is unrelated the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote ⁴).  
+
 
 #### 3.5.2 X1 Oscillator Tolerance  
 
@@ -404,10 +386,10 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | NTSC Color Subcarrier (FSC) | U7        | 8    | 3.58 MHz           | 3.0 Vpp            |  
 | NTSC Video Clock (VCLK)     | U7        | 1    | 48.68 MHz          | 3.3 Vpp            |  
 | PAL Video Clock (VCLK)      | U15       | 1    | 49.66 MHz          | 3.3 Vpp            |  
-| System Master Clock         | U10       | 16   | 62.51 MHz          | -                  |  
+| Master Clock⁶               | U10       | 16   | 62.51 MHz          | -                  |  
 | Rambus Clock (RCLK)         | U1        | 5    | 250.2 MHz          | -                  |  
 
-> The System Master Clock (62.51 MHz) is a logic-domain frequency used by the CPU and RCP for execution timing. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
+⁶ The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
 
 ---
 
@@ -456,66 +438,66 @@ The figure below is a visualization created by lidnariq after oscilloscope analy
 
 ### 4.2 Mode-Specific Notes  
 
-NTSC (Progressive and Interlaced)  
+*L (base) and leap values are terminal-counted; leap patterns are described in (B, A) order, following Libultra VI macro convention (as seen in the [Animal Forest decompilation source code](https://github.com/zeldaret/af/blob/main/lib/ultralib/src/vimodes/vimodepallan1.c)).*
 
-* Crystal frequency: 14.3181818182 MHz (315/22 MHz)  
-* VI clock frequency: 48.6818181818 MHz (5355/110 MHz)  
-* Color subcarrier: 3.5795454545 MHz (315/88 MHz)  
-* VI clock multiplier: 17/5 (3.4)  
-* Leap compensation: 
-1. Baseline L (terminal-counted) is `3093` 
-2. `LEAP_A`, `LEAP_B` is `3093`, `3093`, 
-3. Pattern: `0x00` = `0b00000` = `0-0-0-0-0` = 0
+#### NTSC (Progressive and Interlaced)
 
-> No fractional adjustment.
+* Crystal frequency: 14.3181818182 MHz (315/22 MHz)
+* VI clock frequency: 48.6818181818 MHz (5355/110 MHz)
+* Color subcarrier: 3.5795454545 MHz (315/88 MHz)
+* VI clock multiplier: 17/5 (3.4)
+* Leap compensation:
+1. Baseline L (terminal-counted) is `3093` (effective 3094)
+2. `LEAP_B`, `LEAP_A` is `3093`, `3093` (effective 3094)
+3. Pattern: 0 = `0x00` = `0b00000` = `0-0-0-0-0` = 0 (no f_H compensation applied)
 
-PAL (Progressive and Interlaced)  
+#### PAL (Progressive and Interlaced)
 
-* Crystal frequency: 17,734,475 Hz (exact)  
-* VI clock frequency: 49,656,530 Hz (exact)  
-* Color subcarrier: 4,433,618.75 Hz (exact) (17,734,475/4 Hz)  
-* VI clock multiplier: 14/5 (2.8)  
-* Leap compensation pattern 1 (e.g. Super Mario 64): 
-
+* Crystal frequency: 17,734,475 Hz (exact)
+* VI clock frequency: 49,656,530 Hz (exact)
+* Color subcarrier: 4,433,618.75 Hz (exact) (17,734,475/4 Hz)
+* VI clock multiplier: 14/5 (2.8)
+* Leap compensation pattern #1 (SGI, e.g. Super Mario 64 (Europe), Goldeneye 007 (Europe)):
 1. Baseline L (terminal-counted) is `3177`
-1. `LEAP_A`, `LEAP_B` is `3183`, `3182`, 
-3. Pattern 1: `0x15` = `0b10101` = `6-5-6-5-6` = 28
+2. `LEAP_B`, `LEAP_A` is `3183`, `3182`
+3. Pattern #1: 21 = `0x15` = `0b10101` = `6-5-6-5-6` = 28
 4. 28/5 = 5.6 average additional VI clocks per scanline
 
-* Leap compensation pattern 2 (e.g. Animal Forest): 
-
+* Leap compensation pattern #2 (Nintendo, e.g., Mario Kart 64 (Europe)⁷ and later titles):
 1. Baseline L (terminal-counted) is `3177`
-2. `LEAP_A`, `LEAP_B` is `3183, 3181`, 
-3. Pattern 2: `0x17` = `0b10111` = `6-6-6-4-6` = 28
+2. `LEAP_B`, `LEAP_A` is `3183`, `3181`
+3. Pattern #2: 23 = `0x17` = `0b10111` = `6-4-6-6-6` = 28
 4. 28/5 = 5.6 average additional VI clocks per scanline
 
-> The pattern expansion assumes MSB-first ordering.
+#### PAL-M Progressive
 
-PAL-M Progressive  
-
-* Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)  
-* VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)  
-* Color subcarrier: 511,312,500 / 143 Hz (exact) (≈ 3,575,611.8881118881 Hz ≈ 3.5756118881 MHz)  
-* VI clock multiplier: 17 / 5 (3.4)  
+* Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)
+* VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)
+* Color subcarrier: ≈ 3.5756118881 MHz
+* VI clock multiplier: 17 / 5 (3.4)
 * Leap compensation:
 
-1. Baseline L (terminal-counted) is `3089` 
-2. `LEAP_A`, `LEAP_B` is `3097`, `3098`
-3. Pattern: `0x04` = `0b00100` = `9-9-8-9-9` = 44
-4. 44/5 = 8.8 average additional VI clocks per scanline
+1. Baseline L (terminal-counted) is `3177`
+2. `LEAP_B`, `LEAP_A` is `3183`, `3182`
+3. Pattern #1: 21 = `0x15` = `0b10101` = `6-5-6-5-6` = 28
+4. 28/5 = 5.6 average additional VI clocks per scanline
 
-PAL-M Interlaced  
+#### PAL-M Interlaced
 
-* Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)  
-* VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)  
-* Color subcarrier: 511,312,500 / 143 Hz (exact) (≈ 3,575,611.8881118881 Hz ≈ 3.5756118881 MHz)  
-* VI clock multiplier: 17 / 5 (3.4)  
-* Leap compensation: 
+* Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)
+* VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)
+* Color subcarrier: ≈ 3.5756118881 MHz
+* VI clock multiplier: 17 / 5 (3.4)
+* Leap compensation:
 
-1. Baseline L (terminal) is `3088` 
-2. `LEAP_A`, `LEAP_B` is `3100`, `3100`
-3. Pattern: `0x00` = `0b00000` = `12-12-12-12-12` = 60
+1. Baseline L (terminal-counted) is `3088`
+2. `LEAP_B`, `LEAP_A` is `3100`, `3100`
+3. Pattern: 0 = `0x00` = `0b00000` = `12-12-12-12-12` = 60
 4. 60/5 = 12 additional clocks per scanline
+
+⁷ The osViModeTable in Mario Kart 64 seemingly documents the transition point from PAL leap pattern #1 to #2. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are present in the table, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This pattern appears in later titles, including Star Fox 64 and The Legend of Zelda: Ocarina of Time.
+
+*Leap sums are divided by 5 (the 5-stage leap cycle) to produce the fractional increment added to L. See §5.2.1 for details on leap compensation.*
 
 #### 4.2.1 Subcarrier Frequency Relationships  
 
@@ -531,7 +513,7 @@ All N64 video modes adhere to broadcast standard relationships between subcarrie
 
 *Standard fS to fH ratios. Source: Wooding, M., The Amateur TV Compendium, p. 55*  
 
-PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to an integer number of VI clocks per line. The exact colorburst frequency is 3,575,611 + 127/143 Hz. This remainder propagates through the derivation chain. The hardware resolves this by rounding to 3090 (progressive) or 3089 (interlaced) VI clocks per line, producing an fH of approximately 15,732.23 Hz rather than the NTSC-standard 15,734.27 Hz. The canonical fV values in this document are derived from the exact fractional colorburst frequency carried through each step; see §5.3 for full derivation.  
+PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to an integer number of VI clocks per line. The exact colorburst frequency is 3,575,611 + 127/143 Hz. The fractional component propagates through the timing derivation chain. The hardware resolves this by rounding to 3090 (progressive) or 3089 (interlaced) VI clocks per line, producing an fH of approximately 15,737.15 Hz (progressive) or 15,742.18 Hz (interlaced). These differ slightly from the NTSC standard horizontal frequency of 15,734.27 Hz. The fV values in this document are derived from the fractional colorburst frequency carried through each step; see §5.3 for full derivation.  
 
 > The subcarrier reference signal is delivered to the ENC-NUS encoder (U5) via the SCIN pin (pin 8), which receives the U7.FSC output through a 4.3 kΩ ÷ 820 Ω resistor divider and coupling capacitor C21. This is the hardware path by which the crystal-derived fS enters the analog encode stage. See Figure 2e, §3.4, *ENC-NUS (U5) in circuit*.  
 
@@ -616,17 +598,19 @@ fV_prog = fH / (526/2) = 2,250,000 / 37,609  ≈ 59.8261054535 Hz
 
 ### 5.1.1 NTSC Leap Adjustment
 
-The NTSC configuration programs HSYNC(`3093`, `0`) and LEAP(`3093`, `3093`) (terminal-counted).
+The NTSC configuration programs HSYNC(`3093`, `0`) and LEAP(`3093`, `3093`) (terminal-counted). 
+
+*§5 follows the SDK convention of listing LEAP_B first in these parenthetical groupings.*
 
 ```
 L_base = 3,094  VI clocks per scanline, base
-first  = 3,094  effective  (register value 3,093 + 1)
-second = 3,094  effective  (register value 3,093 + 1)
+LEAP_B = 3,094  effective  (register value 3,093 + 1)
+LEAP_A = 3,094  effective  (register value 3,093 + 1)
 ```
 
-Pattern `0x00` (`0b00000`) selects the second value on every VSYNC. As first = second = L_base, every VSYNC is uniform: no half-line extension occurs. The `VI_H_TOTAL_LEAP` register produces no correction. fH is therefore exact from L alone, with no leap adjustment required.
+Pattern `0x00` (`0b00000`) selects the LEAP_A on every VSYNC. As LEAP_A = L_base, every VSYNC is uniform: no half-line extension occurs. The `VI_H_TOTAL_LEAP` register produces no correction. fH is therefore exact from L alone, with no leap adjustment required.
 
-*This contrasts with PAL-M interlaced, which also programs pattern `0x00` with first = second, but with both values set above L_base. See §5.3.2.1.*
+*This contrasts with PAL-M interlaced, which also programs pattern `0x00` with LEAP_A = LEAP_B, but with both values set above L_base. See §5.3.2.1.*
 
 ---
 
@@ -727,24 +711,20 @@ fH = f_vi / (L + (28/5) / (S/2))
 
 ### 5.2.1.1 PAL Leap Pattern and Bit Mapping
 
-*Certainy regarding respective LEAP register naming is not established. "First" and "second" corresponding with order of appearance in decompilation source are used until nomenclature is reconciled.* 
-
-> Two interpretations of the pattern field were considered: bit=1 selecting the first listed register value, or bit=0 selecting it. The second interpretation fails for both known PAL configurations, producing totals of 27 and 22 where 28 is required.
-
 At least two distinct PAL leap configurations appear across the N64 production run. The Nintendo SDK OS revision coinciding with these changes is not yet identified. 
 
 Super Mario 64 (1996):  
 
 ```
 HSYNC(3177, 21)  ->  L_base = 3178,  pattern = 0b10101
-LEAP(3183, 3182) ->  first leap value (effective) = 3184 (+6), second leap value (effective) = 3183 (+5)
+LEAP(3183, 3182) ->  LEAP_B (effective) = 3184 (+6), LEAP_A (effective) = 3183 (+5)
 
-Bit pattern applied (bit=1->first, bit=0->second):
-slot 1 (1) -> first:  +6
-slot 2 (0) -> second: +5
-slot 3 (1) -> first:  +6
-slot 4 (0) -> second: +5
-slot 5 (1) -> first:  +6
+Bit pattern applied:
+slot 1 (1) -> LEAP_B: +6
+slot 2 (0) -> LEAP_A: +5
+slot 3 (1) -> LEAP_B: +6
+slot 4 (0) -> LEAP_A: +5
+slot 5 (1) -> LEAP_B: +6
 
 Total extra over 5-VSYNC cycle: 6 + 5 + 6 + 5 + 6 = 28
 Average per VSYNC: 28 / 5
@@ -754,14 +734,14 @@ Animal Forest (どうぶつの森, Dōbutsu no Mori) (2001):
 
 ```
 HSYNC(3177, 23)  ->  L_base = 3178,  pattern = 0b10111
-LEAP(3183, 3181) ->  first leap value (effective) = 3184 (+6), second leap value (effective) = 3182 (+4)
+LEAP(3183, 3181) ->  LEAP_B (effective) = 3184 (+6), LEAP_A (effective) = 3182 (+4)
 
-Bit pattern applied (bit=1->first, bit=0->second):
-slot 1 (1) -> first:  +6
-slot 2 (1) -> first:  +6
-slot 3 (1) -> first:  +6
-slot 4 (0) -> second: +4
-slot 5 (1) -> first:  +6
+Bit pattern applied:
+slot 1 (1) -> LEAP_B: +6
+slot 2 (1) -> LEAP_B: +6
+slot 3 (1) -> LEAP_B: +6
+slot 4 (0) -> LEAP_A: +4
+slot 5 (1) -> LEAP_B: +6
 
 Total extra over 5-VSYNC cycle: 6 + 6 + 6 + 4 + 6 = 28
 Average per VSYNC: 28 / 5
@@ -856,18 +836,18 @@ The PAL-M progressive configuration programs HSYNC(`3089`, `4`) and LEAP(`3097`,
 
 ```
 L_base = 3,090  VI clocks per line, base
-first  = 3,098  effective  (register value 3,097 + 1)
-second = 3,099  effective  (register value 3,098 + 1)
+LEAP_B = 3,098  effective  (register value 3,097 + 1)
+LEAP_A = 3,099  effective  (register value 3,098 + 1)
 ```
 
-The bit mapping established in §5.2.1.1 applies. Pattern `0x04` (`0b00100`) distributes one first-value fire and four second-value fires across a repeating 5-VSYNC cycle:
+The bit mapping established in §5.2.1.1 applies. Pattern `0x04` (`0b00100`):
 
 ```
-slot 1 (0) -> second: +9
-slot 2 (0) -> second: +9
-slot 3 (1) -> first:  +8
-slot 4 (0) -> second: +9
-slot 5 (0) -> second: +9
+slot 1 (0) -> LEAP_A: +9
+slot 2 (0) -> LEAP_A: +9
+slot 3 (1) -> LEAP_B: +8
+slot 4 (0) -> LEAP_A: +9
+slot 5 (0) -> LEAP_A: +9
 
 Total extra over 5-VSYNC cycle: 4 × 9 + 1 × 8 = 44
 Average extra per VSYNC: 44 / 5
@@ -1040,6 +1020,8 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | Figure 5b | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal oscillators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
 | Figure 6 | `fig29_raster_scan_progressive_ian_harvey.png` | *Progressive raster scan: electron beam traversal, horizontal retrace, and vertical retrace (Source: Ian Harvey, Wikimedia Commons, [CC0](https://commons.wikimedia.org/wiki/File:Raster-scan.svg))* |  
 | Figure 7 | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
+| Figure 8 | `fig34_US6331856-pp46-47.png` | *Nintendo 64 Video Interface (VI) register layout showing control, sync timing, video window, burst, and scaling registers (Source: [U.S. Patent 6,331,856](https://patents.google.com/patent/US6331856B1/en), sheets 46–47).* |
+| Figure 9 | `fig35_NUS-CPU-01_Prominos.jpg` | *Nintendo 64 motherboard (NUS-CPU-01 revision) showing the Reality Coprocessor and system layout (Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET)).* |
 
 ### 7.2 References
 
@@ -1049,6 +1031,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Nintendo 64 Programming Manual (D.C.N. NUS-06-0030-001 REV G)](https://ultra64.ca/files/documentation/nintendo/Nintendo_64_Programming_Manual_NU6-06-0030-001G_HQ.pdf) - Detailed timing tables.  
 * [Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001 REV A)](https://drive.google.com/drive/folders/1kGlB2TyX7CsmPnSyzpxGcSKpJ1F-ywal) - Block diagrams; boot sequence; oscilloscope timing verification.  
 * [Super Mario 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) - Early libultra-defined Video Interface configurations
+* [Mario Kart 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) - Transitional libultra-defined Video Interface configurations 
 * [Animal Forest Decompilation - VI modes (GitHub)](https://github.com/zeldaret/af/tree/main/lib/ultralib/src/vimodes) - Later libultra-defined Video Interface configurations
 * [Macronix MX8330MC Datasheet](/references/Macronix-MX8330MC-ocr.pdf) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4 color subcarrier output), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
 * [Macronix MX8350 Datasheet](/references/Macronix-MX8350-ocr.pdf) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
@@ -1197,3 +1180,61 @@ A quick reference for terminology used in this document.
 * `VI_V_VIDEO` (`0x04400028`): Defines the vertical start and end of the active video window in half-lines.
 
 * **VSYNC (Vertical Synchronization):** A timing pulse in the video signal marking the end of a vertical scan cycle. The rate of VSYNC pulses defines fV. *See also: fV, CSYNC.*
+
+## Appendix A: X1 and X2 Stamp Code Table
+
+The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. 
+
+| Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
+| :--- | :--- | :--- | :--- | :--- | :--- |  
+| NUS-CPU-01 | `D143A6` | `D147B6` | Jan 1996 | Feb 1996 | ID: Prominos_01 *(Initial configuration: CPU-NUS; RCP-NUS; 2x RDRAM18-NUS A; VDC-NUS; ENC-NUS; BU9480F; AMP-NUS; 2x MX8330MC; Sharp PQ7VZ5 (marking: `7VZ5`); TI SN74LVC125 (marking: `LC125`))* |  
+| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | [Photo by Yaca2671, CC BY-SA 3.0 (Wikimedia)](https://commons.wikimedia.org/w/index.php?curid=5777930) |
+| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | ID: modretro_01 |  
+| NUS-CPU-02 | `D143B6` | `D147C6` | Feb 1996 | Mar 1996 | |  
+| NUS-CPU-02 | `D143C6` | `D147B6` | Mar 1996 | Feb 1996 | |  
+| NUS-CPU-02 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | ID: cy_01 |  
+| NUS-CPU-02 | `D143K6` | `D147K6` | Oct 1996 | Oct 1996 | |  
+| NUS-CPU-03 | `D143A6` | `D147A6` | Jan 1996 | Jan 1996 | *CPU-NUS A and VDC-NUS A are introduced mid-03 run with no board rev. bump* |
+| NUS-CPU-03 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | |
+| NUS-CPU-03 | `D143G6` | `D147F6` | Jul 1996 | Jun 1996 | |
+| NUS-CPU-03 | `D143H6` | `D147F6` | Aug 1996 | Jun 1996 | |
+| NUS-CPU-03 | `D143L6` | `D147L6` | Nov 1996 | Nov 1996 | ID: Prominos_03 |
+| NUS-CPU-04 | `D143H6` | `D147J6` | Aug 1996 | Sep 1996 | |
+| NUS-CPU-04 | `D143L6I` | `D147J7` | Nov 1996 | Sep 1997 | I-suffix on X1 |
+| NUS-CPU-04 | `D143J7` | `D147J7` | Sep 1997 | Sep 1997 | ID: Prominos_04 |
+| NUS-CPU-04 | `D143K7` | `D147K7` | Oct 1997 | Oct 1997 | |
+| NUS-CPU-05 | `D143G8` | `D147G8I` | Jul 1998 | Jul 1998 | I-suffix on X2 *(U7 MX9911MC likely present on [05, 07] inclusive. U1 AVDC-NUS is a positive identifier of NUS-CPU-05; however U1 may be either AVDC-NUS (earlier serials) or MAV-NUS (later serials))* |
+| NUS-CPU-05 | `D143G8` | `D147H8` | Jul 1998 | Aug 1998 | |
+| NUS-CPU-05 | `D143J8` | `D147J8` | Sep 1998 | Sep 1998 | |
+| NUS-CPU-05 | `D143K8` | `D147K8` | Oct 1998 | Oct 1998 | |
+| NUS-CPU-05 | `D143L8` | `D147L8` | Nov 1998 | Nov 1998 | ID: Prominos_05 |
+| NUS-CPU-05 | `D143G9` | `D147H9` | Jul 1999 | Aug 1999 | |
+| NUS-CPU-05-1 | `D143C9` | `D147C9` | Mar 1999 | Mar 1999 | ID: Prominos_05-1 |
+| NUS-CPU-05-1? | `D143L8` | `D147K8` | Nov 1998 | Oct 1998 | Revision not visible; U7+U15 both MX9911MC (never seen on pre-05-1 boards) |
+| NUS-CPU-06 | - | - | - | - | Board image available; stamp codes illegible |
+| NUS-CPU-07 | - | - | - | - | Board images available; stamp codes illegible |
+| NUS-CPU-08 | `D143F9` | `D147F9` | Jun 1999 | Jun 1999 | *MX8350 present in 08 onward* |
+| NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08; I-suffix on both |
+| NUS-CPU-08 | `D143H9` | `D147J9` | Aug 1999 | Sep 1999 | X2 year inferred |
+| NUS-CPU-08 | `D143L9` | `D147L9` | Nov 1999 | Nov 1999 | |
+| NUS-CPU-08-1 | `D143H9` | `D147H9` | Aug 1999 | Aug 1999 | |
+| NUS-CPU-08-1 | `D143K9` | `D147J9` | Oct 1999 | Sep 1999 | ID: Prominos_08-1 |
+| NUS-CPU-08-1 | `D143K9I` | `D147K9I` | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
+| NUS-CPU-09 | `D143J0` | `D147H0` | Sep 2000 | Aug 2000 | ID: Prominos_09 |
+| NUS-CPU-09 | `D143J0` | `D147J0` | Sep 2000 | Sep 2000 | |
+| NUS-CPU-09 | `D143J0I` | `D147K0` | Sep 2000 | Oct 2000 | I-suffix on X1 |
+| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1. All visible IC marks with likely decodes: `PIF-NUS A0027 EA` (`0027` NEC date code convention: wk 27, 2000); `CPU-NUS A 0002XK020` (wk 2, 2000); `RCP-NUS 9949KK008` (wk 49, 1999); `RDRAM36 9949KU621`; `AMP-NUS Ⓜ⁸ 90.6`; `TI LV125A 9AK DE6J`; `MAV-NUS RS5C382 9MS 9Y`; `MX8350MC 43B TA245201` |
+| NUS-CPU-09-1 | `D143K0I` | `D147L0` | Oct 2000 | Nov 2000 | I-suffix on X1 |
+| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: kwyjibo_01 |
+| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01 |
+| NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; modretro_13 |
+| NUS-CPU(P)-01 | `D177G8` | `D147M7I` | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
+| NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
+| NUS-CPU(P)-02? | `D177J9` | - | Sep 1999 | - | PAL; ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS (marking: `9940 E`; date code: wk 40, 1999); (P)-03 not excluded. U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`; wk 21, 1999?) |
+| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_14. Board image available; stamp codes illegible *(MX8350 present.)* |
+| NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01; two MX8330MCs confirmed |
+| NUS-CPU(M)-02 | removed | `D147F7` | - | Jun 1997 | PAL-M; ID: gbonifa_01; X1+U6 absent (junk unit) |
+| NUS-CPU(M)-02? | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: jasnet_01; revision not visible. Markings: `1997 Nintendo`; `PIF(M)-NUS 9739 D`; `VDC-NUS A BU9801F 727 120`; `ENC-NUS 735 161`; `9480F 7935`; `MX8330MC TEC0968L` (2x); `AMP-NUS 726 180`; `TA78M05F 7I`; `287C` |
+| NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
+
+⁸ The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo (confirmed by Prominos). It is unrelated the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote ⁴, §3.5.1.2).  
