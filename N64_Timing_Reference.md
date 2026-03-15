@@ -42,7 +42,7 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
 ## 1. Introduction  
 
 ![Figure 9](/figures/fig35_NUS-CPU-01_Prominos.jpg)  
-*Nintendo 64 motherboard (NUS-CPU-01) showing the Nintendo Reality Coprocessor (RCP-NUS, U9) and NEC VR4300 (CPU_NUS, U10). The Video Interface (VI), part of the RCP, generates composite video timing for NTSC, PAL, and PAL-M output modes.*  
+*Nintendo 64 motherboard (NUS-CPU-01) showing the Nintendo Reality Coprocessor (RCP-NUS, U9) and NEC VR4300 (CPU_NUS, U10). The Video Interface (VI), part of the RCP, generates composite video timing for NTSC, PAL, and PAL-M output modes. Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET).*  
 
 
 The Nintendo 64 **Video Interface (VI)** supports three television standards (**NTSC**, **PAL**, and **PAL-M**), each with both **progressive** and **interlaced** scan modes, resulting in six video timing configurations. This document provides exact timing values derived from hardware specifications, with presented results expressed in irreducible fractions and high-precision decimals.  
@@ -106,7 +106,7 @@ The document uses N64brew naming conventions throughout. SDK equivalents are not
 All registers are terminal-counted; add 1 to the register value to derive the effective count. Interlaced VSYNC is automatically offset by 0.5 lines per field. See §5.2.1 for details regarding the leap adjustment mechanism.  
 
 ![Figure 8](/figures/fig34_US6331856-pp46-47.png)  
-*Video Interface (VI) register layout from U.S. Patent 6,331,856 (sheets 46–47). These diagrams show the VI control and timing registers, including vertical and horizontal sync, active video windows, burst timing, scaling, and the current line counter. The HSYNC leap register provides alternating scanline durations (LEAP_A, LEAP_B) used for PAL timing compensation.*
+*Video Interface (VI) register layout from U.S. Patent 6,331,856 (sheets 46–47). These diagrams show the VI control and timing registers, including vertical and horizontal sync, active video windows, burst timing, scaling, and the current line counter. The HSYNC leap register provides alternating scanline durations (LEAP_A, LEAP_B) used for PAL timing compensation. Source: [U.S. Patent 6,331,856](https://patents.google.com/patent/US6331856B1/en)*
  
 ---
 
@@ -184,10 +184,10 @@ The MX9911MC is a Macronix single-channel clock synthesizer that is pin- and fun
 The RCP (Reality Co-Processor) processes video timings through the following memory-mapped I/O (MMIO) registers:  
 
 ![Figure 2](/figures/fig2_rcp_schematic.png)  
-*RCP-NUS VDC pinout & timing signals. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
+*RCP-NUS VDC pinout & timing signals. Source: RWeick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 ![Figure 2a](/figures/fig9_rcp_vdc_schematic.png)  
-*VDC pin assignments - 7-bit digital output. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
+*VDC pin assignments - 7-bit digital output. Source: RWeick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 The VDC bus carries:  
 * VDC_D0 through VDC_D6: 7-bit digital video data  
@@ -231,19 +231,19 @@ Video signal timing follows a deterministic path from crystal oscillation throug
 > Presence of CSYNC and BFP at U4 confirms a functioning signal path from RCP through DAC to encoder; see §3.6 for oscilloscope verification points.  
 
 ![Figure 2b](/figures/fig13_n64videosys.png)  
-*N64 Video System - VDC bus multiplexing, VDC_DSYNC waveform. Source: Tim Worthington, N64RGB documentation*  
+*N64 Video System - VDC bus multiplexing, VDC_DSYNC waveform. Source: Tim Worthington, [N64RGB documentation](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)*  
 
 ![Figure 2c](/figures/fig14_vdc-nus.png)  
-*VDC-NUS (BU9801F) pinout. Source: Tim Worthington, N64RGB documentation*  
+*VDC-NUS (BU9801F) pinout. Source: Tim Worthington, [N64RGB documentation](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)*  
 
 ![Figure 2d](/figures/fig18_VDC-NUS.png)  
-*VDC-NUS (BU9801F, U4) in circuit. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
+*VDC-NUS (BU9801F, U4) in circuit. Source: RWeick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 ![Figure 2e](/figures/fig17_ENC-NUS.png)  
-*ENC-NUS (U5) in circuit - YOUT (luma, S-Video Y channel) and VOUT (composite video) outputs; SCIN (Subcarrier Input, pin 8) receives U7.FSC (f_xtal ÷ 4) via R13/R12 divider network. Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard*  
+*ENC-NUS (U5) in circuit - YOUT (luma, S-Video Y channel) and VOUT (composite video) outputs; SCIN (Subcarrier Input, pin 8) receives U7.FSC (f_xtal ÷ 4) via R13/R12 divider network. Source: RWeick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 ![Figure 2i](/figures/fig28_n64-nus-03_video_output_circuit_worthington.png)  
-*NUS-CPU-03 video output circuit: VDC-NUS (U4, BU9801F) to ENC-NUS (U5); R13 = 4.3 kΩ, R12 = 820 Ω divider network feeding SCIN; R8/R9/R10 = 110 Ω RGB output resistors; LUMINANCE (pin 7), COMPOSITE VIDEO (pin 9), CHROMINANCE (pin 8) outputs. Source: Tim Worthington, GameSX Wiki, N64 RGB NTSC*  
+*NUS-CPU-03 video output circuit: VDC-NUS (U4, BU9801F) to ENC-NUS (U5); R13 = 4.3 kΩ, R12 = 820 Ω divider network feeding SCIN; R8/R9/R10 = 110 Ω RGB output resistors; LUMINANCE (pin 7), COMPOSITE VIDEO (pin 9), CHROMINANCE (pin 8) outputs. Source: Tim Worthington, [GameSX Wiki, N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc)*  
 
 ¹ Later revisions consolidate the video clock into a single MX8350 in place of the single-channel chip at U7 (MX8330MC or MX9911MC, depending on revision). f_xtal derivations are equivalent across all variants. X1 drives U7 for all regional video modes; its frequency varies by region. The derivations in §5 are rooted in the respective regional X1 value in each case.  
 
@@ -256,12 +256,12 @@ Video signal timing follows a deterministic path from crystal oscillation throug
 *MAV-NUS pinout. Source: Tim Worthington, N64RGB documentation*  
 
 ![Figure 2h](/figures/fig27_n64rgb_vdc_serial_to_parallel_worthington.png)  
-*VDC bus serial-to-parallel protocol: four 7-bit bytes clocked on falling edge; byte 0 carries sync bits (CS, HS, CL, VS); bytes 1-3 carry R0-R6, G0-G6, B0-B6. Source: Tim Worthington, RGB Video DAC for Nintendo 64, Revision 0 (27/1/07)*  
+*VDC bus serial-to-parallel protocol: four 7-bit bytes clocked on falling edge; byte 0 carries sync bits (CS, HS, CL, VS); bytes 1-3 carry R0-R6, G0-G6, B0-B6. Source: Tim Worthington, [RGB Video DAC for Nintendo 64, Revision 0 (27/1/07)](https://web.archive.org/web/20231125190043/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.png)*  
 
 > A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but the capability is non-functional without modification in retail units. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. This chip was originally used in some SNES revisions before appearing in NUS-CPU(R)-01. 
 
-![Figure 2j](/figures/fig30_snes_video_path_DarthCloud.png)  
-*S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage (Q1–Q3); RGB, LUMA, C.VIDEO, and CHROMA outputs; CSYNC and Burst inputs. Source: DarthCloud, SNS-CPU-RGB-02 Video Circuit, 2009*  
+![Figure 2j](/figures/fig36_snes_video_path_v3.png)  
+*S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage (Q1–Q3); RGB, LUMA, C.VIDEO, and CHROMA outputs; CSYNC and Burst inputs. Source: DarthCloud, 2011, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=43494)*  
 
 ³ Per [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
 
@@ -309,10 +309,10 @@ The decode convention is consistent across all three regional crystal frequencie
 ⁵ Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place of* `D`.  
 
 ![Figure 5b](/figures/fig23_X1_(M)143G0_stamp_code.png)  
-*`Ⓜ` marking visible on some PAL-M X1 crystal oscillators. Source: Mielke - MiSTer FPGA Discord*  
+*`Ⓜ` marking visible on some PAL-M X1 crystal oscillators. Source: Mielke - MiSTer FPGA Discord ([imgur.com](https://imgur.com/a/mielke-board-photos-SjqcjYj))*  
 
 ![Figure 5a](/figures/fig24_X1_(M)D143G7_stamp_code.png)  
-*Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking. Source: JASNet Soluções em Eletrônica*  
+*Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking. Source: JASNet Soluções em Eletrônica, [Instalação do RGB Converter v2 no Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php)*  
 
 ##### 3.5.1.3 X1 and X2 Stamp Codes by Revision  
 
@@ -432,7 +432,7 @@ The figure below is a visualization created by lidnariq after oscilloscope analy
 > Technically, the hardware *will* allow overlap of `VI_BURST` and H_START. Doing so produces color corruption that modulates with scene content. See figure below.  
 
 ![Figure 4](/figures/fig22_VI_BURST-overlapping-H_START_devwizard.png)  
-*`VI_BURST` overlapping H_START. Source: devwizard / N64brew.dev Discord*  
+*`VI_BURST` overlapping H_START. Source: devwizard / N64brew.dev Discord ([youtube.com mirror](https://www.youtube.com/watch?v=hSFQPQb00ns))*  
 
 > Relatedly, if `VI_BURST` remains active at line end, the VI randomly fails to blank the left 7 VI pixels.  
 
@@ -1013,10 +1013,10 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | Figure 2g | `fig16_mav-nus.png` | *MAV-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
 | Figure 2h | `fig27_n64rgb_vdc_serial_to_parallel_worthington.png` | *VDC bus serial-to-parallel protocol; 4-cycle byte structure with sync and RGB channel contents (Source: Tim Worthington, [RGB Video DAC for Nintendo 64, Revision 0, 27/1/07](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc))* |  
 | Figure 2i | `fig28_n64-nus-03_video_output_circuit_worthington.png` | *NUS-CPU-03 video output circuit: VDC-NUS (U4, BU9801F) to ENC-NUS (U5); R13/R12 divider; RGB output resistors; LUMINANCE/COMPOSITE/CHROMINANCE outputs (Source: Tim Worthington, GameSX Wiki, N64 RGB NTSC, [gamesx.com](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc))* |
-| Figure 2j | `fig30_snes_video_path_DarthCloud.png` | *S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage; RGB, LUMA, C.VIDEO, and CHROMA outputs (Source: DarthCloud, SNS-CPU-RGB-02 Video Circuit, 2009, [web.archive.com](https://web.archive.org/web/20260218142532/https://i36.photobucket.com/albums/e36/DarthCloud/snes_video_path.png))* |  
+| Figure 2j | `fig36_snes_video_path_v3.png` | *S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage; RGB, LUMA, C.VIDEO, and CHROMA outputs (Source: DarthCloud, SNS-CPU-RGB-02 Video Circuit, 2011, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=43494))* |  
 | Figure 3 | `fig3_n64_default_libdragon_240p_timing.png` | *N64 VI Timing Diagram (NTSC Progressive) (Source: lidnariq via ares emulator Discord server; [reverse-engineered via hardware probing](/figures/fig3_n64_default_libdragon_240p_timing.png))* |  
 | Figure 4  | `fig22_VI_BURST-overlapping-H_START_devwizard.png` | *`VI_BURST` overlapping H_START (Source: devwizard / N64brew.dev Discord [youtube.com mirror](https://youtu.be/hSFQPQb00ns))*  |  
-| Figure 5a | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Installing RGB Converter v2 on Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
+| Figure 5a | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Instalação do RGB Converter v2 no Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | Figure 5b | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal oscillators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
 | Figure 6 | `fig29_raster_scan_progressive_ian_harvey.png` | *Progressive raster scan: electron beam traversal, horizontal retrace, and vertical retrace (Source: Ian Harvey, Wikimedia Commons, [CC0](https://commons.wikimedia.org/wiki/File:Raster-scan.svg))* |  
 | Figure 7 | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
