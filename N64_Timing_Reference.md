@@ -36,6 +36,7 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
     * [§7.3 Acknowledgements](#73-acknowledgements)
 * [§8 Glossary](#8-glossary)
 * [Appendix A: X1 and X2 Crystal Stamp Code Table](#appendix-a-x1-and-x2-stamp-code-table)
+* [Appendix B: VI Modes](#appendix-b-vi-modes)
 
 ---
 
@@ -138,7 +139,7 @@ In the context of contemporary retail software, the N64 outputs four distinct ra
 | PAL    | Progressive | 640x288p   |   
 | PAL    | Interlaced  | 640x576i   |  
 
-> PAL-M signals share corresponding NTSC resolutions.  
+> PAL-M signals share corresponding NTSC resolutions. See [Appendix B: VI Modes](#appendix-b-vi-modes) for full VI mode tables. 
 
 ---  
 
@@ -316,7 +317,7 @@ The decode convention is consistent across all three regional crystal frequencie
 
 ##### 3.5.1.3 X1 and X2 Stamp Codes by Revision  
 
-The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X1 is the video clock crystal; X2 is not involved in video timing derivations. Both are included because their date clustering on individual boards provides independent corroboration of the decode convention.  See §7.2.1 for links.See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. 
+The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X1 is the video clock crystal; X2 is not involved in video timing derivations. Both are included because their date clustering on individual boards provides independent corroboration of the decode convention.  See §7.2.1 for links. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. 
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
 | :--- | :--- | :--- | :--- | :--- | :--- |  
@@ -1183,7 +1184,7 @@ A quick reference for terminology used in this document.
 
 ## Appendix A: X1 and X2 Stamp Code Table
 
-The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. 
+The following table lists confirmed and provisional X1 and X2 stamp codes organized by board revision. 
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
 | :--- | :--- | :--- | :--- | :--- | :--- |  
@@ -1238,3 +1239,198 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 | NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
 
 ⁸ The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo (confirmed by Prominos). It is unrelated the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote ⁴, §3.5.1.2).  
+
+## Appendix B: VI Modes
+
+### libultra VI Mode Decoder
+
+| Position | Options | Description |
+| :--- | :--- | :--- |
+| 1 | `L` (Low Res) / `H` (High Res) | Toggles the horizontal resolution between standard (320px) and high (640px+). |
+| 2 | `A` (Anti-Aliased) / `P` (Point-Sampled) | Toggles VI anti-aliasing and resampling features. `P` disables them for a sharp, pixelated look. |
+| 3 | `N` (Non-interlaced) / `F` (Filtered Interlaced) | Selects progressive (`N`) or interlaced (`F`) scan. Interlaced modes usually enable the VI deflicker filter. |
+| 4 | `1` (16-bit) / `2` (32-bit) | Configures the VI for either a 16-bit or 32-bit color framebuffer. |
+
+**Examples using the decoder:**
+
+*   `LAN1`:
+    *   `L` -> Low Resolution (320)
+    *   `A` -> Anti-Aliased
+    *   `N` -> Non-interlaced (Progressive)
+    *   `1` -> 16-bit
+*   `HPF2`:
+    *   `H` -> High Resolution (640)
+    *   `P` -> Point-Sampled
+    *   `F` -> Interlaced (Filtered)
+    *   `2` -> 32-bit
+
+### Super Mario 64 (1996) VI Mode Definitions
+
+> Values derived from the [osViTable.c](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) present in the Super Mario 64 decompilation source.
+
+| Region | Resolution | Scan | AA/Point | Bit Depth | S (half-lines) | HSYNC(TOTAL, LEAP) | LEAP(A, B) | Decoder Name |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| NTSC | Low (320) | Progressive | AA | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan1 |
+| NTSC | Low (320) | Progressive | AA | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan2 |
+| NTSC | Low (320) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf1 |
+| NTSC | Low (320) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf2 |
+| NTSC | Low (320) | Progressive | Point | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn1 |
+| NTSC | Low (320) | Progressive | Point | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn2 |
+| NTSC | Low (320) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf1 |
+| NTSC | Low (320) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf2 |
+| NTSC | High (640) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf1 |
+| NTSC | High (640) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf2 |
+| NTSC | High (640) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf1 |
+| NTSC | High (640) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf2 |
+| PAL | Low (320) | Progressive | AA | 16-bit | 626 | 3177, 21 | 3182, 3183 | pal_lan1 |
+| PAL | Low (320) | Progressive | AA | 32-bit | 626 | 3177, 21 | 3182, 3183 | pal_lan2 |
+| PAL | Low (320) | Interlaced | AA | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_laf1 |
+| PAL | Low (320) | Interlaced | AA | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_laf2 |
+| PAL | Low (320) | Progressive | Point | 16-bit | 626 | 3177, 21 | 3182, 3183 | pal_lpn1 |
+| PAL | Low (320) | Progressive | Point | 32-bit | 626 | 3177, 21 | 3182, 3183 | pal_lpn2 |
+| PAL | Low (320) | Interlaced | Point | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_lpf1 |
+| PAL | Low (320) | Interlaced | Point | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_lpf2 |
+| PAL | High (640) | Interlaced | AA | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_haf1 |
+| PAL | High (640) | Interlaced | AA | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_haf2 |
+| PAL | High (640) | Interlaced | Point | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_hpf1 |
+| PAL | High (640) | Interlaced | Point | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_hpf2 |
+| PAL-M | Low (320) | Progressive | AA | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan1 |
+| PAL-M | Low (320) | Progressive | AA | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan2 |
+| PAL-M | Low (320) | Interlaced | AA | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf1 |
+| PAL-M | Low (320) | Interlaced | AA | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf2 |
+| PAL-M | Low (320) | Progressive | Point | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn1 |
+| PAL-M | Low (320) | Progressive | Point | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn2 |
+| PAL-M | Low (320) | Interlaced | Point | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf1 |
+| PAL-M | Low (320) | Interlaced | Point | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf2 |
+| PAL-M | High (640) | Interlaced | AA | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_haf1 |
+| PAL-M | High (640) | Interlaced | AA | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_haf2 |
+| PAL-M | High (640) | Interlaced | Point | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_hpf1 |
+| PAL-M | High (640) | Interlaced | Point | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_hpf2 |
+
+### Animal Forest (2001) VI Mode Definitions
+
+> Values derived from the [VI modes](https://github.com/zeldaret/af/blob/main/lib/ultralib/src/vimodes/) present in the Animal Forest decompilation source.
+
+| Region | Resolution | Scan | AA/Point | Bit Depth | S (half-lines) | HSYNC(TOTAL, LEAP) | LEAP(A, B) | Decoder Name | Filename |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| NTSC | Low (320) | Progressive | AA | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan1 | vimodentsclan1.c |
+| NTSC | Low (320) | Progressive | AA | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan2 | vimodentsclan2.c |
+| NTSC | Low (320) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf1 | vimodentsclaf1.c |
+| NTSC | Low (320) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf2 | vimodentsclaf2.c |
+| NTSC | Low (320) | Progressive | Point | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn1 | vimodentsclpn1.c |
+| NTSC | Low (320) | Progressive | Point | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn2 | vimodentsclpn2.c |
+| NTSC | Low (320) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf1 | vimodentsclpf1.c |
+| NTSC | Low (320) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf2 | vimodentsclpf2.c |
+| NTSC | High (640) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf1 | vimodentschaf1.c |
+| NTSC | High (640) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf2 | vimodentschaf2.c |
+| NTSC | High (640) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf1 | vimodentschpf1.c |
+| NTSC | High (640) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf2 | vimodentschpf2.c |
+| PAL | Low (320) | Progressive | AA | 16-bit | 626 | 3177, 23 | 3181, 3183 | pal_lan1 | vimodepallan1.c |
+| PAL | Low (320) | Progressive | AA | 32-bit | 626 | 3177, 23 | 3181, 3183 | pal_lan2 | vimodepallan2.c |
+| PAL | Low (320) | Interlaced | AA | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_laf1 | vimodepallaf1.c |
+| PAL | Low (320) | Interlaced | AA | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_laf2 | vimodepallaf2.c |
+| PAL | Low (320) | Progressive | Point | 16-bit | 626 | 3177, 23 | 3181, 3183 | pal_lpn1 | vimodepallpn1.c |
+| PAL | Low (320) | Progressive | Point | 32-bit | 626 | 3177, 23 | 3181, 3183 | pal_lpn2 | vimodepallpn2.c |
+| PAL | Low (320) | Interlaced | Point | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_lpf1 | vimodepallpf1.c |
+| PAL | Low (320) | Interlaced | Point | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_lpf2 | vimodepallpf2.c |
+| PAL | High (640) | Interlaced | AA | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_haf1 | vimodepalhaf1.c |
+| PAL | High (640) | Interlaced | AA | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_haf2 | vimodepalhaf2.c |
+| PAL | High (640) | Interlaced | Point | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_hpf1 | vimodepalhpf1.c |
+| PAL | High (640) | Interlaced | Point | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_hpf2 | vimodepalhpf2.c |
+| FPAL | Low (320) | Progressive | AA | 16-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lan1 | vimodefpallan1.c |
+| FPAL | Low (320) | Progressive | AA | 32-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lan2 | vimodefpallan2.c |
+| FPAL | Low (320) | Interlaced | AA | 16-bit | 625 | 3177, 23 | 3181, 3183 | fpal_laf1 | vimodefpallaf1.c |
+| FPAL | Low (320) | Interlaced | AA | 32-bit | 625 | 3177, 23 | 3181, 3183 | fpal_laf2 | vimodefpallaf2.c |
+| FPAL | Low (320) | Progressive | Point | 16-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lpn1 | vimodefpallpn1.c |
+| FPAL | Low (320) | Progressive | Point | 32-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lpn2 | vimodefpallpn2.c |
+| FPAL | Low (320) | Interlaced | Point | 16-bit | 625 | 3177, 23 | 3181, 3183 | fpal_lpf1 | vimodefpallpf1.c |
+| FPAL | Low (320) | Interlaced | Point | 32-bit | 625 | 3177, 23 | 3181, 3183 | fpal_lpf2 | vimodefpallpf2.c |
+| PAL-M | Low (320) | Progressive | AA | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan1 | vimodempallan1.c |
+| PAL-M | Low (320) | Progressive | AA | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan2 | vimodempallan2.c |
+| PAL-M | Low (320) | Interlaced | AA | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf1 | vimodempallaf1.c |
+| PAL-M | Low (320) | Interlaced | AA | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf2 | vimodempallaf2.c |
+| PAL-M | Low (320) | Progressive | Point | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn1 | vimodempallpn1.c |
+| PAL-M | Low (320) | Progressive | Point | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn2 | vimodempallpn2.c |
+| PAL-M | Low (320) | Interlaced | Point | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf1 | vimodempallpf1.c |
+| PAL-M | Low (320) | Interlaced | Point | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf2 | vimodempallpf2.c |
+
+### libdragon VI Mode Definitions
+
+> libdragon uses timing presets and computes other registers dynamically. Resolution, bit depth, and AA mode are applied separately.
+
+| Region | Scan | S (half-lines) | HSYNC(TOTAL, LEAP) | LEAP(A, B) |
+| :--- | :--- | :--- | :--- | :--- |
+| NTSC | Progressive | 526 | 3093,0 | 3093, 3093 |
+| NTSC | Interlaced | 525 | 3093,0 | 3093, 3093 |
+| PAL | Progressive | 626 | 3177,21 | 3182, 3183 |
+| PAL | Interlaced | 625 | 3177,21 | 3182, 3183 |
+| PAL-M | Progressive | 526 | 3089,4 | 3098, 3097 |
+| PAL-M | Interlaced | 525 | 3088,0 | 3100, 3100 |
+
+---
+
+### libdragon Display Initialization Behavior
+
+Unlike `libultra`, which defines a full `OSViMode` structure for each preset mode, libdragon separates **timing configuration** from **framebuffer configuration**.
+
+A timing preset establishes the base scan timing (VSYNC, HSYNC, leap pattern).
+The display subsystem then programs several additional registers dynamically.
+
+### Runtime-configured registers
+
+During `display_init()` the following registers are calculated:
+
+| Register     | Source                       | Purpose                      |
+| ------------ | ---------------------------- | ---------------------------- |
+| `VI_WIDTH`   | `res.width`                  | framebuffer width            |
+| `VI_X_SCALE` | `VI_X_SCALE_SET(res.width)`  | horizontal scaling           |
+| `VI_Y_SCALE` | `VI_Y_SCALE_SET(res.height)` | vertical scaling             |
+| `VI_ORIGIN`  | framebuffer pointer          | start of visible framebuffer |
+| `VI_CTRL`    | constructed from options     | pixel size, AA mode, filters |
+
+This means a single timing preset can support many framebuffer sizes.
+
+### Control register construction
+
+The `VI_CTRL` register is assembled from several option groups:
+
+| Setting   | Options                             | Effect                                   |
+| --------- | ----------------------------------- | ---------------------------------------- |
+| Bit depth | 16-bit / 32-bit                     | selects VI pixel format                  |
+| Scan mode | progressive / interlaced            | toggles serration                        |
+| Gamma     | none / corrected / corrected+dither | enables VI gamma                         |
+| Filters   | multiple presets                    | selects AA / resample / dedither / divot |
+
+These combinations roughly correspond to the suffixes used by libultra.
+
+### Leap register interpretation
+
+libdragon reads the horizontal leap register directly:
+
+```
+A = (VI_H_TOTAL_LEAP >> 16)
+B = (VI_H_TOTAL_LEAP >> 0)
+```
+
+In contrast, libultra’s macro is defined as:
+
+```
+LEAP(B, A)
+```
+
+The macro argument order is reversed relative to the register layout, but both approaches produce the same final register value.
+
+### Mode counts by source
+
+| Source | Total | FPAL | MPAL | NTSC | PAL |
+|---|---|---|---|---|---|
+| SM64 | 42 | 0 | 14 | 14 | 14 |
+| MK64 | 42 | 0 | 14 | 14 | 14 |
+| BK | 3 | 0 | 1 | 1 | 1 |
+| GE | 2 | 0 | 0 | 1 | 1 |
+| OOT | 56 | 14 | 14 | 14 | 14 |
+| MM | 6 | 1 | 1 | 3 | 1 |
+| PD | 3 | 0 | 1 | 1 | 1 |
+| Animal Forest | 56 | 14 | 14 | 14 | 14 |
+
+*GE's PAL LAN1 struct has different register values from canonical PAL LAN1, with a comment in the source describing it as their FPAL implementation. The type field is still `OS_VI_PAL_LAN1`, not `OS_VI_FPAL_LAN1`.*
