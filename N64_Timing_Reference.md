@@ -46,7 +46,7 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
 ## 1. Introduction  
 
 ![Figure 9](/figures/fig35_NUS-CPU-01_Prominos.jpg)  
-*Nintendo 64 motherboard (NUS-CPU-01) showing the Nintendo Reality Coprocessor (RCP-NUS, U9) and NEC VR4300 (CPU_NUS, U10). The Video Interface (VI), part of the RCP, generates composite video timing for NTSC, PAL, and PAL-M output modes. Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET).*  
+*Nintendo 64 motherboard (NUS-CPU-01) showing the Nintendo Reality Coprocessor (RCP-NUS, U9) and NEC VR4300 (CPU-NUS, U10). The Video Interface (VI), part of the RCP, generates composite video timing for NTSC, PAL, and PAL-M output modes. Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET).*  
 
 
 The Nintendo 64 **Video Interface (VI)** supports three television standards (**NTSC**, **PAL**, and **PAL-M**), each with both **progressive** and **interlaced** scan modes, resulting in six video timing configurations. This document provides exact timing values derived from hardware specifications, with presented results expressed in irreducible fractions and high-precision decimals.  
@@ -110,7 +110,7 @@ The document uses N64brew naming conventions throughout. SDK equivalents are not
 All registers are terminal-counted; add 1 to the register value to derive the effective count. Interlaced VSYNC is automatically offset by 0.5 lines per field. See §5.2.1 for details regarding the leap adjustment mechanism.  
 
 ![Figure 8](/figures/fig34_US6331856-pp46-47.png)  
-*Video Interface (VI) register layout from U.S. Patent 6,331,856 (sheets 46–47). These diagrams show the VI control and timing registers, including vertical and horizontal sync, active video windows, burst timing, scaling, and the current line counter. The HSYNC leap register provides alternating scanline durations (LEAP_A, LEAP_B) used for PAL timing compensation. Source: [U.S. Patent 6,331,856](https://patents.google.com/patent/US6331856B1/en)*
+*Video Interface (VI) register layout from U.S. Patent 6,331,856 (sheets 46-47). These diagrams show the VI control and timing registers, including vertical and horizontal sync, active video windows, burst timing, scaling, and the current line counter. The HSYNC leap register provides alternating scanline durations (LEAP_A, LEAP_B) used for PAL timing compensation. Source: [U.S. Patent 6,331,856](https://patents.google.com/patent/US6331856B1/en)*
  
 ---
 
@@ -197,7 +197,7 @@ The VDC bus carries:
 * VDC_D0 through VDC_D6: 7-bit digital video data  
 * VDC_DSYNC: Continuous timing signal; while low, sync information is encoded on the accompanying VDC data lines  
 
-These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC (Composite Sync) and BFP (Burst Flag Pulse) for the downstream ENC-NUS encoder (U5). This two-stage signal path (VDC-NUS + ENC-NUS) applies to NUS-CPU-01 through NUS-CPU-04. Other revisions consolidate both functions into a single chip; e.g. DENC-NUS, AVDC-NUS, & MAV-NUS. The substitution of these components is not known to affect timing values derived in this document.  
+These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC (Composite Sync) and BFP (Burst Flag Pulse) for the downstream ENC-NUS encoder (U5). This two-stage signal path (VDC-NUS + ENC-NUS) applies to NUS-CPU-01 through NUS-CPU-04, as well as early PAL-M revisions. Other revisions consolidate both functions into a single chip; e.g. DENC-NUS, AVDC-NUS, & MAV-NUS. The substitution of these components is not known to affect timing values derived in this document.  
 
 > VI registers operate on terminal counts; all derived timing values use the hardware-consistent half-line model described in §1.
 
@@ -265,7 +265,7 @@ Video signal timing follows a deterministic path from crystal oscillation throug
 > A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but the capability is non-functional without modification in retail units. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. This chip was originally used in some SNES revisions before appearing in NUS-CPU(R)-01. 
 
 ![Figure 2j](/figures/fig36_snes_video_path_v3.png)  
-*S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage (Q1–Q3); RGB, LUMA, C.VIDEO, and CHROMA outputs; CSYNC and Burst inputs. Source: DarthCloud, 2011, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=43494)*  
+*S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage (Q1-Q3); RGB, LUMA, C.VIDEO, and CHROMA outputs; CSYNC and Burst inputs. Source: DarthCloud, 2011, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=43494)*  
 
 ³ Per [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
 
@@ -279,7 +279,7 @@ N64 video timings are derived from the X1 crystal oscillator. Variance in this c
 
 ##### 3.5.1.1 X1 Identification  
 
-The clock crystal (X1) has no published datasheet. The manufacturer has not been confirmed from available sources; an unverified but unchallenged theory identifies the “D” prefix near-universally observed in stamp codes with Japanese manufacturer Daishinku Corp. (Daiwa Shinku Kogyosho, a.k.a. KDS, est. 1959). Certainty is not possible from currently available sources.  
+The clock crystal (X1) has no published datasheet. The manufacturer has not been confirmed from available sources; an unverified but unchallenged theory identifies the "D" prefix near-universally observed in stamp codes with Japanese manufacturer Daishinku Corp. (Daiwa Shinku Kogyosho, a.k.a. KDS, est. 1959). Certainty is not possible from currently available sources.  
 
 The NUS-CPU-03 oscillator circuit presents a load capacitance of 21.5 pF + C_stray to X1, derived from C39 = C40 = 43 pF in a series configuration (see Figure 1, §3.1):  
 
@@ -429,7 +429,7 @@ The figure below is a visualization created by lidnariq after oscilloscope analy
 | Yellow  | Color Burst            | `VI_BURST` values; must not overlap H_START        |  
 | Grey    | Active Area            | `VI_H_VIDEO` and `VI_V_VIDEO` start/end offsets    |  
 
-> Technically, the hardware *will* allow overlap of `VI_BURST` and H_START. Doing so produces color corruption that modulates with scene content. See figure below.  
+> Technically, the hardware *will* allow overlap of `VI_BURST` and H_START. Doing so on a revision with a two-stage encoder/decoder configuration produces color corruption that modulates with scene content (this has not been tested on single-stage output models, e.g. MAV-NUS). See figure below.  
 
 ![Figure 4](/figures/fig22_VI_BURST-overlapping-H_START_devwizard.png)  
 *`VI_BURST` overlapping H_START in Super Mario 64 (1996). Source: devwizard / N64brew.dev Discord ([youtube.com mirror](https://www.youtube.com/watch?v=hSFQPQb00ns))*  
@@ -521,7 +521,7 @@ PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolv
 
 ## 5. Mathematical Derivations  
 
-This section provides step-by-step derivations for all timing values. Calculations begin with hardware constants and proceed through to the final refresh rates. All quantities originate from hardware-authoritative integers; no floating-point values are used in the derivation path. All frequencies are expressed in Hertz (Hz) unless otherwise noted.  
+This section provides step-by-step derivations for all timing values. Calculations begin with hardware constants and proceed through to the final refresh rates. All quantities originate from hardware-authoritative integers; no floating-point values are used in the derivation path. All frequencies are expressed in hertz (Hz) unless otherwise noted.  
 
 ### 5.1 NTSC Derivation
 
@@ -1008,7 +1008,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | Figure 5b | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal oscillators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
 | Figure 6 | `fig29_raster_scan_progressive_ian_harvey.png` | *Progressive raster scan: electron beam traversal, horizontal retrace, and vertical retrace (Source: Ian Harvey, Wikimedia Commons, [CC0](https://commons.wikimedia.org/wiki/File:Raster-scan.svg))* |  
 | Figure 7 | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
-| Figure 8 | `fig34_US6331856-pp46-47.png` | *Nintendo 64 Video Interface (VI) register layout showing control, sync timing, video window, burst, and scaling registers (Source: [U.S. Patent 6,331,856](https://patents.google.com/patent/US6331856B1/en), sheets 46–47).* |
+| Figure 8 | `fig34_US6331856-pp46-47.png` | *Nintendo 64 Video Interface (VI) register layout showing control, sync timing, video window, burst, and scaling registers (Source: [U.S. Patent 6,331,856](https://patents.google.com/patent/US6331856B1/en), sheets 46-47).* |
 | Figure 9 | `fig35_NUS-CPU-01_Prominos.jpg` | *Nintendo 64 motherboard (NUS-CPU-01 revision) showing the Reality Coprocessor and system layout (Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET)).* |
 
 ### 7.2 References
@@ -1045,13 +1045,14 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Link83 et al - NFGGames Forum - Datasheet Links Thread](https://nfggames.com/forum2/index.php?topic=3525.0) - Community identification of BA7242F as ENC-NUS match; source of datasheet link.  
 * [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identifies the NUS-CPU(R)-01 motherboard; documents the S-RGB A pinout for RGB restoration; confirms DENC-NUS' unsuitability for RGB output.  
 * [N64brew.dev](https://n64brew.dev/) - VI register descriptions and behavior; timing examples; leap explanation; OS interface functions for VI and hardware access.  
-* [Libdragon](https://libdragon.dev/) - High-level API access to N64 hardware and VI timing abstraction.  
+* [Libdragon](https://libdragon.dev/) - API access to N64 hardware and VI handling abstraction.  
 * [Libdragon - vi.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/src/vi.h) - Video Interface Subsystem information.
 * [Libdragon - display.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/include/display.h) - VI -> RDP hardware rasterizer details.
-* [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) - Direct register-level mappings including VI constants.  
+* [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) - SDK with VI handling abstraction.  
+* [pseultra](https://github.com/pseudophpt/pseultra) - SDK with VI handling abstraction.
 * [n64.readthedocs.io - N64 Hardware Reference](https://n64.readthedocs.io/index.html#video-interface) - Emulator developer reference; SDK register naming corroboration; interrupt handling detail.  
 * [ares N64](https://github.com/ares-emulator/ares/tree/master/ares/n64) / [CEN64](https://github.com/n64dev/cen64) / [MAME N64](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) - Software implementations of VI timing.  
-* [Robert Peip et al - MiSTer FPGA N64 Core](https://github.com/MiSTer-devel/N64_MiSTer) - Corroboration of Zoinkity NTSC 237/474 libultra bounds via Clean HDMI function; FPGA implementation of N64 VI timing.  
+* [Robert Peip et al - MiSTer FPGA N64 Core](https://github.com/MiSTer-devel/N64_MiSTer) - FPGA implementation of N64 VI timing; corroboration of NTSC 237/474 libultra bounds via Clean HDMI function.  
 * [Wikipedia - NTSC](https://en.wikipedia.org/wiki/NTSC) / [PAL](https://www.wikipedia.org/wiki/PAL) / [PAL-M](https://www.wikipedia.org/wiki/PAL-M) - Broadcast standard overviews.  
 * [Mike Wooding - ATV Compendium (BATC)](https://batc.org.uk/wp-content/uploads/ATVCompendium.pdf) - PAL-M fS = 227.25 × fH relationship.  
 * [Martin Hinner - VGA/PAL](https://martin.hinner.info/vga/pal.html) - PAL video timing specification (sourced from R. Salmon, sci.engr.television.broadcast, 1996).  
@@ -1171,11 +1172,11 @@ Examples using the decoder:
     *   `F` -> Interlaced (Filtered)
     *   `2` -> 32-bit
 
-### B.2 Libultra VI Mode Definitions
+### B.2 libultra VI Mode Definitions
 
 > SDK values derived from the [osViTable.c](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) present in the *Super Mario 64* (1996) decompilation source. These values were commpared against later SDK values ([osVITable.c](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) from the *Mario Kart 64* (1996/1997) decompilation, as well as [vitbl.c](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) from the *Animal Forest* (2001) decompilation).
 
-Table values are effective. Leap values are unchanged.
+Table values (VSYNC, HSYNC(TOTAL), LEAP(A, B)) are effective. HSYNC(LEAP) pattern values are unchanged.
 
 ### B.2.1 NTSC (SGI, 1996)
 
@@ -1274,7 +1275,7 @@ Table values are effective. Leap values are unchanged.
 | FPAL   | FPAL_HPF1    | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
 | FPAL   | FPAL_HPF2    | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
 
-¹⁰  FPAL expands to full-screen PAL (or full-height PAL). Normal PAL modes on N64 share NTSC/PAL-M internal line count limitations despite the PAL standard's additional lines. FPAL allows drawing to 48 more those lines (288 - 240 = 48). This mode was apparently developed by Rare Ltd. and subsequently integrated into libultra, per a Goldeneye 007 decompilation source code comment. It inherits the revised PAL leap pattern.
+¹⁰  FPAL expands to full-screen PAL (or full-height PAL). Standard PAL modes in libultra share NTSC/PAL-M internal line count limitations despite the PAL standard's additional lines. FPAL allows drawing to 48 more those lines (288 - 240 = 48). This mode was apparently developed by Rare Ltd. and subsequently integrated into libultra, per a Goldeneye 007 decompilation source code comment. It inherits the revised PAL leap pattern.
 
 ### B.3 libdragon VI Mode Definitions
 
@@ -1370,7 +1371,7 @@ A quick reference for terminology used in this document.
 
 * **VDC_DSYNC** *(a.k.a. !DSYNC):* Control qualifier on the VDC bus from the RCP (U9) to VDC-NUS (U4). When low, VDC_D0-VDC_D6 carry synchronization/control bits (cycle 0 of the four-cycle group); when high, the bus carries pixel color data (cycles 1-3). During active video it asserts low once every four VI clocks. During blanking, VDC_DSYNC is held low continuously, allowing the VI to transmit control signals (VSync, HSync, colorburst clamp, CSync) on every VI clock. *See also: VDC Bus.*  
 
-* **VDC-NUS / ENC-NUS / DENC-NUS / S-RGB A / AVDC-NUS / MAV-NUS:** The N64 video output chip family, converting the RCP's digital stream to analog. NUS-CPU-01 through NUS-CPU-04 use a two-chip path: VDC-NUS (VDC bus D0-D6, DSYNC, CLK in) performs DAC and generates CSYNC/BFP, outputting RGB, CSYNC, and BFP to ENC-NUS (U5), which handles composite/S-Video encoding and receives the chroma subcarrier at SCIN. Later revisions consolidate this into a single chip. Timing is unchanged. *Both AVDC-NUS and MAV-NUS have been observed on unrevised NUS-CPU-05 boards, confirming that they share the same package and compatible pinout (Link83, 2009; David/EEVblog, 2013). Whether they are the same silicon, a process revision, or two approved-equivalent parts is not confirmed. MAV-NUS pins 14–16 carry the audio interface (I2S) (lidnariq).*  
+* **VDC-NUS / ENC-NUS / DENC-NUS / S-RGB A / AVDC-NUS / MAV-NUS:** The N64 video output chip family, converting the RCP's digital stream to analog. NUS-CPU-01 through NUS-CPU-04 use a two-chip path: VDC-NUS (VDC bus D0-D6, DSYNC, CLK in) performs DAC and generates CSYNC/BFP, outputting RGB, CSYNC, and BFP to ENC-NUS (U5), which handles composite/S-Video encoding and receives the chroma subcarrier at SCIN. Later revisions consolidate this into a single chip. Timing is unchanged. *Both AVDC-NUS and MAV-NUS have been observed on unrevised NUS-CPU-05 boards, confirming that they share the same package and compatible pinout (Link83, 2009; David/EEVblog, 2013). Whether they are the same silicon, a process revision, or two approved-equivalent parts is not confirmed. MAV-NUS pins 14-16 carry the audio interface (I2S) (lidnariq).*  
 
 * **VI (Video Interface):** The hardware block within the RCP responsible for generating the N64's video signal. It reads from memory and uses a set of programmable registers (e.g., `VI_V_TOTAL`, `VI_H_TOTAL`) to define the timing, resolution, and format of the output signal.
 
