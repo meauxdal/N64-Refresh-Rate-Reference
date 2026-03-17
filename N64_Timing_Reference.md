@@ -586,15 +586,14 @@ fV_int = fH / (S_int / 2)
        ≈ 59.9400599401 Hz
 ```
 
-*The relationship between the progressive and interlaced rates is a direct arithmetic consequence of the half-line count. Both values derive from the same colorburst root:*
+*Both values derive from the same colorburst root:*
 
 ```
 fH      = 2,250,000 / 143 Hz  (derived above)
 fV_int  = fH / (525/2) = 60,000 / 1,001      ≈ 59.9400599401 Hz
 fV_prog = fH / (526/2) = 2,250,000 / 37,609  ≈ 59.8261054535 Hz
 ```
-
-*The divisor (total half-lines ÷ 2) is the only variable. The ~0.12 Hz gap between the two rates is entirely and exactly the consequence of the single additional half-line in the progressive vertical scan cycle. See §1.3.*
+*The relationship between progressive and interlaced rates in NTSC (and PAL) modes is defined by the differing half-line count.*
 
 ### 5.1.1 NTSC Leap Adjustment
 
@@ -608,7 +607,7 @@ LEAP_B = 3,094  effective  (register value 3,093 + 1)
 LEAP_A = 3,094  effective  (register value 3,093 + 1)
 ```
 
-Pattern `0x00` (`0b00000`) selects the LEAP_A on every VSYNC. As LEAP_A = L_base, every VSYNC is uniform: no half-line extension occurs. The `VI_H_TOTAL_LEAP` register produces no correction. fH is therefore exact from L alone, with no leap adjustment required.
+Pattern `0x00` (`0b00000`) selects the LEAP_A on every VSYNC. As LEAP_A = L_base, every VSYNC is uniform. The `VI_H_TOTAL_LEAP` register produces no correction. fH is therefore exact from L alone, with no leap adjustment required.
 
 *This contrasts with PAL-M interlaced, which also programs pattern `0x00` with LEAP_A = LEAP_B, but with both values set above L_base. See §5.3.2.1.*
 
@@ -649,7 +648,7 @@ fH (theoretical) = f_vi / L
                  ≈ 15,625.0881057269 Hz
 ```
 
-*Under the LEAP register mapping described in §5.2.1.1, the hardware compensates for this error by adding fractional VI clocks during VSYNC, yielding an exact line frequency of 15,625 Hz. The mapping is established by logical inference; see §5.2.1.1.*
+*Under the LEAP register mapping described in §5.2.1.1, the hardware compensates for this error by adding fractional VI clocks during VSYNC, yielding an exact line frequency of 15,625 Hz.*
 
 ```
 fH = 15,625 / 1 Hz  (canonical value)
@@ -696,7 +695,7 @@ The true average line length is the sum of the base line length and this leap ad
 True L_avg = 3,178 + 56/3,125 = (9,931,250 + 56) / 3,125 = 9,931,306 / 3,125
 ```
 
-The leap mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-VSYNC sequence alternates between two extended line lengths during the vertical blanking interval, yielding the required 28/5-clock average per VSYNC. See §5.2.1.1 for register values, pattern variants, and the epistemic status of the bit mapping.
+The leap mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-VSYNC sequence alternates between two extended line lengths during the vertical blanking interval, yielding the required 28/5-clock average per VSYNC. See §5.2.1.1.
 
 ```
 fH = f_vi / (L + (28/5) / (S/2))
@@ -706,8 +705,6 @@ fH = f_vi / (L + (28/5) / (S/2))
    = 5 × 3,125
    = 15,625 Hz  (exact)
 ```
-
-> These additions occur only during the vertical blanking interval and do not affect active video timing. The sequence is encoded in the `VI_H_TOTAL_LEAP` register.
 
 ### 5.2.1.1 PAL Leap Pattern and Bit Mapping
 
@@ -872,10 +869,6 @@ fH = f_vi / L_avg
    ≈ 15,737.1505217050 Hz
 ```
 
-*The NTSC broadcast target is 2,250,000/143 Hz (≈ 15,734.2657342657 Hz). PAL-M progressive fH exceeds this by approximately 2.8848 Hz; fH after leap correction does not achieve the targeted broadcast standard.*
-
-> PAL-M progressive leap fires unevenly within its 5-VSYNC cycle: four VSYNCs carry one second-value line (+9 clocks) and one VSYNC carries one first-value line (+8 clocks). The canonical fH and fV are time-averaged across all five VSYNCs.
-
 ---
 
 ### 5.3.2 PAL-M Interlaced Derivation
@@ -922,7 +915,7 @@ first  = 3,101  effective  (register value 3,100 + 1)
 second = 3,101  effective  (register value 3,100 + 1)
 ```
 
-Pattern `0x00` (`0b00000`) selects the second value on every VSYNC. As first = second, the pattern value is immaterial: one line per VSYNC is unconditionally extended by 12 VI clocks.
+Pattern `0x00` (`0b00000`) (Always use LEAP_A) sets LEAP_A to extend one line per VSYNC by 12 VI clocks unconditionally.
 
 ```
 Extra clocks per VSYNC: 3,101 - 3,089 = 12
@@ -946,11 +939,6 @@ fH = f_vi / L_avg
    = 71,583,750,000 / 4,547,257  (canonical value)
    ≈ 15,742.1825949138 Hz
 ```
-
-*PAL-M interlaced fH exceeds the NTSC broadcast target by approximately 7.9169 Hz. Unlike the progressive case, the +12 clock injection is uniform across every VSYNC; there is no cycle averaging.*
-
-> The +12 clock interlaced injection and the +8/+9 progressive cycle are distinct configurations with distinct base line lengths. Neither achieves broadcast-exact NTSC fH. PAL-M is the only N64 region whose interlaced and progressive modes program different LEAP register values.
-
 ---
 
 ## 6. Conversion Reference  
@@ -1304,27 +1292,6 @@ Table values are effective. Leap values are unchanged.
 ### B.3.1 libdragon Display Initialization Behavior
 
 Unlike libultra, which defines a full OSViMode structure for each preset mode, libdragon separates timing configuration from framebuffer configuration. A timing preset establishes the base scan timing, including vertical sync, horizontal sync, and leap patterns. The display subsystem then programs several additional registers dynamically.
-
-During initialization, the following registers are calculated:
-
-| Register | Source | Purpose |
-| --- | --- | --- |
-| `VI_WIDTH` | `res.width` | Defines framebuffer width |
-| `VI_X_SCALE` | `VI_X_SCALE_SET(res.width)` | Computes horizontal scaling |
-| `VI_Y_SCALE` | `VI_Y_SCALE_SET(res.height)` | Computes vertical scaling |
-| `VI_ORIGIN` | Framebuffer pointer | Defines start of visible framebuffer |
-| `VI_CTRL` | Constructed from options | Configures pixel size, anti-aliasing mode, and filters |
-
-This separation enables a single timing preset to support numerous variable framebuffer dimensions. The `VI_CTRL` register is assembled from several distinct option groups:
-
-| Setting | Options | Effect |
-| --- | --- | --- |
-| Bit depth | 16-bit / 32-bit | Selects VI pixel format |
-| Scan mode | Progressive / Interlaced | Toggles serration |
-| Gamma | None / Corrected / Corrected+Dither | Enables VI gamma processing |
-| Filters | Multiple presets | Selects anti-aliasing, resampling, dedithering, or divot filters |
-
-libdragon reads the horizontal leap register directly, utilizing bitwise shifts to define the parameters. In contrast, the legacy libultra macro reverses the argument order relative to the hardware register layout. Both programming approaches produce identical final register values.
 
 ---
 
