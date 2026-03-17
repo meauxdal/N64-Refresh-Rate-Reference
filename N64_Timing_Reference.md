@@ -34,9 +34,12 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
     * [§7.1 Figures](#71-figures)
     * [§7.2 References](#72-references)
     * [§7.3 Acknowledgements](#73-acknowledgements)
-* [§8 Glossary](#8-glossary)
-* [Appendix A: X1 and X2 Crystal Stamp Code Table](#appendix-a-x1-and-x2-stamp-code-table)
-* [Appendix B: VI Modes](#appendix-b-vi-modes)
+* [Appendix A. X1 and X2 Crystal Stamp Code Table](#appendix-a-x1-and-x2-stamp-code-table)
+* [Appendix B. VI Modes](#appendix-b-vi-modes)
+*    [B.1 Libultra VI Mode Decoder](#b1-libultra-vi-mode-decoder)
+*    [B.2 Libultra VI Mode Definitions](#b2-libultra-vi-mode-definitions)
+*    [B.3 Libdragon VI Mode Definitions](#b3-libdragon-vi-mode-definitions)
+* [Glossary](#glossary)
 
 ---
 
@@ -343,20 +346,16 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 | NUS-CPU(M)-03 | - | - | - | - | PAL; no board image yet located |
 | NUS-CPU(M)-04 | - | - | - | - | PAL; no board image yet located |
 | NUS-CPU(M)-05 | - | - | - | - | PAL; no board image yet located |
-| NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
-
-X1 and X2 date codes on individual boards cluster tightly, typically within one to two months of each other. This is consistent with batch component sourcing and provides independent corroboration of the decode. The crystal date progression across revisions also tracks known board revision chronology: NUS-CPU-01 through -04 uniformly yield 1996-1997 dates; NUS-CPU-05 yields 1998-1999; NUS-CPU-08 onward yields 1999-2000. The MHz field is self-evident from the regional clock frequency; the month and year fields are validated by this revision-anchored progression. The decode is therefore strongly self-corroborating across the current corpus.  
-
-
+| NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1 
 
 #### 3.5.2 X1 Oscillator Tolerance  
 
 AT-cut crystals are effectively commodity parts; grade and cut determine the exact oscillation frequency. Current production equivalents specify ±30 ppm as the base grade tolerance (lidnariq), yielding a range of ±0.0018 Hz around the canonical values in §2 (e.g. NTSC progressive: [59.8243, 59.8279] Hz). GBS-C telemetry from two available NTSC N64 units corroborates:  
 
-| Unit | Nickname | Progressive (Hz) | Interlaced (Hz) | Offset (P) | Offset (I) |  
-| :--- | :--- | :--- | :--- | :--- | :--- |  
-| Unit #1 (NUS-CPU-03, RGB-modded) | Daily driver | 59.82771 | 59.94166 | +26.8 ppm | +26.7 ppm |  
-| Unit #2 (NUS-CPU-04, RGB-modded) | Junk unit | 59.82731 | 59.94126 | +20.1 ppm | +20.0 ppm |  
+| Unit                             | Nickname     | Progressive (Hz)    | Interlaced (Hz)   | Offset (P)    | Offset (I)    |  
+| :---                             | :---         | :---                | :---              | :---          | :---          |  
+| Unit #1 (NUS-CPU-03, RGB-modded) | Daily driver | 59.82771            | 59.94166          | +26.8 ppm     | +26.7 ppm     |  
+| Unit #2 (NUS-CPU-04, RGB-modded) | Junk unit    | 59.82731            | 59.94126          | +20.1 ppm     | +20.0 ppm     |  
 
 Both fall within the predicted tolerance window. The ppm offset within each unit is essentially identical across progressive and interlaced modes, as expected: both rates derive from the same crystal. The differing offsets between units reflect normal unit-to-unit crystal variance. Aggregate second-order variance factors (temperature, aging, supply voltage) require a larger sample to characterize effectively.  
 
@@ -433,13 +432,13 @@ The figure below is a visualization created by lidnariq after oscilloscope analy
 > Technically, the hardware *will* allow overlap of `VI_BURST` and H_START. Doing so produces color corruption that modulates with scene content. See figure below.  
 
 ![Figure 4](/figures/fig22_VI_BURST-overlapping-H_START_devwizard.png)  
-*`VI_BURST` overlapping H_START. Source: devwizard / N64brew.dev Discord ([youtube.com mirror](https://www.youtube.com/watch?v=hSFQPQb00ns))*  
+*`VI_BURST` overlapping H_START in Super Mario 64 (1996). Source: devwizard / N64brew.dev Discord ([youtube.com mirror](https://www.youtube.com/watch?v=hSFQPQb00ns))*  
 
 > Relatedly, if `VI_BURST` remains active at line end, the VI randomly fails to blank the left 7 VI pixels.  
 
 ### 4.2 Mode-Specific Notes  
 
-*L (base) and leap values are terminal-counted; leap patterns are described in (B, A) order, following Libultra VI macro convention (as seen in the [Animal Forest decompilation source code](https://github.com/zeldaret/af/blob/main/lib/ultralib/src/vimodes/vimodepallan1.c)).*
+*Following Libultra VI macro convention (as seen in the [Animal Forest decompilation source code](https://github.com/zeldaret/af/blob/main/lib/ultralib/src/vimodes/vimodepallan1.c)), L (base) and leap values are terminal-counted and leap patterns are described in (B, A) order. See [Appendix B](#appendix-b-vi-modes) for effective values.*
 
 #### NTSC (Progressive and Interlaced)
 
@@ -458,13 +457,13 @@ The figure below is a visualization created by lidnariq after oscilloscope analy
 * VI clock frequency: 49,656,530 Hz (exact)
 * Color subcarrier: 4,433,618.75 Hz (exact) (17,734,475/4 Hz)
 * VI clock multiplier: 14/5 (2.8)
-* Leap compensation pattern #1 (SGI, e.g. Super Mario 64 (Europe), Goldeneye 007 (Europe)):
+* Leap compensation pattern #1 (SGI, e.g. *Super Mario 64* (Europe), *Goldeneye 007* (Europe)):
 1. Baseline L (terminal-counted) is `3177`
 2. `LEAP_B`, `LEAP_A` is `3183`, `3182`
 3. Pattern #1: 21 = `0x15` = `0b10101` = `6-5-6-5-6` = 28
 4. 28/5 = 5.6 average additional VI clocks per scanline
 
-* Leap compensation pattern #2 (Nintendo, e.g., Mario Kart 64 (Europe)⁷ and later titles):
+* Leap compensation pattern #2 (Nintendo, e.g., *Mario Kart 64* (Europe)⁷ and later titles):
 1. Baseline L (terminal-counted) is `3177`
 2. `LEAP_B`, `LEAP_A` is `3183`, `3181`
 3. Pattern #2: 23 = `0x17` = `0b10111` = `6-4-6-6-6` = 28
@@ -496,7 +495,7 @@ The figure below is a visualization created by lidnariq after oscilloscope analy
 3. Pattern: 0 = `0x00` = `0b00000` = `12-12-12-12-12` = 60
 4. 60/5 = 12 additional clocks per scanline
 
-⁷ The osViModeTable in Mario Kart 64 seemingly documents the transition point from PAL leap pattern #1 to #2. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are present in the table, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This pattern appears in later titles, including Star Fox 64 and The Legend of Zelda: Ocarina of Time.
+⁷ The osViModeTable in *Mario Kart 64* (1996) seemingly documents the transition point from PAL leap pattern #1 to #2. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are present in the table, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This pattern appears in later titles, including *Star Fox 64* (1997) and *The Legend of Zelda: Ocarina of Time* (1998).
 
 *Leap sums are divided by 5 (the 5-stage leap cycle) to produce the fractional increment added to L. See §5.2.1 for details on leap compensation.*
 
@@ -601,7 +600,7 @@ fV_prog = fH / (526/2) = 2,250,000 / 37,609  ≈ 59.8261054535 Hz
 
 The NTSC configuration programs HSYNC(`3093`, `0`) and LEAP(`3093`, `3093`) (terminal-counted). 
 
-*§5 follows the SDK convention of listing LEAP_B first in these parenthetical groupings.*
+*§5 follows the SDK macro convention of listing LEAP_B first in these parenthetical groupings. See [Appendix B](#appendix-b-vi-modes) for tables with effective values and A, B leap sorting.*
 
 ```
 L_base = 3,094  VI clocks per scanline, base
@@ -712,9 +711,9 @@ fH = f_vi / (L + (28/5) / (S/2))
 
 ### 5.2.1.1 PAL Leap Pattern and Bit Mapping
 
-At least two distinct PAL leap configurations appear across the N64 production run. The Nintendo SDK OS revision coinciding with these changes is not yet identified. 
+At least two distinct PAL leap configurations appear across the N64 production run. This leap pattern change coincides with OS2.0 revision H (released February 24, 1997). 
 
-Super Mario 64 (1996):  
+*Super Mario 64* (1996):  
 
 ```
 HSYNC(3177, 21)  ->  L_base = 3178,  pattern = 0b10101
@@ -731,7 +730,7 @@ Total extra over 5-VSYNC cycle: 6 + 5 + 6 + 5 + 6 = 28
 Average per VSYNC: 28 / 5
 ```
 
-Animal Forest (どうぶつの森, Dōbutsu no Mori) (2001):  
+*Animal Forest* (*どうぶつの森*, *Dōbutsu no Mori*) (2001):  
 
 ```
 HSYNC(3177, 23)  ->  L_base = 3178,  pattern = 0b10111
@@ -1031,9 +1030,9 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Nintendo 64 Online Manuals - Programming Manual (OS 2.0J)](https://ultra64.ca/files/documentation/online-manuals/man/pro-man/start/index.html) - Memory-mapped I/O; VI mode definitions; system programming reference.  
 * [Nintendo 64 Programming Manual (D.C.N. NUS-06-0030-001 REV G)](https://ultra64.ca/files/documentation/nintendo/Nintendo_64_Programming_Manual_NU6-06-0030-001G_HQ.pdf) - Detailed timing tables.  
 * [Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001 REV A)](https://drive.google.com/drive/folders/1kGlB2TyX7CsmPnSyzpxGcSKpJ1F-ywal) - Block diagrams; boot sequence; oscilloscope timing verification.  
-* [Super Mario 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) - Early libultra-defined Video Interface configurations
-* [Mario Kart 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) - Transitional libultra-defined Video Interface configurations 
-* [Animal Forest Decompilation - VI modes (GitHub)](https://github.com/zeldaret/af/tree/main/lib/ultralib/src/vimodes) - Later libultra-defined Video Interface configurations
+* [Super Mario 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) - Early libultra-defined Video Interface configurations.
+* [Mario Kart 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) - Transitional libultra-defined Video Interface configurations.  
+* [Animal Forest Decompilation - vitbl.c (GitHub)](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) - Later libultra-defined Video Interface configurations.
 * [Macronix MX8330MC Datasheet](/references/Macronix-MX8330MC-ocr.pdf) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4 color subcarrier output), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
 * [Macronix MX8350 Datasheet](/references/Macronix-MX8350-ocr.pdf) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
 * [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer; functional equivalent to MX8330MC.    
@@ -1051,14 +1050,16 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [RWeick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete NUS-CPU-03 KiCAD schematic; component values; signal paths.  
 * [Tim Worthington - GamesX Wiki - N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc) - NUS-CPU-03 video output circuit schematic by Tim Worthington; corroborates YOUT/VOUT/COUT routing to Multi-AV connector.  
 * [Tim Worthington - N64RGB Page](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html) - 4-cycle VDC bus protocol diagram and DAC pinouts (Figures 2b, 2c, 2f, 2g).  
-* [Rodrigo Copetti - Nintendo 64 Architecture - A Practical Analysis](https://www.copetti.org/writings/consoles/nintendo-64/) - General hardware overview; encoder revision corroboration.  
+* [Rodrigo Copetti - Nintendo 64 Architecture - A Practical Analysis](https://www.copetti.org/writings/consoles/nintendo-64/) - High-level hardware overview; encoder revision corroboration.  
 * [Zoinkity - VI Settings Pastebin](https://web.archive.org/web/20260119215039/https://pastebin.com/pJG5SBnW) - 237/474 line libultra behavior; VI reverse-engineering details.  
 * [Link83 et al - ModRetro Forums - N64 Motherboard Revisions](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history; component changes; video encoder chip progression across revisions; board scans.  
 * [kwyjibo, Link83 et al - NFGGames Forum - NUS-CPU(R)-01 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community documentation of the French PAL console, NUS-CPU(R)-01 board, and S-RGB A encoder.  
 * [Link83 et al - NFGGames Forum - Datasheet Links Thread](https://nfggames.com/forum2/index.php?topic=3525.0) - Community identification of BA7242F as ENC-NUS match; source of datasheet link.  
 * [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identifies the NUS-CPU(R)-01 motherboard; documents the S-RGB A pinout for RGB restoration; confirms DENC-NUS' unsuitability for RGB output.  
-* [N64brew.dev](https://n64brew.dev/) - VI register behavior; timing examples; LEAP implementation; video DAC chip variants (VDC-NUS, DENC-NUS, AVDC-NUS, MAV-NUS); 4-cycle bus protocol; VDC_DSYNC signal behaviour; OS interface functions for VI and hardware access.  
+* [N64brew.dev](https://n64brew.dev/) - VI register descriptions and behavior; timing examples; leap explanation; OS interface functions for VI and hardware access.  
 * [Libdragon](https://libdragon.dev/) - High-level API access to N64 hardware and VI timing abstraction.  
+* [Libdragon - vi.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/src/vi.h) - Video Interface Subsystem information.
+* [Libdragon - display.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/include/display.h) - VI -> RDP hardware rasterizer details.
 * [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) - Direct register-level mappings including VI constants.  
 * [n64.readthedocs.io - N64 Hardware Reference](https://n64.readthedocs.io/index.html#video-interface) - Emulator developer reference; SDK register naming corroboration; interrupt handling detail.  
 * [ares N64](https://github.com/ares-emulator/ares/tree/master/ares/n64) / [CEN64](https://github.com/n64dev/cen64) / [MAME N64](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) - Software implementations of VI timing.  
@@ -1097,7 +1098,237 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 
 ---
 
-### 8. Glossary
+## Appendix A. X1 and X2 Stamp Code Table
+
+The following table lists confirmed and provisional X1 and X2 stamp codes organized by board revision. 
+
+| Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
+| :--- | :--- | :--- | :--- | :--- | :--- |  
+| NUS-CPU-01 | `D143A6` | `D147B6` | Jan 1996 | Feb 1996 | ID: Prominos_01 *(Initial configuration: CPU-NUS; RCP-NUS; 2x RDRAM18-NUS A; VDC-NUS; ENC-NUS; BU9480F; AMP-NUS; 2x MX8330MC; Sharp PQ7VZ5 (marking: `7VZ5`); TI SN74LVC125 (marking: `LC125`))* |  
+| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | [Photo by Yaca2671, CC BY-SA 3.0 (Wikimedia)](https://commons.wikimedia.org/w/index.php?curid=5777930) |
+| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | ID: modretro_01 |  
+| NUS-CPU-02 | `D143B6` | `D147C6` | Feb 1996 | Mar 1996 | |  
+| NUS-CPU-02 | `D143C6` | `D147B6` | Mar 1996 | Feb 1996 | |  
+| NUS-CPU-02 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | ID: cy_01 |  
+| NUS-CPU-02 | `D143K6` | `D147K6` | Oct 1996 | Oct 1996 | |  
+| NUS-CPU-03 | `D143A6` | `D147A6` | Jan 1996 | Jan 1996 | *CPU-NUS A and VDC-NUS A are introduced mid-03 run with no board rev. bump* |
+| NUS-CPU-03 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | |
+| NUS-CPU-03 | `D143G6` | `D147F6` | Jul 1996 | Jun 1996 | |
+| NUS-CPU-03 | `D143H6` | `D147F6` | Aug 1996 | Jun 1996 | |
+| NUS-CPU-03 | `D143L6` | `D147L6` | Nov 1996 | Nov 1996 | ID: Prominos_03 |
+| NUS-CPU-04 | `D143H6` | `D147J6` | Aug 1996 | Sep 1996 | |
+| NUS-CPU-04 | `D143L6I` | `D147J7` | Nov 1996 | Sep 1997 | I-suffix on X1 |
+| NUS-CPU-04 | `D143J7` | `D147J7` | Sep 1997 | Sep 1997 | ID: Prominos_04 |
+| NUS-CPU-04 | `D143K7` | `D147K7` | Oct 1997 | Oct 1997 | |
+| NUS-CPU-05 | `D143G8` | `D147G8I` | Jul 1998 | Jul 1998 | I-suffix on X2 *(U7 MX9911MC likely present on [05, 07] inclusive. U1 AVDC-NUS is a positive identifier of NUS-CPU-05; however U1 may be either AVDC-NUS (earlier serials) or MAV-NUS (later serials))* |
+| NUS-CPU-05 | `D143G8` | `D147H8` | Jul 1998 | Aug 1998 | |
+| NUS-CPU-05 | `D143J8` | `D147J8` | Sep 1998 | Sep 1998 | |
+| NUS-CPU-05 | `D143K8` | `D147K8` | Oct 1998 | Oct 1998 | |
+| NUS-CPU-05 | `D143L8` | `D147L8` | Nov 1998 | Nov 1998 | ID: Prominos_05 |
+| NUS-CPU-05 | `D143G9` | `D147H9` | Jul 1999 | Aug 1999 | |
+| NUS-CPU-05-1 | `D143C9` | `D147C9` | Mar 1999 | Mar 1999 | ID: Prominos_05-1 |
+| NUS-CPU-05-1? | `D143L8` | `D147K8` | Nov 1998 | Oct 1998 | Revision not visible; U7+U15 both MX9911MC (never seen on pre-05-1 boards) |
+| NUS-CPU-06 | - | - | - | - | Board image available; stamp codes illegible |
+| NUS-CPU-07 | - | - | - | - | Board images available; stamp codes illegible |
+| NUS-CPU-08 | `D143F9` | `D147F9` | Jun 1999 | Jun 1999 | *MX8350 present in 08 onward* |
+| NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08; I-suffix on both |
+| NUS-CPU-08 | `D143H9` | `D147J9` | Aug 1999 | Sep 1999 | X2 year inferred |
+| NUS-CPU-08 | `D143L9` | `D147L9` | Nov 1999 | Nov 1999 | |
+| NUS-CPU-08-1 | `D143H9` | `D147H9` | Aug 1999 | Aug 1999 | |
+| NUS-CPU-08-1 | `D143K9` | `D147J9` | Oct 1999 | Sep 1999 | ID: Prominos_08-1 |
+| NUS-CPU-08-1 | `D143K9I` | `D147K9I` | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
+| NUS-CPU-09 | `D143J0` | `D147H0` | Sep 2000 | Aug 2000 | ID: Prominos_09 |
+| NUS-CPU-09 | `D143J0` | `D147J0` | Sep 2000 | Sep 2000 | |
+| NUS-CPU-09 | `D143J0I` | `D147K0` | Sep 2000 | Oct 2000 | I-suffix on X1 |
+| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1. All visible IC marks with likely decodes: `PIF-NUS A0027 EA` (`0027` NEC date code convention: wk 27, 2000); `CPU-NUS A 0002XK020` (wk 2, 2000); `RCP-NUS 9949KK008` (wk 49, 1999); `RDRAM36 9949KU621`; `AMP-NUS Ⓜ⁸ 90.6`; `TI LV125A 9AK DE6J`; `MAV-NUS RS5C382 9MS 9Y`; `MX8350MC 43B TA245201` |
+| NUS-CPU-09-1 | `D143K0I` | `D147L0` | Oct 2000 | Nov 2000 | I-suffix on X1 |
+| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: kwyjibo_01 |
+| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01 |
+| NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; modretro_13 |
+| NUS-CPU(P)-01 | `D177G8` | `D147M7I` | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
+| NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
+| NUS-CPU(P)-02? | `D177J9` | - | Sep 1999 | - | PAL; ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS (marking: `9940 E`; date code: wk 40, 1999); (P)-03 not excluded. U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`; wk 21, 1999?) |
+| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_14. Board image available; stamp codes illegible *(MX8350 present.)* |
+| NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01; two MX8330MCs confirmed |
+| NUS-CPU(M)-02 | removed | `D147F7` | - | Jun 1997 | PAL-M; ID: gbonifa_01; X1+U6 absent (junk unit) |
+| NUS-CPU(M)-02? | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: jasnet_01; revision not visible. Markings: `1997 Nintendo`; `PIF(M)-NUS 9739 D`; `VDC-NUS A BU9801F 727 120`; `ENC-NUS 735 161`; `9480F 7935`; `MX8330MC TEC0968L` (2x); `AMP-NUS 726 180`; `TA78M05F 7I`; `287C` |
+| NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
+
+X1 and X2 date codes on individual boards cluster tightly, typically within one to two months of each other. This is consistent with batch component sourcing and provides independent corroboration of the decode. The crystal date progression across revisions also tracks known board revision chronology: NUS-CPU-01 through -04 uniformly yield 1996-1997 dates; NUS-CPU-05 yields 1998-1999; NUS-CPU-08 onward yields 1999-2000. The MHz field is self-evident from the regional clock frequency; the month and year fields are validated by this revision-anchored progression. The decode is therefore strongly self-corroborating across the current corpus.  
+
+⁸ The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo (confirmed by Prominos). It is unrelated the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote ⁴, §3.5.1.2).  
+
+## Appendix B. VI Modes
+
+Tables with SDK-defined VI mode definitions.
+
+### B.1 libultra VI Mode Decoder
+
+| Position | Options | Description |
+| :--- | :--- | :--- |
+| 1 | `L` (Low Res) / `H` (High Res) | Toggles the horizontal resolution between standard (320px) and high (640px+). |
+| 2 | `A` (Anti-Aliased) / `P` (Point-Sampled) | Toggles VI anti-aliasing and resampling features. `P` disables them for a sharp, pixelated look. |
+| 3 | `N` (Non-interlaced) / `F` (Filtered Interlaced) | Selects progressive (`N`) or interlaced (`F`) scan. Interlaced modes usually enable the VI deflicker filter. |
+| 4 | `1` (16-bit) / `2` (32-bit) | Configures the VI for either a 16-bit or 32-bit color framebuffer. |
+
+Examples using the decoder:
+*   `LAN1`:
+    *   `L` -> Low Resolution (320)
+    *   `A` -> Anti-Aliased
+    *   `N` -> Non-interlaced (Progressive)
+    *   `1` -> 16-bit
+*   `HPF2`:
+    *   `H` -> High Resolution (640)
+    *   `P` -> Point-Sampled
+    *   `F` -> Interlaced (Filtered)
+    *   `2` -> 32-bit
+
+### B.2 Libultra VI Mode Definitions
+
+> SDK values derived from the [osViTable.c](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) present in the *Super Mario 64* (1996) decompilation source. These values were commpared against later SDK values ([osVITable.c](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) from the *Mario Kart 64* (1996/1997) decompilation, as well as [vitbl.c](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) from the *Animal Forest* (2001) decompilation).
+
+Table values are effective. Leap values are unchanged.
+
+### B.2.1 NTSC (SGI, 1996)
+
+| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
+| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
+| NTSC   | NTSC_LAN1    | 320   | 240    | Prog  | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_LAN2    | 320   | 240    | Prog  | AA       | 32-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_LPN1    | 320   | 240    | Prog  | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_LPN2    | 320   | 240    | Prog  | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_LAF1    | 320   | 240    | Inter | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_LAF2    | 320   | 240    | Inter | AA       | 32-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_LPF1    | 320   | 240    | Inter | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_LPF2    | 320   | 240    | Inter | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_HAN1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_HAF1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_HPN1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_HPN2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_HPF1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
+| NTSC   | NTSC_HPF2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
+
+### B.2.2 PAL (SGI, 1996)
+
+| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
+| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
+| PAL    | PAL_LAN1     | 320   | 288    | Prog  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_LAN2     | 320   | 288    | Prog  | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_LPN1     | 320   | 288    | Prog  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_LPN2     | 320   | 288    | Prog  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_LAF1     | 320   | 288    | Inter | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_LAF2     | 320   | 288    | Inter | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_LPF1     | 320   | 288    | Inter | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_LPF2     | 320   | 288    | Inter | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_HAN1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_HAF1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_HPN1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_HPN2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_HPF1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
+| PAL    | PAL_HPF2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
+
+### B.2.4 MPAL (SGI, 1996)
+
+| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
+| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
+| MPAL   | MPAL_LAN1    | 320   | 240    | Prog  | AA       | 16-bit | 525       | 3090, 4            | 3099, 3098   |
+| MPAL   | MPAL_LAN2    | 320   | 240    | Prog  | AA       | 32-bit | 525       | 3090, 4            | 3099, 3098   |
+| MPAL   | MPAL_LPN1    | 320   | 240    | Prog  | Point    | 16-bit | 525       | 3090, 4            | 3099, 3098   |
+| MPAL   | MPAL_LPN2    | 320   | 240    | Prog  | Point    | 32-bit | 525       | 3090, 4            | 3099, 3098   |
+| MPAL   | MPAL_LPF1    | 320   | 240    | Prog  | Point    | 16-bit | 525       | 3090, 4            | 3099, 3098   |
+| MPAL   | MPAL_LAF1    | 320   | 240    | Inter | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_LAF2    | 320   | 240    | Inter | AA       | 32-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_LPF2    | 320   | 240    | Inter | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_HAN1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_HAF1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_HPN1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_HPN2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_HPF1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3089, 0            | 3101, 3101   |
+| MPAL   | MPAL_HPF2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101   |
+
+### B.2.3 PAL (OS2.0H, Feb 24, 1997⁹)
+
+| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
+| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
+| PAL    | PAL_LAN1     | 320   | 288    | Prog  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_LAN2     | 320   | 288    | Prog  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_LPN1     | 320   | 288    | Prog  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_LPN2     | 320   | 288    | Prog  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_LAF1     | 320   | 288    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_LAF2     | 320   | 288    | Inter | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_LPF1     | 320   | 288    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_LPF2     | 320   | 288    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_HAN1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_HAF1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_HPN1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_HPN2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_HPF1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| PAL    | PAL_HPF2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+
+⁹ OS2.0H (February 24, 1997) introduced a new PAL leap pattern with the revision note: "The PAL table values have been corrected."
+
+### B.2.5 FPAL¹⁰ (1997)
+
+| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
+| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
+| FPAL   | FPAL_LAN1    | 320   | 288    | Prog  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_LAN2    | 320   | 288    | Prog  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_LPN1    | 320   | 288    | Prog  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_LPN2    | 320   | 288    | Prog  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_LAF1    | 320   | 288    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_LAF2    | 320   | 288    | Inter | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_LPF1    | 320   | 288    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_LPF2    | 320   | 288    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_HAN1    | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_HAF1    | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_HPN1    | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_HPN2    | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_HPF1    | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
+| FPAL   | FPAL_HPF2    | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+
+¹⁰  FPAL expands to full-screen PAL (or full-height PAL). Normal PAL modes on N64 share NTSC/PAL-M internal line count limitations despite the PAL standard's additional lines. FPAL allows drawing to 48 more those lines (288 - 240 = 48). This mode was apparently developed by Rare Ltd. and subsequently integrated into libultra, per a Goldeneye 007 decompilation source code comment. It inherits the revised PAL leap pattern.
+
+### B.3 libdragon VI Mode Definitions
+
+> libdragon uses timing presets and computes other registers dynamically. Resolution, bit depth, and AA mode are applied separately. Values are effective.
+
+| Region | Scan         | VSYNC (S)         | HSYNC(TOTAL, LEAP) | LEAP(A, B) |
+| :---   | :---         | :---              | :---               | :---       |
+| NTSC   | Progressive  | 526               | 3094, 0            | 3094, 3094 |
+| NTSC   | Interlaced   | 525               | 3094, 0            | 3094, 3094 |
+| PAL    | Progressive  | 626               | 3178, 21           | 3183, 3184 |
+| PAL    | Interlaced   | 625               | 3178, 21           | 3183, 3184 |
+| PAL-M  | Progressive  | 526               | 3090, 4            | 3099, 3098 |
+| PAL-M  | Interlaced   | 525               | 3089, 0            | 3101, 3101 |
+
+### B.3.1 libdragon Display Initialization Behavior
+
+Unlike libultra, which defines a full OSViMode structure for each preset mode, libdragon separates timing configuration from framebuffer configuration. A timing preset establishes the base scan timing, including vertical sync, horizontal sync, and leap patterns. The display subsystem then programs several additional registers dynamically.
+
+During initialization, the following registers are calculated:
+
+| Register | Source | Purpose |
+| --- | --- | --- |
+| `VI_WIDTH` | `res.width` | Defines framebuffer width |
+| `VI_X_SCALE` | `VI_X_SCALE_SET(res.width)` | Computes horizontal scaling |
+| `VI_Y_SCALE` | `VI_Y_SCALE_SET(res.height)` | Computes vertical scaling |
+| `VI_ORIGIN` | Framebuffer pointer | Defines start of visible framebuffer |
+| `VI_CTRL` | Constructed from options | Configures pixel size, anti-aliasing mode, and filters |
+
+This separation enables a single timing preset to support numerous variable framebuffer dimensions. The `VI_CTRL` register is assembled from several distinct option groups:
+
+| Setting | Options | Effect |
+| --- | --- | --- |
+| Bit depth | 16-bit / 32-bit | Selects VI pixel format |
+| Scan mode | Progressive / Interlaced | Toggles serration |
+| Gamma | None / Corrected / Corrected+Dither | Enables VI gamma processing |
+| Filters | Multiple presets | Selects anti-aliasing, resampling, dedithering, or divot filters |
+
+libdragon reads the horizontal leap register directly, utilizing bitwise shifts to define the parameters. In contrast, the legacy libultra macro reverses the argument order relative to the hardware register layout. Both programming approaches produce identical final register values.
+
+---
+
+### Glossary
 
 A quick reference for terminology used in this document.
 
@@ -1172,7 +1403,7 @@ A quick reference for terminology used in this document.
 
 * **VDC_DSYNC** *(a.k.a. !DSYNC):* Control qualifier on the VDC bus from the RCP (U9) to VDC-NUS (U4). When low, VDC_D0-VDC_D6 carry synchronization/control bits (cycle 0 of the four-cycle group); when high, the bus carries pixel color data (cycles 1-3). During active video it asserts low once every four VI clocks. During blanking, VDC_DSYNC is held low continuously, allowing the VI to transmit control signals (VSync, HSync, colorburst clamp, CSync) on every VI clock. *See also: VDC Bus.*  
 
-* **VDC-NUS / ENC-NUS / DENC-NUS / S-RGB A / AVDC-NUS / MAV-NUS:** The N64 video output chip family, converting the RCP’s digital stream to analog. NUS-CPU-01 through NUS-CPU-04 use a two-chip path: VDC-NUS (VDC bus D0-D6, DSYNC, CLK in) performs DAC and generates CSYNC/BFP, outputting RGB, CSYNC, and BFP to ENC-NUS (U5), which handles composite/S-Video encoding and receives the chroma subcarrier at SCIN. Later revisions consolidate this into a single chip. Timing is unchanged. *Both AVDC-NUS and MAV-NUS have been observed on unrevised NUS-CPU-05 boards, confirming that they share the same package and compatible pinout (Link83, 2009; David/EEVblog, 2013). Whether they are the same silicon, a process revision, or two approved-equivalent parts is not confirmed. MAV-NUS pins 14–16 carry the audio interface (I2S) (lidnariq).*  
+* **VDC-NUS / ENC-NUS / DENC-NUS / S-RGB A / AVDC-NUS / MAV-NUS:** The N64 video output chip family, converting the RCP's digital stream to analog. NUS-CPU-01 through NUS-CPU-04 use a two-chip path: VDC-NUS (VDC bus D0-D6, DSYNC, CLK in) performs DAC and generates CSYNC/BFP, outputting RGB, CSYNC, and BFP to ENC-NUS (U5), which handles composite/S-Video encoding and receives the chroma subcarrier at SCIN. Later revisions consolidate this into a single chip. Timing is unchanged. *Both AVDC-NUS and MAV-NUS have been observed on unrevised NUS-CPU-05 boards, confirming that they share the same package and compatible pinout (Link83, 2009; David/EEVblog, 2013). Whether they are the same silicon, a process revision, or two approved-equivalent parts is not confirmed. MAV-NUS pins 14–16 carry the audio interface (I2S) (lidnariq).*  
 
 * **VI (Video Interface):** The hardware block within the RCP responsible for generating the N64's video signal. It reads from memory and uses a set of programmable registers (e.g., `VI_V_TOTAL`, `VI_H_TOTAL`) to define the timing, resolution, and format of the output signal.
 
@@ -1181,256 +1412,3 @@ A quick reference for terminology used in this document.
 * `VI_V_VIDEO` (`0x04400028`): Defines the vertical start and end of the active video window in half-lines.
 
 * **VSYNC (Vertical Synchronization):** A timing pulse in the video signal marking the end of a vertical scan cycle. The rate of VSYNC pulses defines fV. *See also: fV, CSYNC.*
-
-## Appendix A: X1 and X2 Stamp Code Table
-
-The following table lists confirmed and provisional X1 and X2 stamp codes organized by board revision. 
-
-| Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
-| :--- | :--- | :--- | :--- | :--- | :--- |  
-| NUS-CPU-01 | `D143A6` | `D147B6` | Jan 1996 | Feb 1996 | ID: Prominos_01 *(Initial configuration: CPU-NUS; RCP-NUS; 2x RDRAM18-NUS A; VDC-NUS; ENC-NUS; BU9480F; AMP-NUS; 2x MX8330MC; Sharp PQ7VZ5 (marking: `7VZ5`); TI SN74LVC125 (marking: `LC125`))* |  
-| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | [Photo by Yaca2671, CC BY-SA 3.0 (Wikimedia)](https://commons.wikimedia.org/w/index.php?curid=5777930) |
-| NUS-CPU-01 | `D143B6` | `D147B6` | Feb 1996 | Feb 1996 | ID: modretro_01 |  
-| NUS-CPU-02 | `D143B6` | `D147C6` | Feb 1996 | Mar 1996 | |  
-| NUS-CPU-02 | `D143C6` | `D147B6` | Mar 1996 | Feb 1996 | |  
-| NUS-CPU-02 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | ID: cy_01 |  
-| NUS-CPU-02 | `D143K6` | `D147K6` | Oct 1996 | Oct 1996 | |  
-| NUS-CPU-03 | `D143A6` | `D147A6` | Jan 1996 | Jan 1996 | *CPU-NUS A and VDC-NUS A are introduced mid-03 run with no board rev. bump* |
-| NUS-CPU-03 | `D143F6` | `D147E6` | Jun 1996 | May 1996 | |
-| NUS-CPU-03 | `D143G6` | `D147F6` | Jul 1996 | Jun 1996 | |
-| NUS-CPU-03 | `D143H6` | `D147F6` | Aug 1996 | Jun 1996 | |
-| NUS-CPU-03 | `D143L6` | `D147L6` | Nov 1996 | Nov 1996 | ID: Prominos_03 |
-| NUS-CPU-04 | `D143H6` | `D147J6` | Aug 1996 | Sep 1996 | |
-| NUS-CPU-04 | `D143L6I` | `D147J7` | Nov 1996 | Sep 1997 | I-suffix on X1 |
-| NUS-CPU-04 | `D143J7` | `D147J7` | Sep 1997 | Sep 1997 | ID: Prominos_04 |
-| NUS-CPU-04 | `D143K7` | `D147K7` | Oct 1997 | Oct 1997 | |
-| NUS-CPU-05 | `D143G8` | `D147G8I` | Jul 1998 | Jul 1998 | I-suffix on X2 *(U7 MX9911MC likely present on [05, 07] inclusive. U1 AVDC-NUS is a positive identifier of NUS-CPU-05; however U1 may be either AVDC-NUS (earlier serials) or MAV-NUS (later serials))* |
-| NUS-CPU-05 | `D143G8` | `D147H8` | Jul 1998 | Aug 1998 | |
-| NUS-CPU-05 | `D143J8` | `D147J8` | Sep 1998 | Sep 1998 | |
-| NUS-CPU-05 | `D143K8` | `D147K8` | Oct 1998 | Oct 1998 | |
-| NUS-CPU-05 | `D143L8` | `D147L8` | Nov 1998 | Nov 1998 | ID: Prominos_05 |
-| NUS-CPU-05 | `D143G9` | `D147H9` | Jul 1999 | Aug 1999 | |
-| NUS-CPU-05-1 | `D143C9` | `D147C9` | Mar 1999 | Mar 1999 | ID: Prominos_05-1 |
-| NUS-CPU-05-1? | `D143L8` | `D147K8` | Nov 1998 | Oct 1998 | Revision not visible; U7+U15 both MX9911MC (never seen on pre-05-1 boards) |
-| NUS-CPU-06 | - | - | - | - | Board image available; stamp codes illegible |
-| NUS-CPU-07 | - | - | - | - | Board images available; stamp codes illegible |
-| NUS-CPU-08 | `D143F9` | `D147F9` | Jun 1999 | Jun 1999 | *MX8350 present in 08 onward* |
-| NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08; I-suffix on both |
-| NUS-CPU-08 | `D143H9` | `D147J9` | Aug 1999 | Sep 1999 | X2 year inferred |
-| NUS-CPU-08 | `D143L9` | `D147L9` | Nov 1999 | Nov 1999 | |
-| NUS-CPU-08-1 | `D143H9` | `D147H9` | Aug 1999 | Aug 1999 | |
-| NUS-CPU-08-1 | `D143K9` | `D147J9` | Oct 1999 | Sep 1999 | ID: Prominos_08-1 |
-| NUS-CPU-08-1 | `D143K9I` | `D147K9I` | Oct 1999 | Oct 1999 | I-suffix on both X1 and X2 |
-| NUS-CPU-09 | `D143J0` | `D147H0` | Sep 2000 | Aug 2000 | ID: Prominos_09 |
-| NUS-CPU-09 | `D143J0` | `D147J0` | Sep 2000 | Sep 2000 | |
-| NUS-CPU-09 | `D143J0I` | `D147K0` | Sep 2000 | Oct 2000 | I-suffix on X1 |
-| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1. All visible IC marks with likely decodes: `PIF-NUS A0027 EA` (`0027` NEC date code convention: wk 27, 2000); `CPU-NUS A 0002XK020` (wk 2, 2000); `RCP-NUS 9949KK008` (wk 49, 1999); `RDRAM36 9949KU621`; `AMP-NUS Ⓜ⁸ 90.6`; `TI LV125A 9AK DE6J`; `MAV-NUS RS5C382 9MS 9Y`; `MX8350MC 43B TA245201` |
-| NUS-CPU-09-1 | `D143K0I` | `D147L0` | Oct 2000 | Nov 2000 | I-suffix on X1 |
-| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: kwyjibo_01 |
-| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01 |
-| NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; modretro_13 |
-| NUS-CPU(P)-01 | `D177G8` | `D147M7I` | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
-| NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
-| NUS-CPU(P)-02? | `D177J9` | - | Sep 1999 | - | PAL; ID: gamingdoc_06.PAL; X2 not visible; PIF(P)-NUS (marking: `9940 E`; date code: wk 40, 1999); (P)-03 not excluded. U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`; wk 21, 1999?) |
-| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_14. Board image available; stamp codes illegible *(MX8350 present.)* |
-| NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01; two MX8330MCs confirmed |
-| NUS-CPU(M)-02 | removed | `D147F7` | - | Jun 1997 | PAL-M; ID: gbonifa_01; X1+U6 absent (junk unit) |
-| NUS-CPU(M)-02? | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: jasnet_01; revision not visible. Markings: `1997 Nintendo`; `PIF(M)-NUS 9739 D`; `VDC-NUS A BU9801F 727 120`; `ENC-NUS 735 161`; `9480F 7935`; `MX8330MC TEC0968L` (2x); `AMP-NUS 726 180`; `TA78M05F 7I`; `287C` |
-| NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
-
-⁸ The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo (confirmed by Prominos). It is unrelated the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote ⁴, §3.5.1.2).  
-
-## Appendix B: VI Modes
-
-### libultra VI Mode Decoder
-
-| Position | Options | Description |
-| :--- | :--- | :--- |
-| 1 | `L` (Low Res) / `H` (High Res) | Toggles the horizontal resolution between standard (320px) and high (640px+). |
-| 2 | `A` (Anti-Aliased) / `P` (Point-Sampled) | Toggles VI anti-aliasing and resampling features. `P` disables them for a sharp, pixelated look. |
-| 3 | `N` (Non-interlaced) / `F` (Filtered Interlaced) | Selects progressive (`N`) or interlaced (`F`) scan. Interlaced modes usually enable the VI deflicker filter. |
-| 4 | `1` (16-bit) / `2` (32-bit) | Configures the VI for either a 16-bit or 32-bit color framebuffer. |
-
-**Examples using the decoder:**
-
-*   `LAN1`:
-    *   `L` -> Low Resolution (320)
-    *   `A` -> Anti-Aliased
-    *   `N` -> Non-interlaced (Progressive)
-    *   `1` -> 16-bit
-*   `HPF2`:
-    *   `H` -> High Resolution (640)
-    *   `P` -> Point-Sampled
-    *   `F` -> Interlaced (Filtered)
-    *   `2` -> 32-bit
-
-### Super Mario 64 (1996) VI Mode Definitions
-
-> Values derived from the [osViTable.c](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) present in the Super Mario 64 decompilation source.
-
-| Region | Resolution | Scan | AA/Point | Bit Depth | S (half-lines) | HSYNC(TOTAL, LEAP) | LEAP(A, B) | Decoder Name |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| NTSC | Low (320) | Progressive | AA | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan1 |
-| NTSC | Low (320) | Progressive | AA | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan2 |
-| NTSC | Low (320) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf1 |
-| NTSC | Low (320) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf2 |
-| NTSC | Low (320) | Progressive | Point | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn1 |
-| NTSC | Low (320) | Progressive | Point | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn2 |
-| NTSC | Low (320) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf1 |
-| NTSC | Low (320) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf2 |
-| NTSC | High (640) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf1 |
-| NTSC | High (640) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf2 |
-| NTSC | High (640) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf1 |
-| NTSC | High (640) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf2 |
-| PAL | Low (320) | Progressive | AA | 16-bit | 626 | 3177, 21 | 3182, 3183 | pal_lan1 |
-| PAL | Low (320) | Progressive | AA | 32-bit | 626 | 3177, 21 | 3182, 3183 | pal_lan2 |
-| PAL | Low (320) | Interlaced | AA | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_laf1 |
-| PAL | Low (320) | Interlaced | AA | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_laf2 |
-| PAL | Low (320) | Progressive | Point | 16-bit | 626 | 3177, 21 | 3182, 3183 | pal_lpn1 |
-| PAL | Low (320) | Progressive | Point | 32-bit | 626 | 3177, 21 | 3182, 3183 | pal_lpn2 |
-| PAL | Low (320) | Interlaced | Point | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_lpf1 |
-| PAL | Low (320) | Interlaced | Point | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_lpf2 |
-| PAL | High (640) | Interlaced | AA | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_haf1 |
-| PAL | High (640) | Interlaced | AA | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_haf2 |
-| PAL | High (640) | Interlaced | Point | 16-bit | 625 | 3177, 21 | 3182, 3183 | pal_hpf1 |
-| PAL | High (640) | Interlaced | Point | 32-bit | 625 | 3177, 21 | 3182, 3183 | pal_hpf2 |
-| PAL-M | Low (320) | Progressive | AA | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan1 |
-| PAL-M | Low (320) | Progressive | AA | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan2 |
-| PAL-M | Low (320) | Interlaced | AA | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf1 |
-| PAL-M | Low (320) | Interlaced | AA | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf2 |
-| PAL-M | Low (320) | Progressive | Point | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn1 |
-| PAL-M | Low (320) | Progressive | Point | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn2 |
-| PAL-M | Low (320) | Interlaced | Point | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf1 |
-| PAL-M | Low (320) | Interlaced | Point | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf2 |
-| PAL-M | High (640) | Interlaced | AA | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_haf1 |
-| PAL-M | High (640) | Interlaced | AA | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_haf2 |
-| PAL-M | High (640) | Interlaced | Point | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_hpf1 |
-| PAL-M | High (640) | Interlaced | Point | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_hpf2 |
-
-### Animal Forest (2001) VI Mode Definitions
-
-> Values derived from the [VI modes](https://github.com/zeldaret/af/blob/main/lib/ultralib/src/vimodes/) present in the Animal Forest decompilation source.
-
-| Region | Resolution | Scan | AA/Point | Bit Depth | S (half-lines) | HSYNC(TOTAL, LEAP) | LEAP(A, B) | Decoder Name | Filename |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| NTSC | Low (320) | Progressive | AA | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan1 | vimodentsclan1.c |
-| NTSC | Low (320) | Progressive | AA | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lan2 | vimodentsclan2.c |
-| NTSC | Low (320) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf1 | vimodentsclaf1.c |
-| NTSC | Low (320) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_laf2 | vimodentsclaf2.c |
-| NTSC | Low (320) | Progressive | Point | 16-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn1 | vimodentsclpn1.c |
-| NTSC | Low (320) | Progressive | Point | 32-bit | 526 | 3093, 0 | 3093, 3093 | ntsc_lpn2 | vimodentsclpn2.c |
-| NTSC | Low (320) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf1 | vimodentsclpf1.c |
-| NTSC | Low (320) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_lpf2 | vimodentsclpf2.c |
-| NTSC | High (640) | Interlaced | AA | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf1 | vimodentschaf1.c |
-| NTSC | High (640) | Interlaced | AA | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_haf2 | vimodentschaf2.c |
-| NTSC | High (640) | Interlaced | Point | 16-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf1 | vimodentschpf1.c |
-| NTSC | High (640) | Interlaced | Point | 32-bit | 525 | 3093, 0 | 3093, 3093 | ntsc_hpf2 | vimodentschpf2.c |
-| PAL | Low (320) | Progressive | AA | 16-bit | 626 | 3177, 23 | 3181, 3183 | pal_lan1 | vimodepallan1.c |
-| PAL | Low (320) | Progressive | AA | 32-bit | 626 | 3177, 23 | 3181, 3183 | pal_lan2 | vimodepallan2.c |
-| PAL | Low (320) | Interlaced | AA | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_laf1 | vimodepallaf1.c |
-| PAL | Low (320) | Interlaced | AA | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_laf2 | vimodepallaf2.c |
-| PAL | Low (320) | Progressive | Point | 16-bit | 626 | 3177, 23 | 3181, 3183 | pal_lpn1 | vimodepallpn1.c |
-| PAL | Low (320) | Progressive | Point | 32-bit | 626 | 3177, 23 | 3181, 3183 | pal_lpn2 | vimodepallpn2.c |
-| PAL | Low (320) | Interlaced | Point | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_lpf1 | vimodepallpf1.c |
-| PAL | Low (320) | Interlaced | Point | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_lpf2 | vimodepallpf2.c |
-| PAL | High (640) | Interlaced | AA | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_haf1 | vimodepalhaf1.c |
-| PAL | High (640) | Interlaced | AA | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_haf2 | vimodepalhaf2.c |
-| PAL | High (640) | Interlaced | Point | 16-bit | 625 | 3177, 23 | 3181, 3183 | pal_hpf1 | vimodepalhpf1.c |
-| PAL | High (640) | Interlaced | Point | 32-bit | 625 | 3177, 23 | 3181, 3183 | pal_hpf2 | vimodepalhpf2.c |
-| FPAL | Low (320) | Progressive | AA | 16-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lan1 | vimodefpallan1.c |
-| FPAL | Low (320) | Progressive | AA | 32-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lan2 | vimodefpallan2.c |
-| FPAL | Low (320) | Interlaced | AA | 16-bit | 625 | 3177, 23 | 3181, 3183 | fpal_laf1 | vimodefpallaf1.c |
-| FPAL | Low (320) | Interlaced | AA | 32-bit | 625 | 3177, 23 | 3181, 3183 | fpal_laf2 | vimodefpallaf2.c |
-| FPAL | Low (320) | Progressive | Point | 16-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lpn1 | vimodefpallpn1.c |
-| FPAL | Low (320) | Progressive | Point | 32-bit | 626 | 3177, 23 | 3181, 3183 | fpal_lpn2 | vimodefpallpn2.c |
-| FPAL | Low (320) | Interlaced | Point | 16-bit | 625 | 3177, 23 | 3181, 3183 | fpal_lpf1 | vimodefpallpf1.c |
-| FPAL | Low (320) | Interlaced | Point | 32-bit | 625 | 3177, 23 | 3181, 3183 | fpal_lpf2 | vimodefpallpf2.c |
-| PAL-M | Low (320) | Progressive | AA | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan1 | vimodempallan1.c |
-| PAL-M | Low (320) | Progressive | AA | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lan2 | vimodempallan2.c |
-| PAL-M | Low (320) | Interlaced | AA | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf1 | vimodempallaf1.c |
-| PAL-M | Low (320) | Interlaced | AA | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_laf2 | vimodempallaf2.c |
-| PAL-M | Low (320) | Progressive | Point | 16-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn1 | vimodempallpn1.c |
-| PAL-M | Low (320) | Progressive | Point | 32-bit | 526 | 3089, 4 | 3098, 3097 | mpal_lpn2 | vimodempallpn2.c |
-| PAL-M | Low (320) | Interlaced | Point | 16-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf1 | vimodempallpf1.c |
-| PAL-M | Low (320) | Interlaced | Point | 32-bit | 525 | 3088, 0 | 3100, 3100 | mpal_lpf2 | vimodempallpf2.c |
-
-### libdragon VI Mode Definitions
-
-> libdragon uses timing presets and computes other registers dynamically. Resolution, bit depth, and AA mode are applied separately.
-
-| Region | Scan | S (half-lines) | HSYNC(TOTAL, LEAP) | LEAP(A, B) |
-| :--- | :--- | :--- | :--- | :--- |
-| NTSC | Progressive | 526 | 3093,0 | 3093, 3093 |
-| NTSC | Interlaced | 525 | 3093,0 | 3093, 3093 |
-| PAL | Progressive | 626 | 3177,21 | 3182, 3183 |
-| PAL | Interlaced | 625 | 3177,21 | 3182, 3183 |
-| PAL-M | Progressive | 526 | 3089,4 | 3098, 3097 |
-| PAL-M | Interlaced | 525 | 3088,0 | 3100, 3100 |
-
----
-
-### libdragon Display Initialization Behavior
-
-Unlike `libultra`, which defines a full `OSViMode` structure for each preset mode, libdragon separates **timing configuration** from **framebuffer configuration**.
-
-A timing preset establishes the base scan timing (VSYNC, HSYNC, leap pattern).
-The display subsystem then programs several additional registers dynamically.
-
-### Runtime-configured registers
-
-During `display_init()` the following registers are calculated:
-
-| Register     | Source                       | Purpose                      |
-| ------------ | ---------------------------- | ---------------------------- |
-| `VI_WIDTH`   | `res.width`                  | framebuffer width            |
-| `VI_X_SCALE` | `VI_X_SCALE_SET(res.width)`  | horizontal scaling           |
-| `VI_Y_SCALE` | `VI_Y_SCALE_SET(res.height)` | vertical scaling             |
-| `VI_ORIGIN`  | framebuffer pointer          | start of visible framebuffer |
-| `VI_CTRL`    | constructed from options     | pixel size, AA mode, filters |
-
-This means a single timing preset can support many framebuffer sizes.
-
-### Control register construction
-
-The `VI_CTRL` register is assembled from several option groups:
-
-| Setting   | Options                             | Effect                                   |
-| --------- | ----------------------------------- | ---------------------------------------- |
-| Bit depth | 16-bit / 32-bit                     | selects VI pixel format                  |
-| Scan mode | progressive / interlaced            | toggles serration                        |
-| Gamma     | none / corrected / corrected+dither | enables VI gamma                         |
-| Filters   | multiple presets                    | selects AA / resample / dedither / divot |
-
-These combinations roughly correspond to the suffixes used by libultra.
-
-### Leap register interpretation
-
-libdragon reads the horizontal leap register directly:
-
-```
-A = (VI_H_TOTAL_LEAP >> 16)
-B = (VI_H_TOTAL_LEAP >> 0)
-```
-
-In contrast, libultra’s macro is defined as:
-
-```
-LEAP(B, A)
-```
-
-The macro argument order is reversed relative to the register layout, but both approaches produce the same final register value.
-
-### Mode counts by source
-
-| Source | Total | FPAL | MPAL | NTSC | PAL |
-|---|---|---|---|---|---|
-| SM64 | 42 | 0 | 14 | 14 | 14 |
-| MK64 | 42 | 0 | 14 | 14 | 14 |
-| BK | 3 | 0 | 1 | 1 | 1 |
-| GE | 2 | 0 | 0 | 1 | 1 |
-| OOT | 56 | 14 | 14 | 14 | 14 |
-| MM | 6 | 1 | 1 | 3 | 1 |
-| PD | 3 | 0 | 1 | 1 | 1 |
-| Animal Forest | 56 | 14 | 14 | 14 | 14 |
-
-*GE's PAL LAN1 struct has different register values from canonical PAL LAN1, with a comment in the source describing it as their FPAL implementation. The type field is still `OS_VI_PAL_LAN1`, not `OS_VI_FPAL_LAN1`.*
