@@ -183,7 +183,7 @@ The MX9911MC is a Macronix single-channel clock synthesizer that is pin- and fun
 ![MX8350 table](/figures/fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: [MX8350 datasheet](/references/Macronix-MX8350-ocr.pdf)*  
 
-> While the MX8350 datasheet lists the PAL-M crystal as 14.302446 MHz, the correct value (derived from the canonically defined PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this error is not indicated by sources. For precision and correctness, all derivations in this document use the fractional form. See [§5.3](#53-pal-m-derivation).  
+> While the MX8350 datasheet lists the PAL-M crystal as 14.302446 MHz, the correct value (derived from the broadcast standard PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this discrepancy is not understood. Derivations in this document use the latter standard frequency. See [§5.3](#53-pal-m-derivation).  
 
 ### 3.2 Video Interface (VI) Register Mapping  
 
@@ -999,36 +999,34 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [ITU-R Recommendation BT.1701](/references/R-REC-BT.1701-1-200508-I!!PDF-E.pdf) - Horizontal/vertical timing for composite video.  
 * [US4054919A - Video Image Positioning Control](https://patents.google.com/patent/US4054919A/en) (1977) - Sync counter generation and display positioning.  
 * [US6239810B1 - High Performance Low Cost Video Game System](https://patents.google.com/patent/US6239810B1/en) (2001) - VI register set; HSYNC LEAP register; VSYNC/HSYNC timing registers; interlaced odd/even line handling; crystal-controlled clock generator.  
-* [US6331856B1 - Video Game System with Coprocessor](https://patents.google.com/patent/US6331856B1/en) (2001) - VI register architecture; HSYNC LEAP register (Fig. 35I) with LEAP_A/LEAP_B fields; interlaced display field toggling; clock generator crystal timing chain.  
+* [US6331856B1 - Video Game System with Coprocessor](https://patents.google.com/patent/US6331856B1/en) (2001) - VI register architecture; HSYNC LEAP register with LEAP_A/LEAP_B fields; interlaced display field toggling; clock generator crystal timing chain.  
 * [US6556197B1 - Programmable Video Timing Registers](https://patents.google.com/patent/US6556197B1/en) (2003) - Horizontal/vertical sync generation; color burst gate timing.  
 * [Philips SAA1101 Universal Sync Generator Datasheet](/references/Philips-SAA1101-datasheet-ocr.pdf) - Corroborating hardware reference for PAL-M fS = 227.25 × fH relationship.  
 * [RWeick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete NUS-CPU-03 KiCAD schematic; component values; signal paths.  
 * [Tim Worthington - GamesX Wiki - N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc) - NUS-CPU-03 video output circuit schematic by Tim Worthington; corroborates YOUT/VOUT/COUT routing to Multi-AV connector.  
-* [Tim Worthington - N64RGB Page](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html) - 4-cycle VDC bus protocol diagram and DAC pinouts (Figures 2b, 2c, 2f, 2g).  
+* [Tim Worthington - N64RGB Page](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html) - 4-cycle VDC bus protocol diagram and DAC pinouts.  
 * [Rodrigo Copetti - Nintendo 64 Architecture - A Practical Analysis](https://www.copetti.org/writings/consoles/nintendo-64/) - High-level hardware overview; encoder revision corroboration.  
 * [Zoinkity - VI Settings Pastebin](https://web.archive.org/web/20260119215039/https://pastebin.com/pJG5SBnW) - 237/474 line libultra behavior; VI reverse-engineering details.  
-* [Link83 et al - ModRetro Forums - N64 Motherboard Revisions](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history; component changes; video encoder chip progression across revisions; board scans.  
+* [Link83 et al - ModRetro Forums - N64 Motherboard Revisions](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history; component changes; video encoder chip progression across revisions; board scans; corroboration of AVDC-NUS/MAV-NUS pin-compatibility per examples of both observed on NUS-CPU-05.  
 * [kwyjibo, Link83 et al - NFGGames Forum - NUS-CPU(R)-01 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community documentation of the French PAL console, NUS-CPU(R)-01 board, and S-RGB A encoder.  
 * [Link83 et al - NFGGames Forum - Datasheet Links Thread](https://nfggames.com/forum2/index.php?topic=3525.0) - Community identification of BA7242F as ENC-NUS match; source of datasheet link.  
-* [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identifies the NUS-CPU(R)-01 motherboard; documents the S-RGB A pinout for RGB restoration; confirms DENC-NUS' unsuitability for RGB output.  
+* [RDC, aflyingcougar et al](https://forums.modretro.com/threads/schematic-nus-cpu-04-ntsc-1996-1997.11227/) - NUS-CPU-03/04 schematics, and board photos (RDC); identification of Mitsumi PST9128 at U3 (aflyingcougar).
+* [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identification of NUS-CPU(R)-01 motherboard; S-RGB A pinout documentation.  
 * [N64brew.dev](https://n64brew.dev/) - VI register descriptions and behavior; timing examples; leap explanation; OS interface functions for VI and hardware access.  
-* [Libdragon](https://libdragon.dev/) - API access to N64 hardware and VI handling abstraction.  
+* [Libdragon](https://libdragon.dev/) - Modernized open-source SDK; numerous implementation details.  
 * [Libdragon - vi.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/src/vi.h) - Video Interface Subsystem information.
 * [Libdragon - display.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/include/display.h) - VI -> RDP hardware rasterizer details.
-* [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) - SDK with VI handling abstraction.  
-* [pseultra](https://github.com/pseudophpt/pseultra) - SDK with VI handling abstraction.
+* [pseultra](https://github.com/pseudophpt/pseultra) / [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) / [n64dev](https://sourceforge.net/projects/n64dev/) - Open-source SDK implementations; VI handling abstraction.  
 * [n64.readthedocs.io - N64 Hardware Reference](https://n64.readthedocs.io/index.html#video-interface) - Emulator developer reference; SDK register naming corroboration; interrupt handling detail.  
-* [ares N64](https://github.com/ares-emulator/ares/tree/master/ares/n64) / [CEN64](https://github.com/n64dev/cen64) / [MAME N64](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) - Software implementations of VI timing.  
+* [ares - N64](https://github.com/ares-emulator/ares/tree/master/ares/n64) / [CEN64](https://github.com/n64dev/cen64) / [MAME N64](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) - Software implementations of VI timing.  
 * [Robert Peip et al - MiSTer FPGA N64 Core](https://github.com/MiSTer-devel/N64_MiSTer) - FPGA implementation of N64 VI timing; corroboration of NTSC 237/474 libultra bounds via Clean HDMI function.  
 * [Wikipedia - NTSC](https://en.wikipedia.org/wiki/NTSC) / [PAL](https://www.wikipedia.org/wiki/PAL) / [PAL-M](https://www.wikipedia.org/wiki/PAL-M) - Broadcast standard overviews.  
 * [Mike Wooding - ATV Compendium (BATC)](https://batc.org.uk/wp-content/uploads/ATVCompendium.pdf) - PAL-M fS = 227.25 × fH relationship.  
 * [Martin Hinner - VGA/PAL](https://martin.hinner.info/vga/pal.html) - PAL video timing specification (sourced from R. Salmon, sci.engr.television.broadcast, 1996).  
 * [Alan Pemberton - World TV Standards](https://web.archive.org/web/20160512200958/http://www.pembers.freeserve.co.uk/World-TV-Standards/) - Detailed information on broadcast standards; HBI and VBI visualizations.  
 * [David - EEVblog Forums - Nintendo 64 Game Console Teardown](https://www.eevblog.com/forum/blog/eevblog-491-nintendo-64-game-console-teardown/25/) - Chip progression by board revision; AVDC-NUS RGB tap rationale; AVDC-NUS/MAV-NUS shared pinout observation.  
-* [Pacal - BitBuilt 2022 Summer Building Competition - Odyssey 64](https://bitbuilt.net/forums/threads/2022-contest-entry-odyssey-64.5061/) - NUS-CPU-05 board; `D143G8`/`D147G8I` crystal stamps.  
-* [Miceeno - BitBuilt Forums - N64 Expansion Paks RAM Part Numbers](https://bitbuilt.net/forums/threads/n64-expansion-paks-ram-part-numbers.3943/post-44749) - NUS-CPU-05 board; `D143G9`/`D147H9`; MAV-NUS on NUS-CPU-05.  
-* [Chunky-Soups - Reddit r/n64](https://www.reddit.com/r/n64/comments/1awwnao/does_this_n64_have_any_raritysignificance/) - NUS-CPU-09 board; `D143J0`/`D147J0`; MAV-NUS BU9906F confirmed.  
-* [JASNet Soluções em Eletrônica - N64 RGB Install Guide (Portuguese)](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; `ⓂD143G7`/`D147E7`; `Ⓜ` marking on X1.  
+
+* [JASNet Soluções em Eletrônica - Instalação do RGB Converter v2 no Nintendo 64 (Portuguese)](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; `ⓂD143G7`/`D147E7`; `Ⓜ` marking on X1.  
 * [Prominos - N64 Motherboard Images](https://imgur.com/a/YpyuRET) - Collection of high quality N64 motherboard images including rare NUS-CPU(R)-01 model, shared by Prominos (Video Game Preservation Collective Discord).
 * [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of rare PAL-M model, shared by Mielke (MiSTer FPGA Discord).
 * [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of rare PAL-M model, shared by grav (Discord64 Discord).
