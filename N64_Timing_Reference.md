@@ -274,7 +274,7 @@ C_stray (the aggregate parasitic capacitance from PCB traces and IC pin capacita
 
 ##### 3.5.1.2 X1 and X2 Stamp Codes by Revision (Abridged) 
 
-The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X1 is the video clock crystal; X2 is not involved in video timing derivations. Both are included because their date clustering on individual boards provides independent corroboration of the decode convention. See [§7.2.1](#721-personal-resources) for image collection. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. 
+The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X1 is the video clock crystal; X2 is not involved in video timing derivations. Both are included because their date clustering on individual boards provides independent corroboration of the decode convention. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. See [§7.2.1](#721-personal-resources) for a link to the annotated image collection.
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
 | :--- | :--- | :--- | :--- | :--- | :--- |  
@@ -294,7 +294,7 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 | NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; ID: modretro_13 |
 | NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; ID: modretro_14 |
 | NUS-CPU(P)-03 | - | - | - | - | PAL; no board image available |
-| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_16; 1 board image available; stamp codes illegible. |
+| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_16; 1 board image available; stamp codes illegible |
 | NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01 |
 | NUS-CPU(M)-02 | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: JASNetInfo_01; revision inferred |
 | NUS-CPU(M)-03 | `ⓂD143M8` | `D147K9I` | Dec 1998 | Nov 1999 | PAL-M; ID: Lima112_01 |
@@ -1098,7 +1098,7 @@ The decode convention is consistent across all three regional crystal frequencie
 | NUS-CPU-05-1 | `D143C9` | `D147C9` | Mar 1999 | Mar 1999 | ID: Prominos_05-1 |
 | NUS-CPU-06 | `D143H8` | `D147M7I` | Aug 1998 | Dec 1997 | ID: DragonsHoard_01; extremely rare revision; I-suffix on X2 |
 | NUS-CPU-07 | - | - | - | - | Board images available; stamp codes illegible; extremely rare revision |
-| NUS-CPU-08 | `D143F9` | `D147F9` | Jun 1999 | Jun 1999 | *MX8350 present in 08 onward* |
+| NUS-CPU-08 | `D143F9` | `D147F9` | Jun 1999 | Jun 1999 | *MX8350 present from NUS-CPU-08 onward* |
 | NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08; I-suffix on both |
 | NUS-CPU-08 | `D143H9` | `D147J9` | Aug 1999 | Sep 1999 | X2 year inferred |
 | NUS-CPU-08 | `D143L9` | `D147L9` | Nov 1999 | Nov 1999 | |
@@ -1115,9 +1115,9 @@ The decode convention is consistent across all three regional crystal frequencie
 | NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; modretro_13 |
 | NUS-CPU(P)-01 | `D177G8` | `D147M7I` | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
 | NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
-| NUS-CPU(P)-02 | `D177J9` | - | Sep 1999 | - | PAL; ID: gamingdoc_06.PAL; revision inferred. X2 not visible; PIF(P)-NUS (marking: `9940 E`; wk 40, 1999); U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`) |
+| NUS-CPU(P)-02 | `D177J9` | - | Sep 1999 | - | PAL; ID: GamingDoc_06; revision inferred; X2 not visible.;PIF(P)-NUS (marking: `9940 E`; wk 40, 1999); U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`) |
 | NUS-CPU(P)-03 | - | - | - | - | PAL; no board image available
-| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_16. Board image available; stamp codes illegible *(MX8350 present.)* |
+| NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_16. Board image available; stamp codes illegible *(MX8350 present)* |
 | NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01; MX8330MC at U7 and U15 |
 | NUS-CPU(M)-02 | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: MeuGameAntigo_01
 | NUS-CPU(M)-02 | removed | `D147F7` | - | Jun 1997 | PAL-M; ID: gbonifa_01; X1+U6 absent (junk unit) |
