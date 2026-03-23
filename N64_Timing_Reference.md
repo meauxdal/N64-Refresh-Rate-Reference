@@ -1115,7 +1115,7 @@ The decode convention is consistent across all three regional crystal frequencie
 | NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; modretro_13 |
 | NUS-CPU(P)-01 | `D177G8` | `D147M7I` | Jul 1998 | Dec 1997 | PAL; U7 MX9911MC; I-suffix on X2 |
 | NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; I-suffix on X2 |
-| NUS-CPU(P)-02 | `D177J9` | - | Sep 1999 | - | PAL; ID: GamingDoc_06; revision inferred; X2 not visible.;PIF(P)-NUS (marking: `9940 E`; wk 40, 1999); U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`) |
+| NUS-CPU(P)-02 | `D177J9` | - | Sep 1999 | - | PAL; ID: GamingDoc_06; revision inferred; X2 not visible; PIF(P)-NUS (marking: `9940 E`; wk 40, 1999); U8: Toshiba TC74LCX125 (marking: `LCX 125 9 21`) |
 | NUS-CPU(P)-03 | - | - | - | - | PAL; no board image available
 | NUS-CPU(P)-03-1 | - | - | - | - | PAL; ID: modretro_16. Board image available; stamp codes illegible *(MX8350 present)* |
 | NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01; MX8330MC at U7 and U15 |
