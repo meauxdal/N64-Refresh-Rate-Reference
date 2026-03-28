@@ -334,7 +334,7 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | NTSC Color Subcarrier (FSC) | U7        | 8    | 3.58 MHz           | 3.0 Vpp            |  
 | NTSC Video Clock (VCLK)     | U7        | 1    | 48.68 MHz          | 3.3 Vpp            |  
 | PAL Video Clock (VCLK)      | U15       | 1    | 49.66 MHz          | 3.3 Vpp            |  
-| Master Clock[^4]               | U10       | 16   | 62.51 MHz          | -                  |  
+| Master Clock[^4]            | U10       | 16   | 62.51 MHz          | -                  |  
 | Rambus Clock (RCLK)         | U1        | 5    | 250.2 MHz          | -                  |  
 
 [^4]: The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
@@ -1158,100 +1158,105 @@ Table values (VSYNC, HSYNC(TOTAL), LEAP(A, B)) are effective. HSYNC(LEAP) patter
 
 ### B.2.1 NTSC (SGI, 1996)
 
-| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
-| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
-| NTSC   | NTSC_LAN1    | 320   | 240    | Prog  | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_LAN2    | 320   | 240    | Prog  | AA       | 32-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_LPN1    | 320   | 240    | Prog  | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_LPN2    | 320   | 240    | Prog  | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_LAF1    | 320   | 240    | Inter | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_LAF2    | 320   | 240    | Inter | AA       | 32-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_LPF1    | 320   | 240    | Inter | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_LPF2    | 320   | 240    | Inter | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_HAN1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_HAF1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_HPN1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_HPN2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_HPF1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094   |
-| NTSC   | NTSC_HPF2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094   |
+Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
+:----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
+NTSC   | NTSC_LAN1    | 320   | 240    | Progressive | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_LAN2    | 320   | 240    | Progressive | AA       | 32-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_LPN1    | 320   | 240    | Progressive | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_LPN2    | 320   | 240    | Progressive | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_LAF1    | 320   | 240    | Interlaced  | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_LAF2    | 320   | 240    | Interlaced  | AA       | 32-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_LPF1    | 320   | 240    | Interlaced  | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_LPF2    | 320   | 240    | Interlaced  | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_HAN1    | 640   | 480    | Interlaced  | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_HAF1    | 640   | 480    | Interlaced  | AA       | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_HPN1    | 640   | 480    | Interlaced  | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_HPN2    | 640   | 480    | Interlaced  | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_HPF1    | 640   | 480    | Interlaced  | Point    | 16-bit | 525       | 3094, 0            | 3094, 3094
+NTSC   | NTSC_HPF2    | 640   | 480    | Interlaced  | Point    | 32-bit | 525       | 3094, 0            | 3094, 3094
+
 
 ### B.2.2 PAL (SGI, 1996)
 
-| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
-| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
-| PAL    | PAL_LAN1     | 320   | 288    | Prog  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_LAN2     | 320   | 288    | Prog  | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_LPN1     | 320   | 288    | Prog  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_LPN2     | 320   | 288    | Prog  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_LAF1     | 320   | 288    | Inter | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_LAF2     | 320   | 288    | Inter | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_LPF1     | 320   | 288    | Inter | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_LPF2     | 320   | 288    | Inter | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_HAN1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_HAF1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_HPN1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_HPN2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_HPF1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183   |
-| PAL    | PAL_HPF2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183   |
+Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
+:----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
+PAL    | PAL_LAN1     | 320   | 288    | Progressive | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LAN2     | 320   | 288    | Progressive | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LPN1     | 320   | 288    | Progressive | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LPN2     | 320   | 288    | Progressive | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LAF1     | 320   | 288    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LAF2     | 320   | 288    | Interlaced  | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LPF1     | 320   | 288    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LPF2     | 320   | 288    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_HAN1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_HAF1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_HPN1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_HPN2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_HPF1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_HPF2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
+
 
 ### B.2.4 MPAL (SGI, 1996)
 
-| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
-| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
-| MPAL   | MPAL_LAN1    | 320   | 240    | Prog  | AA       | 16-bit | 525       | 3090, 4            | 3099, 3098   |
-| MPAL   | MPAL_LAN2    | 320   | 240    | Prog  | AA       | 32-bit | 525       | 3090, 4            | 3099, 3098   |
-| MPAL   | MPAL_LPN1    | 320   | 240    | Prog  | Point    | 16-bit | 525       | 3090, 4            | 3099, 3098   |
-| MPAL   | MPAL_LPN2    | 320   | 240    | Prog  | Point    | 32-bit | 525       | 3090, 4            | 3099, 3098   |
-| MPAL   | MPAL_LPF1    | 320   | 240    | Prog  | Point    | 16-bit | 525       | 3090, 4            | 3099, 3098   |
-| MPAL   | MPAL_LAF1    | 320   | 240    | Inter | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_LAF2    | 320   | 240    | Inter | AA       | 32-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_LPF2    | 320   | 240    | Inter | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_HAN1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_HAF1    | 640   | 480    | Inter | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_HPN1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_HPN2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_HPF1    | 640   | 480    | Inter | Point    | 16-bit | 525       | 3089, 0            | 3101, 3101   |
-| MPAL   | MPAL_HPF2    | 640   | 480    | Inter | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101   |
+Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
+:----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
+MPAL   | MPAL_LAN1    | 320   | 240    | Progressive | AA       | 16-bit | 525       | 3090, 4            | 3099, 3098
+MPAL   | MPAL_LAN2    | 320   | 240    | Progressive | AA       | 32-bit | 525       | 3090, 4            | 3099, 3098
+MPAL   | MPAL_LPN1    | 320   | 240    | Progressive | Point    | 16-bit | 525       | 3090, 4            | 3099, 3098
+MPAL   | MPAL_LPN2    | 320   | 240    | Progressive | Point    | 32-bit | 525       | 3090, 4            | 3099, 3098
+MPAL   | MPAL_LPF1    | 320   | 240    | Progressive | Point    | 16-bit | 525       | 3090, 4            | 3099, 3098
+MPAL   | MPAL_LAF1    | 320   | 240    | Interlaced  | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_LAF2    | 320   | 240    | Interlaced  | AA       | 32-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_LPF2    | 320   | 240    | Interlaced  | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_HAN1    | 640   | 480    | Interlaced  | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_HAF1    | 640   | 480    | Interlaced  | AA       | 16-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_HPN1    | 640   | 480    | Interlaced  | Point    | 16-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_HPN2    | 640   | 480    | Interlaced  | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_HPF1    | 640   | 480    | Interlaced  | Point    | 16-bit | 525       | 3089, 0            | 3101, 3101
+MPAL   | MPAL_HPF2    | 640   | 480    | Interlaced  | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101
+
 
 ### B.2.3 PAL (OS2.0H, Feb 24, 1997[^9])
 
-| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
-| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
-| PAL    | PAL_LAN1     | 320   | 288    | Prog  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_LAN2     | 320   | 288    | Prog  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_LPN1     | 320   | 288    | Prog  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_LPN2     | 320   | 288    | Prog  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_LAF1     | 320   | 288    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_LAF2     | 320   | 288    | Inter | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_LPF1     | 320   | 288    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_LPF2     | 320   | 288    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_HAN1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_HAF1     | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_HPN1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_HPN2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_HPF1     | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| PAL    | PAL_HPF2     | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
+:----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
+PAL    | PAL_LAN1     | 320   | 288    | Progressive | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_LAN2     | 320   | 288    | Progressive | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_LPN1     | 320   | 288    | Progressive | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_LPN2     | 320   | 288    | Progressive | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_LAF1     | 320   | 288    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_LAF2     | 320   | 288    | Interlaced  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_LPF1     | 320   | 288    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_LPF2     | 320   | 288    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_HAN1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_HAF1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_HPN1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_HPN2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_HPF1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+PAL    | PAL_HPF2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+
 
 [^9]: OS2.0H (February 24, 1997) introduced a new PAL leap pattern with the revision note: "The PAL table values have been corrected."
 
 ### B.2.5 FPAL[^10] (1997)
 
-| Region | Decoder Name | Width | Height | Scan  | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)   |
-| :----- | :----------- | :---- | :----- | :---- | :------- | :----- | :----     | :----------------- | :----------- |
-| FPAL   | FPAL_LAN1    | 320   | 288    | Prog  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_LAN2    | 320   | 288    | Prog  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_LPN1    | 320   | 288    | Prog  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_LPN2    | 320   | 288    | Prog  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_LAF1    | 320   | 288    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_LAF2    | 320   | 288    | Inter | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_LPF1    | 320   | 288    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_LPF2    | 320   | 288    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_HAN1    | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_HAF1    | 640   | 576    | Inter | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_HPN1    | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_HPN2    | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_HPF1    | 640   | 576    | Inter | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184   |
-| FPAL   | FPAL_HPF2    | 640   | 576    | Inter | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184   |
+Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
+:----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
+FPAL   | FPAL_LAN1    | 320   | 288    | Progressive | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LAN2    | 320   | 288    | Progressive | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPN1    | 320   | 288    | Progressive | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPN2    | 320   | 288    | Progressive | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LAF1    | 320   | 288    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LAF2    | 320   | 288    | Interlaced  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPF1    | 320   | 288    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPF2    | 320   | 288    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HAN1    | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HAF1    | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPN1    | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPN2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPF1    | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPF2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+
 
 [^10]: FPAL expands to full-screen PAL (or full-height PAL). Standard PAL modes in libultra share NTSC/PAL-M internal line count limitations despite the PAL standard's additional lines. FPAL allows drawing to 48 more those lines (288 - 240 = 48). This mode was apparently developed by Rare Ltd. and subsequently integrated into libultra, per a Goldeneye 007 decompilation source code comment. It inherits the revised PAL leap pattern.
 
@@ -1259,7 +1264,7 @@ Table values (VSYNC, HSYNC(TOTAL), LEAP(A, B)) are effective. HSYNC(LEAP) patter
 
 > libdragon uses timing presets and computes other registers dynamically. Resolution, bit depth, and AA mode are applied separately. Values are effective.
 
-| Region | Scan         | VSYNC (S)         | HSYNC(TOTAL, LEAP) | LEAP(A, B) |
+| Region | Scan Type    | VSYNC (S)         | HSYNC(TOTAL, LEAP) | LEAP(A, B) |
 | :---   | :---         | :---              | :---               | :---       |
 | NTSC   | Progressive  | 526               | 3094, 0            | 3094, 3094 |
 | NTSC   | Interlaced   | 525               | 3094, 0            | 3094, 3094 |
