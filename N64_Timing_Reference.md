@@ -1152,7 +1152,7 @@ Examples using the decoder:
 
 ### B.2 libultra VI Mode Definitions
 
-> SDK values derived from the [osViTable.c](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) present in the *Super Mario 64* (1996) decompilation source. These values were commpared against later SDK values ([osVITable.c](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) from the *Mario Kart 64* (1996/1997) decompilation, as well as [vitbl.c](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) from the *Animal Forest* (2001) decompilation).
+> SDK values derived from the [osViTable.c](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) present in the *Super Mario 64* (1996) decompilation source. These values were compared against later SDK values ([osVITable.c](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) from the *Mario Kart 64* (1996/1997) decompilation, as well as [vitbl.c](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) from the *Animal Forest* (2001) decompilation).
 
 Table values (VSYNC, HSYNC(TOTAL), LEAP(A, B)) are effective. HSYNC(LEAP) pattern values are unchanged.
 
