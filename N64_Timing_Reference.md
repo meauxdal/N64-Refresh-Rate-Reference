@@ -931,7 +931,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 
 ## 7. Sources  
 
-### 7.1 Figures (TODO: Needs updating) 
+### 7.1 Figures
 
 | Figure | Filename | Description (Source) |  
 | :--- | :--- | :--- |  
@@ -975,7 +975,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer; functional equivalent to MX8330MC.    
 * [Rohm BA7242F Datasheet](/references/Rohm-BA7242F-(ENC-NUS)-datasheet-ocr.pdf) - ENC-NUS (U5) video encoder IC; YOUT (pin 13) luminance, VOUT (pin 12) composite video, COUT (pin 10) chrominance outputs; SCIN input level 0.45-0.60 Vpp corroborating the R13/R12 attenuation network; NT/PAL pin logic (HIGH = NTSC, LOW = PAL).  
 * [NUS-CPU-07 Annotated Circuit Board (ChipWorks, Rev 1.0, Nov 2000)](/references/NUS-CPU-07-Annotated-PCB-ChipWorks-ocr.pdf) - Professional teardown; board-level IC identification, manufacturer attribution, and component revision corroboration.    
-* [ITU-R Recommendation BT.470-6](/references/R-REC-BT.470-6-199811-S!!PDF-E.pdf) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies.  
+* [ITU-R Recommendation BT.470-6](/references/R-REC-BT.470-6-199811-S!!PDF-E.pdf) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; PAL-M subcarrier relationship (item 2.11b); item 2.11a contains a transcription error (confirmed by lidnariq).  
 * [ITU-R Recommendation BT.1700 Annex 1](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_1700-e.pdf) - Composite video signal characteristics for NTSC, PAL, and SECAM; signal levels, sync timing, chrominance subcarrier frequencies and modulation.  
 * [ITU-R Recommendation BT.1700 Annex 2](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_S170m-2004.pdf) - SMPTE 170M-2004 (incorporated by reference); NTSC composite analog video for studio applications; subcarrier frequency, line/field frequency specifications, horizontal/vertical blanking and sync timing.  
 * [ITU-R Recommendation BT.1701](/references/R-REC-BT.1701-1-200508-I!!PDF-E.pdf) - Horizontal/vertical timing for composite video.  
@@ -983,7 +983,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [US6239810B1 - High Performance Low Cost Video Game System](https://patents.google.com/patent/US6239810B1/en) (2001) - VI register set; HSYNC LEAP register; VSYNC/HSYNC timing registers; interlaced odd/even line handling; crystal-controlled clock generator.  
 * [US6331856B1 - Video Game System with Coprocessor](https://patents.google.com/patent/US6331856B1/en) (2001) - VI register architecture; HSYNC LEAP register with LEAP_A/LEAP_B fields; interlaced display field toggling; clock generator crystal timing chain.  
 * [US6556197B1 - Programmable Video Timing Registers](https://patents.google.com/patent/US6556197B1/en) (2003) - Horizontal/vertical sync generation; color burst gate timing.  
-* [F. R. Lack, G. W. Willard, I. E. Fair - Some Improvements in Quartz Crystal Circuit Elements](https://ieeexplore.ieee.org/document/6772950) (1934) - AT cut crystal oscillator properties.  
+* [F. R. Lack, G. W. Willard, I. E. Fair - Some Improvements in Quartz Crystal Circuit Elements](https://ieeexplore.ieee.org/document/6772950) (1934) - Original AT cut paper; Bell System Technical Journal; establishes zero temperature coefficient orientation and names the AT cut.  
 * [Ian Poole - Electronics Notes - Quartz Crystal Cuts: AT, BT, SC, CT](https://www.electronics-notes.com/articles/electronic_components/quartz-crystal-xtal/crystal-resonator-cuts-at-bt-sc-ct.php) - AT cut crystal properties; temperature coefficient; frequency range; thickness shear mode of vibration.  
 * [RWeick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete NUS-CPU-03 KiCAD schematic; component values; signal paths.  
 * [Tim Worthington - GamesX Wiki - N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc) - NUS-CPU-03 video output circuit schematic by Tim Worthington; corroborates YOUT/VOUT/COUT routing to Multi-AV connector.  
@@ -1008,7 +1008,6 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Martin Hinner - VGA/PAL](https://martin.hinner.info/vga/pal.html) - PAL video timing specification (sourced from R. Salmon, sci.engr.television.broadcast, 1996).  
 * [Alan Pemberton - World TV Standards](https://web.archive.org/web/20160512200958/http://www.pembers.freeserve.co.uk/World-TV-Standards/) - Detailed information on broadcast standards; HBI and VBI visualizations.  
 * [David - EEVblog Forums - Nintendo 64 Game Console Teardown](https://www.eevblog.com/forum/blog/eevblog-491-nintendo-64-game-console-teardown/25/) - Chip progression by board revision; AVDC-NUS RGB tap rationale; AVDC-NUS/MAV-NUS shared pinout observation.  
-
 * [JASNet Soluções em Eletrônica - Instalação do RGB Converter v2 no Nintendo 64 (Portuguese)](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; `ⓂD143G7`/`D147E7`; `Ⓜ` marking on X1.  
 * [Prominos - N64 Motherboard Images](https://imgur.com/a/YpyuRET) - Collection of high quality N64 motherboard images including rare NUS-CPU(R)-01 model, shared by Prominos (Video Game Preservation Collective Discord).
 * [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of rare PAL-M model, shared by Mielke (MiSTer FPGA Discord).
