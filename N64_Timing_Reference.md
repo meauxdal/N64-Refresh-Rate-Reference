@@ -232,7 +232,7 @@ Video signal timing follows a deterministic path from crystal oscillation throug
 
 [^1]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. f_xtal derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case.  
 
-[^2]: [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "Since there are three unused bits in the multiplex sequence, it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains thisit is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
+[^2]: [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "Since there are three unused bits in the multiplex sequence, it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
 
 [^3]: A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but RGB output is not functional in retail units: the RGB output circuit is unpopulated. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. See figure *S-RGB A video circuit* (DarthCloud, 2011). This chip was used in some SNES revisions before appearing in NUS-CPU(R)-01.  
 
@@ -1062,7 +1062,7 @@ The I-skip in the month field is a noted date code convention, where `I` is omit
 
 The decode convention is consistent across all three regional crystal frequencies (14.3 MHz, 14.7 MHz, 17.7 MHz) and across the full known production span of the hardware (1996-2000).   
 
-[^6]: The meaning of the circular-M (`Ⓜ`) marking observed on some PAL-M boards is unconfirmed. One plausible expansion is an `M`PAL-specific marking (using an available glyph) applied to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (e.g. `D143K7` could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates).   
+[^6]: The circular-M (`Ⓜ`) observed on some PAL-M boards appears to be an `M`PAL-specific mark applied to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (e.g. `D143K7` could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). This symbol may also be observed on some PAL-M SNES motherboard crystals.  
 
 [^7]: Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place of* `D`.  
 
