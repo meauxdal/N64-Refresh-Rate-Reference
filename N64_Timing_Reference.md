@@ -1051,7 +1051,7 @@ X1 and X2 stamp codes follow the format `(P)(D)FFFMY(I)`, where:
 
 | Field | Description                                                                               |  
 | :---  | :---                                                                                      |  
-| `P`   | Always `Ⓜ`. Only yet observed on some PAL-M units[^6]                                        |  
+| `P`   | Always `Ⓜ`. Only observed on some PAL-M units[^6]                                        |  
 | `D`   | Always `D`[^7]                                                                               |  
 | `FFF` | Frequency in abbreviated MHz (e.g. `143` = 14.3 MHz, `147` = 14.7 MHz, `177` = 17.7 MHz)  |  
 | `M`   | Month of manufacture (`A`-`M`, skipping `I`. `A`: January; through `M`: December)         |  
