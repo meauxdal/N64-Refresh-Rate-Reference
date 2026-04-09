@@ -177,9 +177,9 @@ Hardware constants derived from f_xtal and the Video Interface (VI) registers. L
 Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce f_vi. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. Later revisions substitute the pin-compatible MX9911MC at one or both synthesizer positions before consolidating both clocks into a single MX8350 dual-channel chip at U17 from NUS-CPU-08 onward. These substitutions do not affect derived timing values. See [§3.5.1.1](#3511-x1-identification) for visual identification.
  
 ![MX8350 table](/figures/fig6_mx8350_table.png)  
-*MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL. Source: [MX8350 datasheet](/references/Macronix-MX8350-ocr.pdf)*  
+*MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL[^mx8350_mpal]. Source: [MX8350 datasheet](/references/Macronix-MX8350-ocr.pdf)*  
 
-> While the MX8350 datasheet lists the PAL-M crystal as 14.302446 MHz, the correct rate (derived from the broadcast standard PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this discrepancy is not understood. Derivations in this document use the latter standard frequency. See [§5.3](#53-pal-m-derivation).  
+[^mx8350_mpal]: While the MX8350 datasheet lists the PAL-M crystal as 14.302446 MHz, the correct rate (derived from the broadcast standard PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this discrepancy is not understood. Derivations in this document use the latter standard frequency. See [§5.3](#53-pal-m-derivation).  
 
 ### 3.2 Video Interface (VI) Register Mapping  
 
@@ -224,17 +224,17 @@ Timing values in this section are calculated from the fundamental constants in [
 
 Video signal timing follows a deterministic path from crystal oscillation through digital counting to analog output. The following applies to NUS-CPU-01 through NUS-CPU-04, as documented in RWeick's NUS-CPU-03 schematics.
 
-1. Source: Crystal X1 oscillates at f_xtal; the clock generator (U7)[^1] multiplies this by M to produce f_vi. f_xtal is the hardware primitive for N64 video timing. 
+1. Source: Crystal X1 oscillates at f_xtal; the clock generator (U7)[^clock_combo] multiplies this by M to produce f_vi. f_xtal is the hardware primitive for N64 video timing. 
 2. Logic: The RCP (Reality Co-Processor, U9) receives f_vi to drive the internal VI logic.
 3. Counting: The VI counts clock cycles according to `VI_H_TOTAL` (line length) and `VI_V_TOTAL` (vertical extent) to define the signal's timing boundaries.  
-4. Encoding: The VI transmits pixel data to the VDC-NUS over the VDC bus: a 7-bit[^2] data bus (VDC_D0 through VDC_D6), VDC_DSYNC (a.k.a. !DSYNC), and a shared clock. Data is multiplexed across 4 VI clock cycles per pixel: cycle 0 carries sync data with VDC_DSYNC held low; cycles 1 through 3 carry Red, Green, and Blue, respectively. Each 4-cycle group constitutes one rendered pixel, referred to throughout as a "VI pixel."  
-5. Output: The VDC-NUS (U4) performs digital-to-analog conversion, clocked by U7.FSO/5 (Frequency Synthesizer Output ÷ 5). It generates analog RGB, CSYNC (pin 14), and BFP (pin 13), passing these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (f_xtal ÷ 4) at its SCIN pin via the R13/R12 resistor divider and C21. The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite[^3]. Each implementation performs the same DAC/encoding function.  
+4. Encoding: The VI transmits pixel data to the VDC-NUS over the VDC bus: a 7-bit[^vdc_7bit] data bus (VDC_D0 through VDC_D6), VDC_DSYNC (a.k.a. !DSYNC), and a shared clock. Data is multiplexed across 4 VI clock cycles per pixel: cycle 0 carries sync data with VDC_DSYNC held low; cycles 1 through 3 carry Red, Green, and Blue, respectively. Each 4-cycle group constitutes one rendered pixel, referred to throughout as a "VI pixel."  
+5. Output: The VDC-NUS (U4) performs digital-to-analog conversion, clocked by U7.FSO/5 (Frequency Synthesizer Output ÷ 5). It generates analog RGB, CSYNC (pin 14), and BFP (pin 13), passing these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (f_xtal ÷ 4) at its SCIN pin via the R13/R12 resistor divider and C21. The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite[^masterclock]. Each implementation performs the same DAC/encoding function.  
 
-[^1]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. f_xtal derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case.  
+[^clock_combo]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. f_xtal derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case.  
 
-[^2]: [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "Since there are three unused bits in the multiplex sequence, it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
+[^vdc_7bit]: [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "Since there are three unused bits in the multiplex sequence, it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
 
-[^3]: A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but RGB output is not functional in retail units: the RGB output circuit is unpopulated. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. See figure *S-RGB A video circuit* (DarthCloud, 2011). This chip was used in some SNES revisions before appearing in NUS-CPU(R)-01.  
+[^masterclock]: A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but RGB output is not functional in retail units: the RGB output circuit is unpopulated. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. See figure *S-RGB A video circuit* (DarthCloud, 2011). This chip was used in some SNES revisions before appearing in NUS-CPU(R)-01.  
 
 ![N64 Video System](/figures/fig13_n64videosys.png)  
 *N64 Video System - VDC bus multiplexing, VDC_DSYNC waveform. Source: Tim Worthington, [N64RGB documentation](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)*  
@@ -254,7 +254,7 @@ N64 video timings are derived from the per-region quartz crystal resonator at X1
 
 ##### 3.5.1.1 X1 Identification  
 
-The clock crystal (X1) has no published datasheet. The manufacturer has not been confirmed from available sources; an unverified but unchallenged theory identifies the "D" prefix near-universally observed in stamp codes with Japanese manufacturer Daishinku Corp. (Daiwa Shinku Kogyosho, a.k.a. KDS, est. 1959).  
+No public datasheets exist for the crystal resonators at X1 and X2. The `D` prefix near-universally observed in stamp codes identifies the manufacturer as Daishinku Corp. (Daiwa Shinku Kogyosho, a.k.a. KDS, est. 1959), a Japanese quartz crystal manufacturer. While no direct primary link is available, the stamp code format and `D` prefix appear on numerous Nintendo hardware examples throughout the 90s. Game Boy hardware database gbhwdb.gekkio.fi explicitly attributes crystals with identical appearance and date encoding to Daishinku.
 
 The NUS-CPU-03 oscillator circuit presents a load capacitance of 21.5 pF + C_stray to X1, derived from C39 = C40 = 43 pF in a series configuration (See [§3.1](#31-fundamental-constants)):  
 
@@ -411,7 +411,7 @@ The figure below is a visualization created by lidnariq after analysis of N64 vi
 3. Pattern #1: 21 = `0x15` = `0b10101` = `6-5-6-5-6` = 28
 4. 28/5 = 5.6 average additional VI clocks per scanline
 
-* Leap compensation pattern #2 (Nintendo, e.g., *Mario Kart 64* (Europe)[^5] and later titles):
+* Leap compensation pattern #2 (Nintendo, e.g., *Mario Kart 64* (Europe)[^leap_mk64] and later titles):
 1. Baseline L (terminal-counted) is `3177`
 2. `LEAP_B`, `LEAP_A` is `3183`, `3181`
 3. Pattern #2: 23 = `0x17` = `0b10111` = `6-4-6-6-6` = 28
@@ -421,7 +421,7 @@ The figure below is a visualization created by lidnariq after analysis of N64 vi
 
 * Crystal frequency: 2,045,250,000 / 143 Hz (exact) (≈ 14.3024475524 MHz)
 * VI clock frequency: 6,953,850,000 / 143 Hz (exact) (≈ 48.6283216783 MHz)
-* Color subcarrier: ≈ 3.5756118881 MHz
+* Color subcarrier: ≈ 3.5756118881 MHz[^itu-r_error]
 * VI clock multiplier: 17 / 5 (3.4)
 * Leap compensation:
 
@@ -430,7 +430,7 @@ The figure below is a visualization created by lidnariq after analysis of N64 vi
 3. Pattern: 4 = `0x04` = `0b00100` = `9-9-8-9-9` = 44
 4. 44/5 = 8.8 average additional VI clocks per scanline
 
-> ITU-R BT.470-6 Table 2 item 2.11a lists the M/PAL subcarrier as 3,579,611.49 Hz, which is inconsistent with the relationship defined in item 2.11b (fsc = 909/4 × fH). Applying that relationship to the System M nominal fH yields 511,312,500/143 Hz (≈ 3,575,611.888 Hz). The ITU value appears to be a transcription error propagated unchanged across multiple revisions of the standard.  
+[^itu-r_error]: ITU-R BT.470-6 Table 2 item 2.11a lists the M/PAL subcarrier as 3,579,611.49 Hz, which is inconsistent with the relationship defined in item 2.11b (fsc = 909/4 × fH). Applying that relationship to the System M nominal fH yields 511,312,500/143 Hz (≈ 3,575,611.888 Hz). The ITU value appears to be a transcription error propagated unchanged across multiple revisions of the standard.  
 
 #### PAL-M Interlaced
 
@@ -445,7 +445,7 @@ The figure below is a visualization created by lidnariq after analysis of N64 vi
 3. Pattern: 0 = `0x00` = `0b00000` = `12-12-12-12-12` = 60
 4. 60/5 = 12 additional clocks per scanline
 
-[^5]: The osViModeTable in *Mario Kart 64* (1996/1997) seemingly documents the transition point from PAL leap pattern #1 to #2. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are present in the table, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This revised leap pattern appears in later titles, including *Star Fox 64* (1997) and *The Legend of Zelda: Ocarina of Time* (1998).
+[^leap_mk64]: The osViModeTable in *Mario Kart 64* (1996/1997) seemingly documents the transition point from PAL leap pattern #1 to #2. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are present in the table, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This revised leap pattern appears in later titles, including *Star Fox 64* (1997) and *The Legend of Zelda: Ocarina of Time* (1998) See also footnote[^leap_os20h].
 
 *Leap sums are divided by 5 (the 5-stage leap cycle) to produce the fractional increment added to L. See [§5.2.1](#521-pal-leap-adjustment) for details on PAL leap compensation.*
 
@@ -561,15 +561,15 @@ Pattern `0x00` (`0b00000`) selects the LEAP_A on every VSYNC. As LEAP_A = L_base
 
 *This contrasts with PAL-M interlaced, which also programs pattern `0x00` with LEAP_A = LEAP_B, but with both values set above L_base. See [§5.3.2.1](#5321-pal-m-interlaced-leap-adjustment).*
 
-### 5.1.2 iQue Player (2003)
+### 5.1.2 iQue Player  
 
-The iQue Player (China, 2003) integrates the CPU, RCP, PIF, and supporting logic into a single custom NEC ASIC, replacing the multi-chip N64 motherboard. Video encoding is also consolidated into the ASIC; the external video encoder present on N64 revisions is absent.
+Developed as a localized hardware revision for the Chinese market, the iQue Player integrates the CPU, RCP, PIF, and supporting logic into a single custom NEC ASIC, replacing the multi-chip N64 motherboard. Video encoding is also consolidated into the ASIC; the external video encoder present on N64 revisions is absent.  
 
-Clock synthesis is performed by an ICS420BG chip driven by a single 315/22 MHz crystal (≈ 14.318 MHz, same as NTSC). The VI pixel clock of 48.68 MHz, identical to the standard NTSC f_vi established in §5.1, is confirmed present on test points. The derivation in §5.1 therefore applies without modification. Video timing is identical to NTSC.
+Clock synthesis is performed by an ICS420BG chip driven by a single 315/22 MHz crystal (≈ 14.318 MHz, same as NTSC). The VI pixel clock of 48.68 MHz, identical to the standard NTSC f_vi established in §5.1, is confirmed present on test points. The derivation in §5.1 therefore applies without modification. Video timing is identical to NTSC.  
 
-A 57/17 PLL path from this crystal generates approximately 48.008 MHz (17955/374), from which 96 MHz and 192 MHz (DDR memory controller) are also derived. 
+A 57/17 PLL path from this crystal generates approximately 48.008 MHz (17955/374), from which 96 MHz and 192 MHz (DDR memory controller) are also derived.  
 
-The CPU is clocked at 140.625 MHz, 1.5x the standard N64 rate. Because many N64 titles use the CPU counter register to determine timing, a customized iQue libultra revision allows compensation to produce the expected slower increment. This does not affect VI timing.
+The CPU is clocked at 140.625 MHz, 1.5x the standard N64 rate. Because many N64 titles use the CPU counter register to determine timing, a customized iQue libultra revision allows compensation to produce the expected slower increment. This does not affect VI timing.  
 
 ---
 
@@ -977,6 +977,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001 REV A)](https://drive.google.com/drive/folders/1kGlB2TyX7CsmPnSyzpxGcSKpJ1F-ywal) - Block diagrams; boot sequence; oscilloscope timing verification.  
 * [Super Mario 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) - Early libultra-defined Video Interface configurations.
 * [Mario Kart 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) - Transitional libultra-defined Video Interface configurations.  
+* [Goldeneye 007 Decompilation - vimodepallan1.c](https://github.com/n64decomp/007/blob/754a0a977efcbc99a46d079a73292e40780e3aab/src/libultrare/io/vimodepallan1.c) - Note regarding Rare's custom FPAL mode.
 * [Animal Forest Decompilation - vitbl.c (GitHub)](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) - Later libultra-defined Video Interface configurations.
 * [Macronix MX8330MC Datasheet](/references/Macronix-MX8330MC-ocr.pdf) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4 color subcarrier output), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
 * [Macronix MX8350 Datasheet](/references/Macronix-MX8350-ocr.pdf) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
@@ -1017,12 +1018,14 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Alan Pemberton - World TV Standards](https://web.archive.org/web/20160512200958/http://www.pembers.freeserve.co.uk/World-TV-Standards/) - Detailed information on broadcast standards; HBI and VBI visualizations.  
 * [David - EEVblog Forums - Nintendo 64 Game Console Teardown](https://www.eevblog.com/forum/blog/eevblog-491-nintendo-64-game-console-teardown/25/) - Chip progression by board revision; AVDC-NUS RGB tap rationale; AVDC-NUS/MAV-NUS shared pinout observation.  
 * [JASNet Soluções em Eletrônica - Instalação do RGB Converter v2 no Nintendo 64 (Portuguese)](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php) - NUS-CPU(M)-02 candidate board; `ⓂD143G7`/`D147E7`; `Ⓜ` marking on X1.  
-* [Prominos - N64 Motherboard Images](https://imgur.com/a/YpyuRET) - Collection of high quality N64 motherboard images including rare NUS-CPU(R)-01 model, shared by Prominos (Video Game Preservation Collective Discord).
-* [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of rare PAL-M model, shared by Mielke (MiSTer FPGA Discord).
-* [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of rare PAL-M model, shared by grav (Discord64 Discord).
-* [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of rare 09-1 model, shared by Aringon (Video Game Preservation Collective Discord).  
+* [Prominos - N64 Motherboard Images](https://imgur.com/a/YpyuRET) - Collection of high quality N64 motherboard images including NUS-CPU(R)-01 model, shared by Prominos (Video Game Preservation Collective Discord).
+* [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of late PAL-M model, shared by Mielke (MiSTer FPGA Discord).
+* [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of early PAL-M model, shared by grav (Discord64 Discord).
+* [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of late NTSC model, shared by Aringon (Video Game Preservation Collective Discord).  
 * [marshallh - iQue Player Notes](https://retroactive.be/personal/ique) - iQue Player reverse-engineering; identification of single-oscillator layout, 57/17 PLL ratio, and libultra CPU timing compensation details.  
-* [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.
+* [大狗 via iQue Historia - Record Issue 17: iQue China](https://iquehistoria.neocities.org/articletl/RecordiQueChina/article) - Additional iQue Player details and historical context.
+* [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.  
+* [Gekkio - Game Boy Hardware Database - DMG G01008206](https://gbhwdb.gekkio.fi/consoles/dmg/G01008206.html) - Unit-level DMG hardware documentation; explicitly attributes `D`-prefix stamp codes to Daishinku Corp.; corroborates manufacturer identification of N64 X1 crystals.  
 
 ![S-RGB A SNES](/figures/fig33_S-RGB_A-SNS.png)  
 *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))*
@@ -1051,9 +1054,9 @@ X1 and X2 stamp codes follow the format `(P)(D)FFFMY(I)`, where:
 
 | Field | Description                                                                               |  
 | :---  | :---                                                                                      |  
-| `P`   | Always `Ⓜ`. Only observed on some PAL-M units[^6]                                        |  
-| `D`   | Always `D`[^7]                                                                               |  
-| `FFF` | Frequency in abbreviated MHz (e.g. `143` = 14.3 MHz, `147` = 14.7 MHz, `177` = 17.7 MHz)  |  
+| `P`   | Always `Ⓜ`. Only observed on some PAL-M units[^mpal_mark]                                |  
+| `D`   | Always `D`[^x1_prefix]                                                                    |  
+| `FFF` | Truncated frequency in MHz (e.g. `143` = 14.3 MHz, `147` = 14.7 MHz, `177` = 17.7 MHz)    |  
 | `M`   | Month of manufacture (`A`-`M`, skipping `I`. `A`: January; through `M`: December)         |  
 | `Y`   | Last digit of year of manufacture (e.g. `6` = 1996, `0` = 2000)                           |  
 | `I`   | Always `I`. Uncommon; appears without obvious pattern; meaning not established            |  
@@ -1062,9 +1065,9 @@ The I-skip in the month field is a noted date code convention, where `I` is omit
 
 The decode convention is consistent across all three regional crystal frequencies (14.3 MHz, 14.7 MHz, 17.7 MHz) and across the full known production span of the hardware (1996-2000).   
 
-[^6]: The circular-M (`Ⓜ`) observed on some PAL-M boards appears to be an `M`PAL-specific mark applied to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (e.g. `D143K7` could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). This symbol may also be observed on some PAL-M SNES motherboard crystals.  
+[^mpal_mark]: The circular-M (`Ⓜ`) observed on some PAL-M boards appears to be an `M`PAL-specific mark applied to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (e.g. `D143K7` could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). This symbol may also be observed on some PAL-M SNES motherboard crystals.  
 
-[^7]: Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place of* `D`.  
+[^x1_prefix]: Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place of* `D`.  
 
 ![`Ⓜ` marking](/figures/fig23_X1_(M)143G0_stamp_code.png)  
 *`Ⓜ` marking visible on some PAL-M X1 crystal resonators. Source: Mielke - MiSTer FPGA Discord ([imgur.com](https://imgur.com/a/mielke-board-photos-SjqcjYj))*  
@@ -1112,7 +1115,7 @@ The decode convention is consistent across all three regional crystal frequencie
 | NUS-CPU-09 | `D143J0` | `D147H0` | Sep 2000 | Aug 2000 | ID: Prominos_09 |
 | NUS-CPU-09 | `D143J0` | `D147J0` | Sep 2000 | Sep 2000 | |
 | NUS-CPU-09 | `D143J0I` | `D147K0` | Sep 2000 | Oct 2000 | I-suffix on X1 |
-| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1. All visible IC marks with likely decodes: `PIF-NUS A0027 EA` (`0027` NEC date code convention: wk 27, 2000); `CPU-NUS A 0002XK020` (wk 2, 2000); `RCP-NUS 9949KK008` (wk 49, 1999); `RDRAM36 9949KU621`; `AMP-NUS Ⓜ`[^8] `90.6`; `TI LV125A 9AK DE6J`; `MAV-NUS RS5C382 9MS 9Y`; `MX8350MC 43B TA245201` |
+| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01; I-suffix on X1. All visible IC marks with likely decodes: `PIF-NUS A0027 EA` (`0027` NEC date code convention: wk 27, 2000); `CPU-NUS A 0002XK020` (wk 2, 2000); `RCP-NUS 9949KK008` (wk 49, 1999); `RDRAM36 9949KU621`; `AMP-NUS Ⓜ`[^matsushita] `90.6`; `TI LV125A 9AK DE6J`; `MAV-NUS RS5C382 9MS 9Y`; `MX8350MC 43B TA245201` |
 | NUS-CPU-09-1 | `D143K0I` | `D147L0` | Oct 2000 | Nov 2000 | I-suffix on X1 |
 | NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: kwyjibo_01 |
 | NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01 |
@@ -1130,7 +1133,7 @@ The decode convention is consistent across all three regional crystal frequencie
 | NUS-CPU(M)-05 | - | - | - | - | PAL-M; no board image available
 | NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1; I-suffix on X2 |
 
-[^8]: The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo (confirmed by Prominos). It is unrelated the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote ⁴, [§3.5.1.2](#3512-x1-and-x2-stamp-codes-by-revision-abridged)).  
+[^matsushita]: The `Ⓜ` on the AMP-NUS marking is a Matsushita (Panasonic) logo. It is unrelated to the legal mask work protection symbol `Ⓜ` present elsewhere on this hardware (e.g. PIF-NUS); it is similarly distinct from the `Ⓜ` prefix observed on some PAL-M X1 crystals (see footnote[^mpal_mark], [§3.5.1.2](#3512-x1-and-x2-stamp-codes-by-revision-abridged)).  
 
 ## Appendix B. VI Modes
 
@@ -1223,7 +1226,7 @@ MPAL   | MPAL_HPF1    | 640   | 480    | Interlaced  | Point    | 16-bit | 525  
 MPAL   | MPAL_HPF2    | 640   | 480    | Interlaced  | Point    | 32-bit | 525       | 3089, 0            | 3101, 3101
 
 
-### B.2.3 PAL (OS2.0H, Feb 24, 1997[^9])
+### B.2.3 PAL (OS2.0H, Feb 24, 1997[^leap_os20h])
 
 Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
 :----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
@@ -1243,9 +1246,9 @@ PAL    | PAL_HPF1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625  
 PAL    | PAL_HPF2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
 
 
-[^9]: OS2.0H (February 24, 1997) introduced a new PAL leap pattern with the revision note: "The PAL table values have been corrected."
+[^leap_os20h]: OS2.0H (February 24, 1997) introduced a new PAL leap pattern with the revision note: "The PAL table values have been corrected."
 
-### B.2.5 FPAL[^10] (1997)
+### B.2.5 FPAL[^fpal] (1997)
 
 Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
 :----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
@@ -1265,7 +1268,7 @@ FPAL   | FPAL_HPF1    | 640   | 576    | Interlaced  | Point    | 16-bit | 625  
 FPAL   | FPAL_HPF2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
 
 
-[^10]: FPAL expands to full-screen PAL (or full-height PAL). Standard PAL modes in libultra share NTSC/PAL-M internal line count limitations despite the PAL standard's additional lines. FPAL allows drawing to 48 more those lines (288 - 240 = 48). This mode was apparently developed by Rare Ltd. and subsequently integrated into libultra, per a Goldeneye 007 decompilation source code comment. It inherits the revised PAL leap pattern.
+[^fpal]: FPAL expands to full-screen PAL (or full-height PAL). Standard PAL modes in libultra share NTSC/PAL-M internal line count limitations despite the PAL standard's additional lines. FPAL allows drawing to 48 more of those lines (288 - 240 = 48). This mode was apparently developed by Rare Ltd. and subsequently integrated into libultra, per a [Goldeneye 007 decompilation source code comment](https://github.com/n64decomp/007/blob/754a0a977efcbc99a46d079a73292e40780e3aab/src/libultrare/io/vimodepallan1.c). It inherits the revised PAL leap pattern.
 
 ### B.3 libdragon VI Mode Definitions
 
