@@ -224,17 +224,17 @@ Timing values in this section are calculated from the fundamental constants in [
 
 Video signal timing follows a deterministic path from crystal oscillation through digital counting to analog output. The following applies to NUS-CPU-01 through NUS-CPU-04, as documented in RWeick's NUS-CPU-03 schematics.
 
-1. Source: Crystal X1 oscillates at f_xtal; the clock generator (U7)[^clock_combo] multiplies this by M to produce f_vi. f_xtal is the hardware primitive for N64 video timing. 
+1. Source: Crystal X1 oscillates at f_xtal; the clock generator (U7)[^mx8350] multiplies this by M to produce f_vi. f_xtal is the hardware primitive for N64 video timing. 
 2. Logic: The RCP (Reality Co-Processor, U9) receives f_vi to drive the internal VI logic.
 3. Counting: The VI counts clock cycles according to `VI_H_TOTAL` (line length) and `VI_V_TOTAL` (vertical extent) to define the signal's timing boundaries.  
 4. Encoding: The VI transmits pixel data to the VDC-NUS over the VDC bus: a 7-bit[^vdc_7bit] data bus (VDC_D0 through VDC_D6), VDC_DSYNC (a.k.a. !DSYNC), and a shared clock. Data is multiplexed across 4 VI clock cycles per pixel: cycle 0 carries sync data with VDC_DSYNC held low; cycles 1 through 3 carry Red, Green, and Blue, respectively. Each 4-cycle group constitutes one rendered pixel, referred to throughout as a "VI pixel."  
-5. Output: The VDC-NUS (U4) performs digital-to-analog conversion, clocked by U7.FSO/5 (Frequency Synthesizer Output ÷ 5). It generates analog RGB, CSYNC (pin 14), and BFP (pin 13), passing these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (f_xtal ÷ 4) at its SCIN pin via the R13/R12 resistor divider and C21. The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite[^masterclock]. Each implementation performs the same DAC/encoding function.  
+5. Output: The VDC-NUS (U4) performs digital-to-analog conversion, clocked by U7.FSO/5 (Frequency Synthesizer Output ÷ 5). It generates analog RGB, CSYNC (pin 14), and BFP (pin 13), passing these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (f_xtal ÷ 4) at its SCIN pin via the R13/R12 resistor divider and C21. The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite[^srgb-a]. Each implementation performs the same DAC/encoding function.  
 
-[^clock_combo]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. f_xtal derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case.  
+[^mx8350]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. f_xtal derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case.  
 
 [^vdc_7bit]: [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "Since there are three unused bits in the multiplex sequence, it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
 
-[^masterclock]: A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but RGB output is not functional in retail units: the RGB output circuit is unpopulated. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. See figure *S-RGB A video circuit* (DarthCloud, 2011). This chip was used in some SNES revisions before appearing in NUS-CPU(R)-01.  
+[^srgb-a]: A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but RGB output is not functional in retail units: the RGB output circuit is unpopulated. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. See figure *S-RGB A video circuit* (DarthCloud, 2011). This chip was used in some SNES revisions before appearing in NUS-CPU(R)-01.  
 
 ![N64 Video System](/figures/fig13_n64videosys.png)  
 *N64 Video System - VDC bus multiplexing, VDC_DSYNC waveform. Source: Tim Worthington, [N64RGB documentation](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)*  
@@ -254,7 +254,7 @@ N64 video timings are derived from the per-region quartz crystal resonator at X1
 
 ##### 3.5.1.1 X1 Identification  
 
-No public datasheets exist for the crystal resonators at X1 and X2. The `D` prefix near-universally observed in stamp codes identifies the manufacturer as Daishinku Corp. (Daiwa Shinku Kogyosho, a.k.a. KDS, est. 1959), a Japanese quartz crystal manufacturer. While no direct primary link is available, the stamp code format and `D` prefix appear on numerous Nintendo hardware examples throughout the 90s. Game Boy hardware database gbhwdb.gekkio.fi explicitly attributes crystals with identical appearance and date encoding to Daishinku.
+No public datasheets exist for the crystal resonators at X1 and X2. The `D` prefix near-universally observed in stamp codes identifies the manufacturer as Daishinku Corp. (Daiwa Shinku Kogyosho, a.k.a. KDS, est. 1959), a Japanese quartz crystal manufacturer. This stamp code format and `D` prefix appear on numerous Nintendo hardware examples throughout the 90s. Game Boy hardware database gbhwdb.gekkio.fi explicitly attributes crystals with identical appearance and date encoding to Daishinku.
 
 The NUS-CPU-03 oscillator circuit presents a load capacitance of 21.5 pF + C_stray to X1, derived from C39 = C40 = 43 pF in a series configuration (See [§3.1](#31-fundamental-constants)):  
 
@@ -268,7 +268,7 @@ C_stray (the aggregate parasitic capacitance from PCB traces and IC pin capacita
 
 ##### 3.5.1.2 X1 and X2 Stamp Codes by Revision (Abridged) 
 
-The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X1 is the video clock crystal; X2 is not involved in video timing derivations. Both are included because their date clustering on individual boards provides independent corroboration of the decode convention. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. See [§7.2.1](#721-personal-resources) for a link to the annotated image collection.
+The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X2 (250/17 MHz in all regions, or approximately 14.705 MHz) in circuit drives RDRAM and other system clocks, but does not affect video timing. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. See [§7.2.1](#721-personal-resources) for a link to the annotated image collection.
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
 | :--- | :--- | :--- | :--- | :--- | :--- |  
@@ -334,10 +334,10 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | NTSC Color Subcarrier (FSC) | U7        | 8    | 3.58 MHz           | 3.0 Vpp            |  
 | NTSC Video Clock (VCLK)     | U7        | 1    | 48.68 MHz          | 3.3 Vpp            |  
 | PAL Video Clock (VCLK)      | U15       | 1    | 49.66 MHz          | 3.3 Vpp            |  
-| Master Clock[^4]            | U10       | 16   | 62.51 MHz          | -                  |  
+| Master Clock[^masterclock]            | U10       | 16   | 62.51 MHz          | -                  |  
 | Rambus Clock (RCLK)         | U1        | 5    | 250.2 MHz          | -                  |  
 
-[^4]: The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
+[^masterclock]: The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
 
 ---
 
@@ -365,7 +365,7 @@ The following table defines the relationship between VI clock rate (f_vi) and th
 The figure below is a visualization created by lidnariq after analysis of N64 video output. The image dimensions map to signal timing for one NTSC progressive vertical scan period:  
 
 ![N64 VI Timing Diagram (NTSC-P)](/figures/fig3_n64_default_libdragon_240p_timing.png)  
-*N64 VI Timing Diagram (NTSC Progressive). Source: lidnariq / ares emulator Discord, hardware probe*  
+*N64 VI Timing Diagram (NTSC Progressive). Source: lidnariq (ares emulator Discord), hardware probe*  
 
 * Vertical Axis (263 units): Represents a single progressive vertical refresh. 263 sequential lines are drawn before VSYNC instructs the display's scanning mechanism to return to the top-left of the raster. Lines are contiguous, with no interleaving.  
 
@@ -380,9 +380,16 @@ The figure below is a visualization created by lidnariq after analysis of N64 vi
 > Technically, the hardware *will* allow overlap of `VI_BURST` and H_START. Doing so on a revision with a two-stage encoder/decoder configuration produces color corruption that modulates with scene content (this has not been tested on single-stage output models, e.g. MAV-NUS). See figure below.  
 
 ![VI_BURST overlapping H_START](/figures/fig22_VI_BURST-overlapping-H_START_devwizard.png)  
-*`VI_BURST` overlapping H_START in Super Mario 64 (1996). Source: devwizard / N64brew.dev Discord ([youtube.com mirror](https://www.youtube.com/watch?v=hSFQPQb00ns))*  
+*`VI_BURST` overlapping H_START in Super Mario 64 (1996). Source: devwizard (N64brew.dev Discord) ([youtube.com mirror](https://www.youtube.com/watch?v=hSFQPQb00ns))*  
 
 > Relatedly, if `VI_BURST` remains active at line end, the VI randomly fails to blank the left 7 VI pixels.  
+
+### 4.1.2. Clock Diagram
+
+![eb1560 N64 Clock Diagram (NTSC)](/figures/fig40_n64-clock-diagram-eb1560_ag.png)  
+*How clock is generated and distributed on the NTSC N64 board. Source: eb1560, ([assemblergames.org](https://assemblergames.org/viewtopic.php?t=25918)), oscilloscope and X1/X2 crystal swap experimentation*
+
+Diagram by eb1560 tracing clock generation, modulation, and distribution for an NTSC N64, including X1/X2 domain interaction.
 
 ### 4.2 Mode-Specific Notes  
 
@@ -561,15 +568,55 @@ Pattern `0x00` (`0b00000`) selects the LEAP_A on every VSYNC. As LEAP_A = L_base
 
 *This contrasts with PAL-M interlaced, which also programs pattern `0x00` with LEAP_A = LEAP_B, but with both values set above L_base. See [§5.3.2.1](#5321-pal-m-interlaced-leap-adjustment).*
 
-### 5.1.2 iQue Player  
+---
 
-Developed as a localized hardware revision for the Chinese market, the iQue Player integrates the CPU, RCP, PIF, and supporting logic into a single custom NEC ASIC, replacing the multi-chip N64 motherboard. Video encoding is also consolidated into the ASIC; the external video encoder present on N64 revisions is absent.  
+### 5.1.2 Ultra 64 Development Board (SGI Indy N64 Emulator)
 
-Clock synthesis is performed by an ICS420BG chip driven by a single 315/22 MHz crystal (≈ 14.318 MHz, same as NTSC). The VI pixel clock of 48.68 MHz, identical to the standard NTSC f_vi established in §5.1, is confirmed present on test points. The derivation in §5.1 therefore applies without modification. Video timing is identical to NTSC.  
+Both known revisions of the Ultra 64 development board (designed for use in conjunction with SGI Indy workstation hardware) match retail clock domain structure with altered designators:
 
-A 57/17 PLL path from this crystal generates approximately 48.008 MHz (17955/374), from which 96 MHz and 192 MHz (DDR memory controller) are also derived.  
+* Retail X1 → X6
+* Retail X2 → X7
 
-The CPU is clocked at 140.625 MHz, 1.5x the standard N64 rate. Because many N64 titles use the CPU counter register to determine timing, a customized iQue libultra revision allows compensation to produce the expected slower increment. This does not affect VI timing.  
+Observed boards populate X6 with a 315/22 MHz-class crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz-class crystal (≈ 14.7058823529 MHz), consistent with retail relationships.
+
+Documented PAL conversion modifies only the X6 domain:
+
+* X6 replaced with a 17.7 MHz-class crystal
+* R6 populated (0 Ω)
+* R8 (4.7 kΩ) removed
+
+This establishes X6 as primary VI timing reference (retail X1 equivalent). Clock domain separation is therefore identical to retail hardware; only reference designators differ. X7 is unchanged and retains the RDRAM and master clock generation roles (retail X2).
+
+---
+
+### 5.1.3 Aleck64
+
+Developed by SETA Corporation in collaboration with Nintendo, Aleck64 hardware (models E90 and E92) is an arcade-oriented implementation that retains Nintendo 64 architectural parity while adding industrial I/O and audio subsystems.
+
+Crystal designators are transposed relative to retail:
+
+* Retail X1 → X3
+* Retail X2 → X4
+
+A 315/22 MHz crystal (silkscreened `14.3181MHz`) is populated at X3 and serves as the primary reference for VI and system timing. MX8330MC is present in circuit with X3; output characteristics and VI timings match NTSC.  
+
+X4[^x4] frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead use components marked `140` (≈ 14.0 MHz), despite silkscreen markings indicating `14.3181MHz` on observed samples. These discrepancies are yet unresolved.  
+
+[^x4]: Analogously to retail hardware, video timing derives from X3; X4 does not participate.  
+
+---
+
+### 5.1.4 iQue Player
+
+The iQue Player is a localized hardware revision for the Chinese market that consolidates the CPU, RCP, and other logic into a single custom NEC ASIC, replacing the discrete multi-chip N64 motherboard. Video output circuitry is integrated into the ASIC; no external discrete output IC is present.
+
+Clock generation is handled by an ICS420BG clock synthesizer driven by a 315/22 MHz crystal resonator (one example is marked `TXC 14.3k88F`[^txc]). Hardware measurement confirms a VI pixel clock of approximately 48.68 MHz, consistent with NTSC hardware. 
+
+A PLL path of 57/17 from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock.
+
+The CPU operates at 140.625 MHz (1.5 × the standard N64 frequency). Because many titles rely on the CPU count register for timing, a modified libultra compensates by scaling the observed counter rate. This adjustment does not impact VI timing.
+
+[^txc]: Manufacturer inferred to be [TXC Corporation](https://www.txccrystal.com/).
 
 ---
 
@@ -962,6 +1009,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | MX8350MC Image | `fig32_MX8350MC.png` | *MX8350MC (U17); 14-pin SOP package; lot code TA022201 (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
 | N64 VI Timing Diagram (NTSC-P) | `fig3_n64_default_libdragon_240p_timing.png` | *N64 VI Timing Diagram (NTSC Progressive) (Source: lidnariq via ares emulator Discord server; [reverse-engineered via hardware probing](/figures/fig3_n64_default_libdragon_240p_timing.png))* |  
 | VI_BURST Overlapping H_START | `fig22_VI_BURST-overlapping-H_START_devwizard.png` | *`VI_BURST` overlapping H_START (Source: devwizard / N64brew.dev Discord [youtube.com mirror](https://youtu.be/hSFQPQb00ns))*  |  
+| eb1560 N64 Clock Diagram (NTSC) | `fig40_n64-clock-diagram-eb1560_ag.png` | *Comprehensive NTSC N64 clock diagram, derived frequencies (Source: eb1560, oscilloscope measurements and crystal swap experimentation, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=25918)).* |  
 | S-RGB A SNES | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
 | `Ⓜ` and `D` Markings | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Instalação do RGB Converter v2 no Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | `Ⓜ` Marking | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal resonators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
@@ -1024,8 +1072,13 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of late NTSC model, shared by Aringon (Video Game Preservation Collective Discord).  
 * [marshallh - iQue Player Notes](https://retroactive.be/personal/ique) - iQue Player reverse-engineering; identification of single-oscillator layout, 57/17 PLL ratio, and libultra CPU timing compensation details.  
 * [大狗 via iQue Historia - Record Issue 17: iQue China](https://iquehistoria.neocities.org/articletl/RecordiQueChina/article) - Additional iQue Player details and historical context.
+* [eb1560 - AssemblerGames - N64 Clock Relationship Diagram](https://assemblergames.org/viewtopic.php?t=25918) - Complete retail N64 clock relationship diagram; establishes X1/X2 domain relationships and derived frequencies.
+* [System16 - Aleck64 Hardware (Mickey's Magical Tetris Challenge)](https://system16.com/hardware.php?id=816) - Aleck64 E90 board photography; confirms crystal placement (X3/X4) and component layout.  
+* [Ikotsu Blog - Aleck64 (SETA/Nintendo 1998)](https://ikotsu.blogspot.com/2019/07/aleck64-seta-nintendo-1998.html) - Aleck64 E92 board images; corroborates crystal population and silkscreen markings.  
+* [Arcade-Projects - SETA Aleck64 JAMMA Board Thread](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/post-259421) - Additional E90/E92 board images; cross-verification of component variation and crystal markings across revisions.  
 * [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.  
-* [Gekkio - Game Boy Hardware Database - DMG G01008206](https://gbhwdb.gekkio.fi/consoles/dmg/G01008206.html) - Unit-level DMG hardware documentation; explicitly attributes `D`-prefix stamp codes to Daishinku Corp.; corroborates manufacturer identification of N64 X1 crystals.  
+* [Gekkio - Game Boy Hardware Database - DMG G01008206](https://gbhwdb.gekkio.fi/consoles/dmg/G01008206.html) - Unit-level DMG hardware documentation; explicitly attributes `D`-prefix stamp codes to Daishinku Corp.; corroborates manufacturer identification of N64 crystals.  
+* [TXC - Technical FAQ](https://web.archive.org/web/20121118132013/http://www.txccrystal.com/faq.html) / [TXC - Technical Terminology](https://web.archive.org/web/20121102025253/http://www.txccrystal.com/term.html) / [TXC - Manufacturing Process](https://web.archive.org/web/20121105204534/http://www.txccrystal.com/manufacture.html) - Information on crystal manufacture; supplier for iQue Player crystals.
 
 ![S-RGB A SNES](/figures/fig33_S-RGB_A-SNS.png)  
 *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))*
@@ -1297,6 +1350,8 @@ A quick reference for terminology used in this document.
 
 * **480i:** Shorthand for NTSC and PAL-M interlaced mode. One vertical refresh comprises two interlaced fields across 525 half-lines; a 45 half-line blanking period with the remaining 480 half-lines available for active video output. Contemporary retail NTSC games built with libultra draw no more than 474 half-lines of visible content per vertical refresh. PAL equivalent is 576i. *See also: Interlaced, Vertical Scan Frequency.*
 
+* **Aleck64:** N64-based arcade hardware developed by SETA Corporation in cooperation with Nintendo. The hardware and earliest games were released in 1998. Shares video timing characteristics with retail NTSC N64 units.
+
 * **BFP (Burst Flag Pulse):** A timing pulse generated by the VDC-NUS chip (U4) that gates the colorburst window on each active line. It signals to the downstream encoder (ENC-NUS, U5) the interval during which the chroma subcarrier reference should be inserted into the back porch of the composite output. The burst gate window duration is approximately 5.1 μs per oscilloscope observation. *See also: Chrominance Subcarrier Frequency, CSYNC.* 
 
 * **C_stray:** The aggregate parasitic capacitance contributed by PCB traces and IC pin capacitance in an oscillator circuit. Not directly measurable without physical probing of the specific board. In the NUS-CPU-03 X1 load capacitance derivation, C_stray is estimated in the range of 2-5 pF, yielding an effective CL of approximately 23.5-26.5 pF. *See also: Crystal Oscillator Frequency, CL.*  
@@ -1325,7 +1380,7 @@ A quick reference for terminology used in this document.
 
 * **Interlaced (I):** A scan method in which lines are interleaved across two successive vertical scans in alternating stripes of even-odd (262.5 lines per vertical scan in NTSC and PAL-M interlaced modes). The VI offsets vertical sync by one half-line on every other scan, each constituting a field in broadcast terminology. fV represents the rate of each individual vertical scan. *See also: Progressive, Half-line, fV.*
 
-* **iQue Player (2003)**  A Nintendo 64–derived system integrating the CPU, RCP, PIF, and video encoder into a single ASIC. Uses a single NTSC-derived crystal (315/22 MHz). The Video Interface (VI) timing model is preserved exactly, retaining the NTSC pixel clock (5355/110 MHz, 17/5 × f_xtal). Additional clocks are generated via separate PLL ratios (e.g., 57/17 ≈ 48.008 MHz) and further scaling for higher-frequency domains (e.g., DDR); Rambus RDRAM is replaced by DDR SDRAM.
+* **iQue Player** - A Nintendo 64–derived system integrating the CPU, RCP, and other previously-discrete components into a single ASIC. Released in 2003 and sold exclusively in China. Uses a single NTSC-derived crystal (315/22 MHz). The Video Interface (VI) timing model is preserved exactly, retaining the NTSC pixel clock (5355/110 MHz, 17/5 × f_xtal). Additional clocks are generated via separate PLL ratios (e.g., 57/17 ≈ 48.008 MHz) and further scaling for higher-frequency domains (e.g., DDR); Rambus RDRAM is replaced by DDR SDRAM.
 
 * **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,090 (PAL-M progressive) / 3,089 (PAL-M interlaced). *See also: Terminal Count, VI.*
 
