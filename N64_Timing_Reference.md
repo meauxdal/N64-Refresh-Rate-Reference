@@ -23,6 +23,7 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
 * [§4 Signal Analysis](#4-signal-analysis)
     * [§4.1 Signal Parameters by Mode](#41-signal-parameters-by-mode)
     * [§4.2 Mode-Specific Notes](#42-mode-specific-notes)
+    * [§4.3 Hardware Variants](#43-hardware-variants)
 * [§5 Mathematical Derivations](#5-mathematical-derivations)
     * [§5.1 NTSC Derivation](#51-ntsc-derivation)
     * [§5.2 PAL Derivation](#52-pal-derivation)
@@ -437,7 +438,7 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 3. Pattern: 4 = `0x04` = `0b00100` = `9-9-8-9-9` = 44
 4. 44/5 = 8.8 average additional VI clocks per scanline
 
-[^itu-r_error]: ITU-R BT.470-6 Table 2 item 2.11a lists the M/PAL subcarrier as 3,579,611.49 Hz, which is inconsistent with the relationship defined in item 2.11b (fsc = 909/4 × fH). Applying that relationship to the System M nominal fH yields 511,312,500/143 Hz (≈ 3,575,611.888 Hz). The ITU value appears to be a transcription error propagated unchanged across multiple revisions of the standard.  
+[^itu-r_error]: ITU-R BT.470-6 Table 2 item 2.11a lists the M/PAL subcarrier as 3,579,611.49 Hz, which is inconsistent with the relationship defined in item 2.11b (fsc = 909/4 × fH). Applying that relationship to the System M nominal fH yields 511,312,500/143 Hz (≈ 3,575,611.888 Hz). This has been confirmed as a transcription error introduced in ITU-R BT.470-3 by reference to the preceding standards publication, CCIR - XVIIth Plenary Assembly (Düsseldorf, 1990), Volume XI - Part 1: Recommendations: Broadcasting Service (Television).  
 
 #### PAL-M Interlaced
 
@@ -452,7 +453,7 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 3. Pattern: 0 = `0x00` = `0b00000` = `12-12-12-12-12` = 60
 4. 60/5 = 12 additional clocks per scanline
 
-[^leap_mk64]: The osViModeTable in *Mario Kart 64* (1996/1997) seemingly documents the transition point from PAL leap pattern #1 to #2. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are present in the table, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This revised leap pattern appears in later titles, including *Star Fox 64* (1997) and *The Legend of Zelda: Ocarina of Time* (1998) See also footnote[^leap_os20h].
+[^leap_mk64]: The  contains both leap patterns. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are observed in osViModeTable.c in the decompiled *Mario Kart 64* (1996/1997) source code, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This revised leap pattern appears in later titles, including *Star Fox 64* (1997) and *The Legend of Zelda: Ocarina of Time* (1998). See also footnote[^leap_os20h].
 
 *Leap sums are divided by 5 (the 5-stage leap cycle) to produce the fractional increment added to L. See [§5.2.1](#521-pal-leap-adjustment) for details on PAL leap compensation.*
 
@@ -476,6 +477,71 @@ All N64 video modes adhere to broadcast standard relationships between subcarrie
 PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolve to an integer number of VI clocks per line. The exact colorburst frequency is 3,575,611 + 127/143 Hz. The fractional component propagates through the timing derivation chain. The hardware resolves this by rounding to 3090 (progressive) or 3089 (interlaced) VI clocks per line, producing an fH of approximately 15,737.15 Hz (progressive) or 15,742.18 Hz (interlaced). These differ slightly from the NTSC standard horizontal frequency of 15,734.27 Hz. The fV values in this document are derived from the fractional colorburst frequency carried through each step; see [§5.3](#53-pal-m-derivation) for full derivation.  
 
 > The subcarrier reference signal is delivered to the ENC-NUS encoder (U5) via the SCIN pin (pin 8), which receives the U7.FSC output through a 4.3 kΩ ÷ 820 Ω resistor divider and coupling capacitor C21. This is the hardware path by which the crystal-derived fS enters the analog encode stage. See [§3.4](#34-hardware-signal-path), figure *ENC-NUS in circuit*.  
+
+---
+
+## 4.3 Hardware Variants
+
+The following platforms share N64 video timing architecture and confirm the derivations in [§5](#5-mathematical-derivations) without modification. Each implementation maps the retail crystal domain to different reference designators; no new timing values result.
+
+### 4.3.1 Ultra 64 Development Board (SGI Indy N64 Emulator)
+
+![Ultra 64 Dev Board](/figures/fig45_ultra64_rev2.jpg)  
+*`Ultra 64 Developmnet Board Rev 2.0` (sic) PCB. Source: Jax184, [assemblergames.com](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165)*
+
+Both known revisions of the Ultra 64 development board (designed for use in conjunction with SGI Indy workstation hardware) match retail clock domain structure with altered designators:
+
+* Retail X1 → X6
+* Retail X2 → X7
+
+Observed boards populate X6 with a 315/22 MHz crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz crystal (≈ 14.7058823529 MHz), consistent with retail relationships.
+
+Documented PAL conversion modifies only the X6 domain: the crystal is exchanged for a PAL-nominal 17.7 MHz part, R6 is populated (0 Ω), and R8 (4.7 kΩ) is removed.
+
+![U64 X6 Swap](/figures/fig42_x6_swap.png)  
+*Ultra 64 emulator board PAL conversion procedure (Figure 5-3-4). Source: Nintendo 64 Online Manuals v5.2, [ultra64.ca](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/kantan/step2/5/5_3.htm)*  
+
+That only the X6 domain requires modification confirms X6 as the primary VI timing reference (retail X1 equivalent). X7 is unchanged and retains the RDRAM and master clock generation roles (retail X2). Clock domain separation is otherwise identical to retail hardware.
+
+---
+
+### 4.3.2 Aleck64 (1998)
+
+![Aleck64 E92](/figures/fig44_aleck64_e92.jpg)  
+*Aleck64 `E92 Mother PCB`. Source: brizzo, [arcade-projects.com](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/)*
+
+Developed by SETA Corporation in collaboration with Nintendo, Aleck64 hardware (models E90 and E92) is an arcade-oriented implementation that retains Nintendo 64 architectural parity with additional I/O and audio subsystems.
+
+Crystal designators are transposed relative to retail:
+
+* Retail X1 → X4
+* Retail X2 → X3
+
+On E90 and E92, a 315/22 MHz crystal (silkscreened `14.3181MHz`) is populated at X4 and drives video timing. MX8330MC is confirmed in circuit with X4 on E90; the equivalent component on E92 has not been positively identified from available board photography, though the crystal frequency implies an equivalent multiplier configuration. Output characteristics and VI timings match NTSC on both revisions.
+
+X3[^x3] frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead populate a `D140B8` crystal (Daishinku, 14.0 MHz, February 1998) at X3, despite the silkscreen reading `14.3181MHz`; X4 on the same boards carries `D143B8`, confirming the video timing crystal is at nominal. The X3 discrepancy is yet unresolved.
+
+![Aleck64 E90 X3](/figures/fig43_aleck64_e90_x3.png)  
+*Aleck64 E90 motherboard showing `D140B8` (14.0 MHz) at X3 against `14.3181MHz` silkscreen, and `D143B8` (315/22 MHz nominal) at X4; MX8330 and PQ7VZ5 visible. Source: HSBallina, [newastrocity.wordpress.com](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/)*
+
+[^x3]: Analogously to retail hardware, video timing derives from X4; X3 does not participate.
+
+---
+
+### 4.3.3 iQue Player (2003)
+
+![iQue Player PCB (marshallh)](/figures/fig47_ique_pcb_crop_marshallh.png)  
+*iQue Player PCB. Source: marshallh, [retroactive.be](https://retroactive.be/personal/ique/)*
+
+The iQue Player is a localized hardware revision for the Chinese market that consolidates the CPU, RCP, and other logic into a single custom NEC ASIC, replacing the discrete multi-chip N64 motherboard. Video output circuitry is integrated into the ASIC; no external discrete encoder IC is present.
+
+Clock generation is handled by an ICS420BG clock synthesizer driven by a 315/22 MHz crystal resonator (one example is marked `TXC 14.3k88F`[^txc]). Hardware measurements confirm a VI pixel clock of approximately 48.68 MHz, consistent with NTSC hardware.
+
+A PLL path of 57/17 (marshallh) from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock.
+
+The CPU operates at 140.625 MHz (1.5 × the standard N64 frequency). Because many titles rely on the CPU count register for timing, a modified libultra compensates by scaling the observed counter rate. This adjustment does not impact VI timing.
+
+[^txc]: Manufacturer inferred to be [TXC Corporation](https://www.txccrystal.com/).
 
 ---
 
@@ -570,56 +636,6 @@ LEAP_A = 3,094  effective  (register value 3,093 + 1)
 Pattern `0x00` (`0b00000`) selects the LEAP_A on every VSYNC. As LEAP_A = L_base, every VSYNC is uniform. The `VI_H_TOTAL_LEAP` register produces no correction. fH is therefore exact from L alone, with no leap adjustment required.
 
 *This contrasts with PAL-M interlaced, which also programs pattern `0x00` with LEAP_A = LEAP_B, but with both values set above L_base. See [§5.3.2.1](#5321-pal-m-interlaced-leap-adjustment).*
-
----
-
-### 5.1.2 Ultra 64 Development Board (SGI Indy N64 Emulator)
-
-Both known revisions of the Ultra 64 development board (designed for use in conjunction with SGI Indy workstation hardware) match retail clock domain structure with altered designators:
-
-* Retail X1 → X6
-* Retail X2 → X7
-
-Observed boards populate X6 with a 315/22 MHz-class crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz-class crystal (≈ 14.7058823529 MHz), consistent with retail relationships.
-
-Documented PAL conversion modifies only the X6 domain:
-
-* X6 replaced with a 17.7 MHz-class crystal
-* R6 populated (0 Ω)
-* R8 (4.7 kΩ) removed
-
-This establishes X6 as primary VI timing reference (retail X1 equivalent). Clock domain separation is therefore identical to retail hardware; only reference designators differ. X7 is unchanged and retains the RDRAM and master clock generation roles (retail X2).
-
----
-
-### 5.1.3 Aleck64
-
-Developed by SETA Corporation in collaboration with Nintendo, Aleck64 hardware (models E90 and E92) is an arcade-oriented implementation that retains Nintendo 64 architectural parity while adding industrial I/O and audio subsystems.
-
-Crystal designators are transposed relative to retail:
-
-* Retail X1 → X3
-* Retail X2 → X4
-
-A 315/22 MHz crystal (silkscreened `14.3181MHz`) is populated at X3 and serves as the primary reference for VI and system timing. MX8330MC is present in circuit with X3; output characteristics and VI timings match NTSC.  
-
-X4[^x4] frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead use components marked `140` (≈ 14.0 MHz), despite silkscreen markings indicating `14.3181MHz` on observed samples. These discrepancies are yet unresolved.  
-
-[^x4]: Analogously to retail hardware, video timing derives from X3; X4 does not participate.  
-
----
-
-### 5.1.4 iQue Player
-
-The iQue Player is a localized hardware revision for the Chinese market that consolidates the CPU, RCP, and other logic into a single custom NEC ASIC, replacing the discrete multi-chip N64 motherboard. Video output circuitry is integrated into the ASIC; no external discrete output IC is present.
-
-Clock generation is handled by an ICS420BG clock synthesizer driven by a 315/22 MHz crystal resonator (one example is marked `TXC 14.3k88F`[^txc]). Hardware measurement confirms a VI pixel clock of approximately 48.68 MHz, consistent with NTSC hardware. 
-
-A PLL path of 57/17 from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock.
-
-The CPU operates at 140.625 MHz (1.5 × the standard N64 frequency). Because many titles rely on the CPU count register for timing, a modified libultra compensates by scaling the observed counter rate. This adjustment does not impact VI timing.
-
-[^txc]: Manufacturer inferred to be [TXC Corporation](https://www.txccrystal.com/).
 
 ---
 
@@ -1008,12 +1024,17 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | MAV-NUS Pinout | `fig16_mav-nus.png` | *MAV-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
 | MX8330MC Table | `fig8_mx8330MC_table.png` | *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient (Source: [MX8330MC datasheet](/references/Macronix-MX8330MC-ocr.pdf))* |  
 | MX8330MC Image | `fig25_mx8330mc_macro_prominos.jpg` | *MX8330MC (U7); 8-pin SOP package; lot code TEB61102 (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
-| MX9911MC Image | `fig31_MX9911MC.png` | *MX9911MC (U7); 8-pin SOP package; chamfered corner pin-1 indicator (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
+| MX9911MC Image | `fig31_MX9911MC.png` | *MX9911MC (U7); 8-pin SOP package (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
 | MX8350MC Image | `fig32_MX8350MC.png` | *MX8350MC (U17); 14-pin SOP package; lot code TA022201 (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
 | N64 VI Timing Diagram (NTSC-P) | `fig3_n64_default_libdragon_240p_timing.png` | *N64 VI Timing Diagram (NTSC Progressive) (Source: lidnariq via ares emulator Discord server; [reverse-engineered via hardware probing](/figures/fig3_n64_default_libdragon_240p_timing.png))* |  
 | VI_BURST Overlapping H_START | `fig22_VI_BURST-overlapping-H_START_devwizard.png` | *`VI_BURST` overlapping H_START (Source: devwizard / N64brew.dev Discord [youtube.com mirror](https://youtu.be/hSFQPQb00ns))*  |  
 | eb1560 N64 Clock Diagram (NTSC) | `fig40_n64-clock-diagram-eb1560_ag.png` | *Comprehensive NTSC N64 clock diagram, derived frequencies (Source: eb1560, oscilloscope measurements and crystal swap experimentation, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=25918)).* |  
 | CCIR Rep. 624-4 Table II (item 2.11) | `fig41_ccir-1990-rep.624-4.png` | *Chrominance subcarrier frequency (item 2.11a nominal values and tolerances; item 2.11b subcarrier-to-line-frequency relationships) for M/NTSC, M/PAL, B/D/G/H/N/PAL, I/PAL, and SECAM colour television systems (Source: CCIR Rep. 624-4, XVIth Plenary Assembly, Düsseldorf, 1990, Table II).* |  
+| N64 Emulator Board PAL Crystal Alteration | `fig42_x6_swap.png` | *PAL conversion procedure for the N64 Emulator Board (Figure 5-3-4): X6 crystal exchange (14.3 MHz to 17.7 MHz), R8 removal (4.7 kΩ), and R6 population (0 Ω) (Source: Nintendo 64 Online Manuals v5.2, [ultra64.ca](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/kantan/step2/5/5_3.htm)).* |  
+| Ultra 64 Development Board (Rev 2.0) | `fig45_ultra64_rev2.jpg` | *Ultra 64 Development Board Rev 2.0 (Silicon Graphics, Inc., © 1995) showing X6 and X7 crystal positions and IS-130 label. Source: Jax184, [jax184.com](https://web.archive.org/web/20160525232126/http://www.jax184.com/projects/ultra64/) / [AssemblerGames](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165).* |  
+| Aleck64 E92 Motherboard | `fig44_aleck64_e92.jpg` | *Aleck64 E92 motherboard (Source: brizzo, [arcade-projects.com](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/)).* |
+| Aleck64 E90 Crystal Discrepancy | `fig43_aleck64_e90_x3.png` | *Aleck64 E90 board detail showing X3 crystal marked `D140B8` (Daishinku, 14.0 MHz, Feb 1998) silkscreened `14.3181MHz`; Macronix MX8330MC at U9; Sharp PQ7VZ5 voltage regulator visible (Source: HSBallina, [Magical Tetris Challenge (マジカルテトリスチャレンジ featuring ミッキー) -- New Astro City, 2015](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/)).* |  
+| iQue Player PCB (Rev 1.03) | `fig47_ique_pcb_crop_marshallh.jpg` | *iQue Player motherboard (Rev 1.03) showing NEC custom ASIC (`D800044F2511`, date code `0336KK002`, week 36, 2003) and OSC1 crystal position. Source: marshallh, [retroactive.be](https://retroactive.be/personal/ique).* |
 | S-RGB A SNES | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
 | `Ⓜ` and `D` Markings | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Instalação do RGB Converter v2 no Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | `Ⓜ` Marking | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal resonators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
@@ -1022,7 +1043,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 
 ### 7.2 References
 
-* [Nintendo 64 Online Manuals (OS 2.0L, v5.2)](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/) - Hardware behavior; VI implementation details.  
+* [Nintendo 64 Online Manuals (OS 2.0L, v5.2)](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/) - Hardware behavior; VI implementation details; N64 Emulator development board PAL modification details.  
 * [Nintendo 64 Online Manuals - Functions Reference Manual (OS 2.0I)](https://ultra64.ca/files/documentation/online-manuals/functions_reference_manual_2.0i/home.html) - VI register mappings; programmable timing.  
 * [Nintendo 64 Online Manuals - Programming Manual (OS 2.0J)](https://ultra64.ca/files/documentation/online-manuals/man/pro-man/start/index.html) - Memory-mapped I/O; VI mode definitions; system programming reference.  
 * [Nintendo 64 Programming Manual (D.C.N. NUS-06-0030-001 REV G)](https://ultra64.ca/files/documentation/nintendo/Nintendo_64_Programming_Manual_NU6-06-0030-001G_HQ.pdf) - Detailed timing tables.  
@@ -1036,16 +1057,16 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer; functional equivalent to MX8330MC.    
 * [Rohm BA7242F Datasheet](/references/Rohm-BA7242F-(ENC-NUS)-datasheet-ocr.pdf) - ENC-NUS (U5) video encoder IC; YOUT (pin 13) luminance, VOUT (pin 12) composite video, COUT (pin 10) chrominance outputs; SCIN input level 0.45-0.60 Vpp corroborating the R13/R12 attenuation network; NT/PAL pin logic (HIGH = NTSC, LOW = PAL).  
 * [NUS-CPU-07 Annotated Circuit Board (ChipWorks, Rev 1.0, Nov 2000)](/references/NUS-CPU-07-Annotated-PCB-ChipWorks-ocr.pdf) - Professional teardown; board-level IC identification, manufacturer attribution, and component revision corroboration.  
-* [CCIR Rep. 624-4 (XVIth Plenary Assembly, Düsseldorf, 1990)](/references/4.283.43.en.1030.pdf) - Final CCIR publication of M/PAL chrominance subcarrier data; item 2.11a carries 3,575,611.49 Hz, consistent with the 909/4 × fH relationship; confirms the error postdates the CCIR-to-ITU-R transition.  
-* [ITU-R Recommendation BT.470-6](/references/R-REC-BT.470-6-199811-S!!PDF-E.pdf) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; PAL-M subcarrier relationship (item 2.11b); item 2.11a value 3,579,611.49 Hz is a digit transposition introduced in BT.470-3 (1993) and propagated unchanged; correct value derivable from item 2.11b.  
-* [ITU-R Recommendation BT.1700 Annex 1](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_1700-e.pdf) - Composite video signal characteristics for NTSC, PAL, and SECAM; signal levels, sync timing, chrominance subcarrier frequencies and modulation.  
-* [ITU-R Recommendation BT.1700 Annex 2](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_S170m-2004.pdf) - SMPTE 170M-2004 (incorporated by reference); NTSC composite analog video for studio applications; subcarrier frequency, line/field frequency specifications, horizontal/vertical blanking and sync timing.  
-* [ITU-R Recommendation BT.1701](/references/R-REC-BT.1701-1-200508-I!!PDF-E.pdf) - Horizontal/vertical timing for composite video.  
-* [US4054919A - Video Image Positioning Control](https://patents.google.com/patent/US4054919A/en) (1977) - Sync counter generation and display positioning.  
-* [US6239810B1 - High Performance Low Cost Video Game System](https://patents.google.com/patent/US6239810B1/en) (2001) - VI register set; HSYNC LEAP register; VSYNC/HSYNC timing registers; interlaced odd/even line handling; crystal-controlled clock generator.  
-* [US6331856B1 - Video Game System with Coprocessor](https://patents.google.com/patent/US6331856B1/en) (2001) - VI register architecture; HSYNC LEAP register with LEAP_A/LEAP_B fields; interlaced display field toggling; clock generator crystal timing chain.  
-* [US6556197B1 - Programmable Video Timing Registers](https://patents.google.com/patent/US6556197B1/en) (2003) - Horizontal/vertical sync generation; color burst gate timing.  
-* [F. R. Lack, G. W. Willard, I. E. Fair - Some Improvements in Quartz Crystal Circuit Elements](https://ieeexplore.ieee.org/document/6772950) (1934) - Original AT cut paper; Bell System Technical Journal; establishes zero temperature coefficient orientation and names the AT cut.  
+* [CCIR Rep. 624-4 (XVIth Plenary Assembly, Düsseldorf, 1990)](/references/4.283.43.en.1030.pdf)- Final CCIR publication of M/PAL chrominance subcarrier data; item 2.11a carries 3,575,611.49 Hz, consistent with the 909/4 × fH relationship.  
+* [ITU-R Recommendation BT.470-6 (1998)](/references/R-REC-BT.470-6-199811-S!!PDF-E.pdf) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; item 2.11a value 3,579,611.49 Hz is a digit transposition introduced in BT.470-3 (1993) and propagated unchanged.*  
+* [ITU-R Recommendation BT.1700 Annex 1 (2005)](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_1700-e.pdf) - Composite video signal characteristics for NTSC, PAL, and SECAM; signal levels, sync timing, chrominance subcarrier frequencies and modulation.  
+* [ITU-R Recommendation BT.1700 Annex 2 (2005)](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_S170m-2004.pdf) - SMPTE 170M-2004 (incorporated by reference); NTSC composite analog video for studio applications; subcarrier frequency, line/field frequency specifications, horizontal/vertical blanking and sync timing.  
+* [ITU-R Recommendation BT.1701 (2005)](/references/R-REC-BT.1701-1-200508-I!!PDF-E.pdf) - Horizontal/vertical timing for composite video.  
+* [US4054919A - Video Image Positioning Control (1977)](https://patents.google.com/patent/US4054919A/en) - Sync counter generation and display positioning.  
+* [US6239810B1 - High Performance Low Cost Video Game System (2001)](https://patents.google.com/patent/US6239810B1/en) - VI register set; HSYNC LEAP register; VSYNC/HSYNC timing registers; interlaced odd/even line handling; crystal-controlled clock generator.  
+* [US6331856B1 - Video Game System with Coprocessor (2001)](https://patents.google.com/patent/US6331856B1/en) - VI register architecture; HSYNC LEAP register with LEAP_A/LEAP_B fields; interlaced display field toggling; clock generator crystal timing chain.  
+* [US6556197B1 - Programmable Video Timing Registers (2003)](https://patents.google.com/patent/US6556197B1/en) - Horizontal/vertical sync generation; color burst gate timing.  
+* [F. R. Lack, G. W. Willard, I. E. Fair - Some Improvements in Quartz Crystal Circuit Elements (1934)](https://ieeexplore.ieee.org/document/6772950) - Original AT cut paper; Bell System Technical Journal; establishes zero temperature coefficient orientation and names the AT cut.  
 * [Ian Poole - Electronics Notes - Quartz Crystal Cuts: AT, BT, SC, CT](https://www.electronics-notes.com/articles/electronic_components/quartz-crystal-xtal/crystal-resonator-cuts-at-bt-sc-ct.php) - AT cut crystal properties; temperature coefficient; frequency range; thickness shear mode of vibration.  
 * [RWeick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete NUS-CPU-03 KiCAD schematic; component values; signal paths.  
 * [Tim Worthington - GamesX Wiki - N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc) - NUS-CPU-03 video output circuit schematic by Tim Worthington; corroborates YOUT/VOUT/COUT routing to Multi-AV connector.  
@@ -1075,10 +1096,11 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of late PAL-M model, shared by Mielke (MiSTer FPGA Discord).
 * [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of early PAL-M model, shared by grav (Discord64 Discord).
 * [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of late NTSC model, shared by Aringon (Video Game Preservation Collective Discord).  
-* [marshallh - iQue Player Notes](https://retroactive.be/personal/ique) - iQue Player reverse-engineering; identification of single-oscillator layout, 57/17 PLL ratio, and libultra CPU timing compensation details.  
+* [marshallh - iQue Player Notes](https://retroactive.be/personal/ique) - iQue Player reverse-engineering; identification of single-oscillator layout, 57/17 PLL ratio, VI pixel clock measurement, and libultra CPU timing compensation details.  
 * [大狗 via iQue Historia - Record Issue 17: iQue China](https://iquehistoria.neocities.org/articletl/RecordiQueChina/article) - Additional iQue Player details and historical context.
 * [eb1560 - AssemblerGames - N64 Clock Relationship Diagram](https://assemblergames.org/viewtopic.php?t=25918) - Complete retail N64 clock relationship diagram; establishes X1/X2 domain relationships and derived frequencies.
 * [System16 - Aleck64 Hardware (Mickey's Magical Tetris Challenge)](https://system16.com/hardware.php?id=816) - Aleck64 E90 board photography; confirms crystal placement (X3/X4) and component layout.  
+* [HSBallina -- New Astro City -- Magical Tetris Challenge (マジカルテトリスチャレンジ featuring ミッキー)](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/) -- Aleck64 E90 board photography; X4 `D140B8` crystal and silkscreen discrepancy observation.  
 * [Ikotsu Blog - Aleck64 (SETA/Nintendo 1998)](https://ikotsu.blogspot.com/2019/07/aleck64-seta-nintendo-1998.html) - Aleck64 E92 board images; corroborates crystal population and silkscreen markings.  
 * [Arcade-Projects - SETA Aleck64 JAMMA Board Thread](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/post-259421) - Additional E90/E92 board images; cross-verification of component variation and crystal markings across revisions.  
 * [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.  
