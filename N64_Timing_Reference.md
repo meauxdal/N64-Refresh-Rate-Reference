@@ -458,6 +458,9 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 
 #### 4.2.1 Subcarrier Frequency Relationships  
 
+![Relationship between chrominance subcarrier and line frequency](/figures/fig41_ccir-1990-rep.624-4.png)  
+*Chrominance subcarrier nominal values and line frequency relationships. Source: [CCIR - XVIIth Plenary Assembly (Düsseldorf, 1990), Volume XI - Part 1: Recommendations: Broadcasting Service (Television)](/references/4.283.43.en.1030.pdf)*
+
 All N64 video modes adhere to broadcast standard relationships between subcarrier frequency (fS) and horizontal scan frequency (fH):  
 
 | Standard | fS to fH Relationship |  
@@ -1010,6 +1013,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | N64 VI Timing Diagram (NTSC-P) | `fig3_n64_default_libdragon_240p_timing.png` | *N64 VI Timing Diagram (NTSC Progressive) (Source: lidnariq via ares emulator Discord server; [reverse-engineered via hardware probing](/figures/fig3_n64_default_libdragon_240p_timing.png))* |  
 | VI_BURST Overlapping H_START | `fig22_VI_BURST-overlapping-H_START_devwizard.png` | *`VI_BURST` overlapping H_START (Source: devwizard / N64brew.dev Discord [youtube.com mirror](https://youtu.be/hSFQPQb00ns))*  |  
 | eb1560 N64 Clock Diagram (NTSC) | `fig40_n64-clock-diagram-eb1560_ag.png` | *Comprehensive NTSC N64 clock diagram, derived frequencies (Source: eb1560, oscilloscope measurements and crystal swap experimentation, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=25918)).* |  
+| CCIR Rep. 624-4 Table II (item 2.11) | `fig41_ccir-1990-rep.624-4.png` | *Chrominance subcarrier frequency (item 2.11a nominal values and tolerances; item 2.11b subcarrier-to-line-frequency relationships) for M/NTSC, M/PAL, B/D/G/H/N/PAL, I/PAL, and SECAM colour television systems (Source: CCIR Rep. 624-4, XVIth Plenary Assembly, Düsseldorf, 1990, Table II).* |  
 | S-RGB A SNES | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
 | `Ⓜ` and `D` Markings | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Instalação do RGB Converter v2 no Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | `Ⓜ` Marking | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal resonators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
@@ -1031,8 +1035,9 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Macronix MX8350 Datasheet](/references/Macronix-MX8350-ocr.pdf) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
 * [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer; functional equivalent to MX8330MC.    
 * [Rohm BA7242F Datasheet](/references/Rohm-BA7242F-(ENC-NUS)-datasheet-ocr.pdf) - ENC-NUS (U5) video encoder IC; YOUT (pin 13) luminance, VOUT (pin 12) composite video, COUT (pin 10) chrominance outputs; SCIN input level 0.45-0.60 Vpp corroborating the R13/R12 attenuation network; NT/PAL pin logic (HIGH = NTSC, LOW = PAL).  
-* [NUS-CPU-07 Annotated Circuit Board (ChipWorks, Rev 1.0, Nov 2000)](/references/NUS-CPU-07-Annotated-PCB-ChipWorks-ocr.pdf) - Professional teardown; board-level IC identification, manufacturer attribution, and component revision corroboration.    
-* [ITU-R Recommendation BT.470-6](/references/R-REC-BT.470-6-199811-S!!PDF-E.pdf) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; PAL-M subcarrier relationship (item 2.11b); item 2.11a contains a transcription error (confirmed by lidnariq).  
+* [NUS-CPU-07 Annotated Circuit Board (ChipWorks, Rev 1.0, Nov 2000)](/references/NUS-CPU-07-Annotated-PCB-ChipWorks-ocr.pdf) - Professional teardown; board-level IC identification, manufacturer attribution, and component revision corroboration.  
+* [CCIR Rep. 624-4 (XVIth Plenary Assembly, Düsseldorf, 1990)](/references/4.283.43.en.1030.pdf) - Final CCIR publication of M/PAL chrominance subcarrier data; item 2.11a carries 3,575,611.49 Hz, consistent with the 909/4 × fH relationship; confirms the error postdates the CCIR-to-ITU-R transition.  
+* [ITU-R Recommendation BT.470-6](/references/R-REC-BT.470-6-199811-S!!PDF-E.pdf) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; PAL-M subcarrier relationship (item 2.11b); item 2.11a value 3,579,611.49 Hz is a digit transposition introduced in BT.470-3 (1993) and propagated unchanged; correct value derivable from item 2.11b.  
 * [ITU-R Recommendation BT.1700 Annex 1](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_1700-e.pdf) - Composite video signal characteristics for NTSC, PAL, and SECAM; signal levels, sync timing, chrominance subcarrier frequencies and modulation.  
 * [ITU-R Recommendation BT.1700 Annex 2](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_S170m-2004.pdf) - SMPTE 170M-2004 (incorporated by reference); NTSC composite analog video for studio applications; subcarrier frequency, line/field frequency specifications, horizontal/vertical blanking and sync timing.  
 * [ITU-R Recommendation BT.1701](/references/R-REC-BT.1701-1-200508-I!!PDF-E.pdf) - Horizontal/vertical timing for composite video.  
