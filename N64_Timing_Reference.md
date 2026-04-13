@@ -482,7 +482,7 @@ PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolv
 
 ## 4.3 Hardware Variants
 
-The following platforms share N64 video timing architecture (see [§5](#5-mathematical-derivations)). Direct measurement is not available at time of writing; however, examination of board photography indicates VI timing equivalent with retail NTSC hardware.   
+The following platforms share N64 video timing architecture (see [§5](#5-mathematical-derivations)). Direct measurement is not available at time of writing; however, examination of board photography and source material indicates VI timing equivalent with retail NTSC hardware.   
 
 ### 4.3.1 Ultra 64 Development Board (1995)
 
@@ -494,14 +494,14 @@ Both observed revisions of the Ultra 64 development board (designed for use in c
 * Retail X1 → X6
 * Retail X2 → X7
 
-X6 is populated with a 315/22 MHz crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz crystal (≈ 14.70588 MHz), consistent with retail relationships.
+X6 is populated with a 315/22 MHz crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz crystal (≈ 14.70588 MHz), consistent with retail relationships. 2x Macronix MX8330MC clock generators are visible in circuit with X6/X7.
 
 Documented PAL conversion modifies only the X6 domain: the crystal is exchanged for a PAL-nominal 17.7 MHz part, R6 is populated (0 Ω), and R8 (4.7 kΩ) is removed.
 
 ![U64 X6 Swap](/figures/fig42_x6_swap.png)  
 *Alteration of the N64 Emulator board required for use with PAL. MX8330MC visible in inset Figure 5-3-4. Source: Nintendo 64 Online Manuals v5.2, [ultra64.ca](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/kantan/step2/5/5_3.htm)*  
 
-VI timings are therefore strongly inferred identical to retail hardware.   
+In the absence of direct testing, VI timings are strongly inferred identical to retail hardware.   
 
 ---
 
@@ -517,14 +517,14 @@ Crystal designators are transposed relative to retail:
 * Retail X1 → X4
 * Retail X2 → X3[^x3]
 
-On both E90 and E92, a 315/22 MHz crystal (silkscreened `14.3181MHz`) is populated at X4 and drives video timing. MX8330MC is confirmed in circuit with X4 on E90; equivalent component identification on E92 is not established at time of writing. 
+On both E90 and E92, a 315/22 MHz crystal (silkscreened `14.3181MHz`) is populated at X4 and drives video timing. 2x MX8330MC configuration confirmed for X3/X4 clock synthesis on both models (E92 boards populate MX8330MC chips on the board underside).
 
 VI timings are inferred identical to NTSC on both revisions.  
 
 ![Aleck64 E90 X3](/figures/fig43_aleck64_e90_x3.png)  
 *Aleck64 E90 motherboard showing `D140B8` (14.0 MHz) at X3 against `14.3181MHz` silkscreen, and `D143B8` (315/22 MHz nominal) at X4; MX8330 and PQ7VZ5 visible. Source: HSBallina, [newastrocity.wordpress.com](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/)*
 
-[^x3]: X3 frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead populate a `D140B8` crystal (Daishinku, 14.0 MHz, February 1998) at X3, despite the silkscreen reading `14.3181MHz`; X4 on the same boards carries `D143B8` (nominal NTSC video timing crystal). The X3 discrepancy is unresolved at time of writing.
+[^x3]: X3 frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead populate a `D140B8` crystal (Daishinku, 14.0 MHz, February 1998) at X3, despite the silkscreen reading `14.3181MHz`; X4 on the same boards carries `D143B8` (nominal NTSC video timing crystal). The presence of an MX8330MC IC constrains RCLCK to datasheet-listed PLL capabilities, which cannot meet retail N64 RCLK timings exactly. Both the X3 oscillator frequency deviation from retail and the silkscreen discrepancy are unresolved at time of writing.
 
 ---
 
@@ -535,19 +535,17 @@ VI timings are inferred identical to NTSC on both revisions.
 
 The iQue Player is a localized hardware revision for the Chinese market that consolidates the CPU, RCP, and other logic into a single custom NEC ASIC, replacing the discrete multi-chip N64 motherboard. Video output circuitry is integrated into the ASIC; no external discrete encoder IC is present.
 
-Clock generation is handled by an ICS420BG clock synthesizer driven by a 315/22 MHz crystal resonator (one example is marked `TXC 14.3k88F`[^txc]). Hardware measurements confirm a VI pixel clock of approximately 48.68 MHz, consistent with NTSC hardware.
+Clock generation is handled by an ICS420BG clock synthesizer driven by a single 315/22 MHz crystal resonator[^ique-pll] (one example is marked `TXC 14.3k88F`[^txc]). Hardware measurements confirm a VI pixel clock of approximately 48.68 MHz (marshallh), consistent with NTSC VI timing. There is no published datasheet for ICS420BG, but the presence of an NTSC-nominal crystal as well as NTSC-consistent VI clock measurements strongly suggest iQue Player video timings are identical to N64 NTSC.
 
-A PLL path of 57/17 (marshallh) from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock.
+[^ique-pll]: Per marshallh reverse-engineering, a PLL path of 57/17 from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock. The CPU operates at 140.625 MHz (1.5 × the standard N64 frequency). Because many titles rely on the CPU count register for timing, a modified libultra compensates by scaling the observed counter rate. This adjustment does not impact VI timing.
 
-The CPU operates at 140.625 MHz (1.5 × the standard N64 frequency). Because many titles rely on the CPU count register for timing, a modified libultra compensates by scaling the observed counter rate. This adjustment does not impact VI timing.
-
-[^txc]: Manufacturer inferred to be [TXC Corporation](https://www.txccrystal.com/).
+[^txc]: [TXC Corporation](https://www.txccrystal.com/) appears to be the manufacturer based on the marking.
 
 ---
 
 ## 5. Mathematical Derivations  
 
-This section provides step-by-step derivations for all timing values. Calculations begin with hardware constants and proceed through to the final refresh rates. All quantities originate from hardware-authoritative integers; no floating-point values are used in the derivation path. All frequencies are expressed in hertz (Hz) unless otherwise noted.  
+This section provides step-by-step derivations for all timing values. Calculations begin with hardware constants and proceed through to the final refresh rates. Initial quantities originate from targeted broadcast standards and hardware integers; no floating-point values are used in the derivation path. All frequencies are expressed in hertz (Hz) unless otherwise noted.  
 
 ### 5.1 NTSC Derivation
 
