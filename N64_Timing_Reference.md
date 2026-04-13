@@ -228,7 +228,7 @@ Video signal timing follows a deterministic path from crystal oscillation throug
 1. Source: Crystal X1 oscillates at f_xtal; the clock generator (U7)[^mx8350] multiplies this by M to produce f_vi. f_xtal is the hardware primitive for N64 video timing. 
 2. Logic: The RCP (Reality Co-Processor, U9) receives f_vi to drive the internal VI logic.
 3. Counting: The VI counts clock cycles according to `VI_H_TOTAL` (line length) and `VI_V_TOTAL` (vertical extent) to define the signal's timing boundaries.  
-4. Encoding: The VI transmits pixel data to the VDC-NUS over the VDC bus: a 7-bit[^vdc_7bit] data bus (VDC_D0 through VDC_D6), VDC_DSYNC (a.k.a. !DSYNC), and a shared clock. Data is multiplexed across 4 VI clock cycles per pixel: cycle 0 carries sync data with VDC_DSYNC held low; cycles 1 through 3 carry Red, Green, and Blue, respectively. Each 4-cycle group constitutes one rendered pixel, referred to throughout as a "VI pixel."  
+4. Encoding: The VI transmits pixel data to the VDC-NUS over the VDC bus: a 7-bit[^vdc_7bit] data bus (VDC_D0 through VDC_D6), VDC_DSYNC (a.k.a. !DSYNC), and a shared clock. Data is multiplexed across 4 VI clock cycles per pixel: cycle 0 carries sync data with VDC_DSYNC held low; cycles 1 through 3 carry Red, Green, and Blue, respectively. Each 4-cycle group may be conceptualized as one rendered "VI pixel."  
 5. Output: The VDC-NUS (U4) performs digital-to-analog conversion, clocked by U7.FSO/5 (Frequency Synthesizer Output ÷ 5). It generates analog RGB, CSYNC (pin 14), and BFP (pin 13), passing these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC (f_xtal ÷ 4) at its SCIN pin via the R13/R12 resistor divider and C21. The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite[^srgb-a]. Each implementation performs the same DAC/encoding function.  
 
 [^mx8350]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. f_xtal derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case.  
@@ -265,11 +265,11 @@ CL = (C39 × C40) / (C39 + C40) + C_stray
    = 21.5 pF + C_stray  
 ```  
 
-C_stray (the aggregate parasitic capacitance from PCB traces and IC pin capacitance) cannot be determined without direct measurement. Consumer PCB oscillator layouts may be estimated in the range of 2-5 pF, implying an effective CL of approximately 23.5-26.5 pF. Available documentation does not establish whether X1 was specified for this load or whether the circuit operates outside the nominal crystal load rating.  
+C_stray represents the aggregate parasitic capacitance from PCB traces and IC pin capacitance. Consumer PCB oscillator layouts may be estimated in the range of 2-5 pF, implying an effective CL of approximately 23.5-26.5 pF. Available documentation does not establish whether X1 was specified for this load or whether the circuit operates outside the nominal crystal load rating.  
 
 ##### 3.5.1.2 X1 and X2 Stamp Codes by Revision (Abridged) 
 
-The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X2 (250/17 MHz in all regions, or approximately 14.705 MHz) in circuit drives RDRAM and other system clocks, but does not affect video timing. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. See [§7.2.1](#721-personal-resources) for a link to the annotated image collection.
+The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X2 (250/17 MHz in all regions, or approximately 14.7058823529 MHz) in circuit drives RDRAM and other system clocks, but does not affect video timing. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. See [§7.2.1](#721-personal-resources) for a link to the annotated image collection.
 
 | Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
 | :--- | :--- | :--- | :--- | :--- | :--- |  
@@ -482,26 +482,26 @@ PAL-M nominally defines fS = 227.25 × fH, but this relationship does not resolv
 
 ## 4.3 Hardware Variants
 
-The following platforms share N64 video timing architecture and confirm the derivations in [§5](#5-mathematical-derivations) without modification. Each implementation maps the retail crystal domain to different reference designators; no new timing values result.
+The following platforms share N64 video timing architecture (see [§5](#5-mathematical-derivations)). Direct measurement is not available at time of writing; however, examination of board photography indicates VI timing equivalent with retail NTSC hardware.   
 
-### 4.3.1 Ultra 64 Development Board (SGI Indy N64 Emulator)
+### 4.3.1 Ultra 64 Development Board (1995)
 
-![Ultra 64 Dev Board](/figures/fig45_ultra64_rev2.jpg)  
-*`Ultra 64 Developmnet Board Rev 2.0` (sic) PCB. Source: Jax184, [assemblergames.com](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165)*
+![Ultra 64 Dev Board](/figures/fig48_ultra64_rev2_crop.png)  
+*Ultra 64 Development Board Rev 2.0 PCB. Source: Jax184, [assemblergames.com](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165)*
 
-Both known revisions of the Ultra 64 development board (designed for use in conjunction with SGI Indy workstation hardware) match retail clock domain structure with altered designators:
+Both observed revisions of the Ultra 64 development board (designed for use in conjunction with SGI Indy workstation hardware) match retail clock domain structure with altered designators:
 
 * Retail X1 → X6
 * Retail X2 → X7
 
-Observed boards populate X6 with a 315/22 MHz crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz crystal (≈ 14.7058823529 MHz), consistent with retail relationships.
+X6 is populated with a 315/22 MHz crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz crystal (≈ 14.70588 MHz), consistent with retail relationships.
 
 Documented PAL conversion modifies only the X6 domain: the crystal is exchanged for a PAL-nominal 17.7 MHz part, R6 is populated (0 Ω), and R8 (4.7 kΩ) is removed.
 
 ![U64 X6 Swap](/figures/fig42_x6_swap.png)  
-*Ultra 64 emulator board PAL conversion procedure (Figure 5-3-4). Source: Nintendo 64 Online Manuals v5.2, [ultra64.ca](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/kantan/step2/5/5_3.htm)*  
+*Alteration of the N64 Emulator board required for use with PAL. MX8330MC visible in inset Figure 5-3-4. Source: Nintendo 64 Online Manuals v5.2, [ultra64.ca](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/kantan/step2/5/5_3.htm)*  
 
-That only the X6 domain requires modification confirms X6 as the primary VI timing reference (retail X1 equivalent). X7 is unchanged and retains the RDRAM and master clock generation roles (retail X2). Clock domain separation is otherwise identical to retail hardware.
+VI timings are therefore strongly inferred identical to retail hardware.   
 
 ---
 
@@ -510,21 +510,21 @@ That only the X6 domain requires modification confirms X6 as the primary VI timi
 ![Aleck64 E92](/figures/fig44_aleck64_e92.jpg)  
 *Aleck64 `E92 Mother PCB`. Source: brizzo, [arcade-projects.com](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/)*
 
-Developed by SETA Corporation in collaboration with Nintendo, Aleck64 hardware (models E90 and E92) is an arcade-oriented implementation that retains Nintendo 64 architectural parity with additional I/O and audio subsystems.
+Developed by SETA Corporation in collaboration with Nintendo, Aleck64 hardware (models E90 and E92) is an arcade-oriented implementation that retains Nintendo 64 architecture with additional I/O and audio subsystems. E90 is a single-game board (*Magical Tetris Challenge featuring Mickey*), while E92 implements a cartridge interface to facilitate cabinet conversion.
 
 Crystal designators are transposed relative to retail:
 
 * Retail X1 → X4
-* Retail X2 → X3
+* Retail X2 → X3[^x3]
 
-On E90 and E92, a 315/22 MHz crystal (silkscreened `14.3181MHz`) is populated at X4 and drives video timing. MX8330MC is confirmed in circuit with X4 on E90; the equivalent component on E92 has not been positively identified from available board photography, though the crystal frequency implies an equivalent multiplier configuration. Output characteristics and VI timings match NTSC on both revisions.
+On both E90 and E92, a 315/22 MHz crystal (silkscreened `14.3181MHz`) is populated at X4 and drives video timing. MX8330MC is confirmed in circuit with X4 on E90; equivalent component identification on E92 is not established at time of writing. 
 
-X3[^x3] frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead populate a `D140B8` crystal (Daishinku, 14.0 MHz, February 1998) at X3, despite the silkscreen reading `14.3181MHz`; X4 on the same boards carries `D143B8`, confirming the video timing crystal is at nominal. The X3 discrepancy is yet unresolved.
+VI timings are inferred identical to NTSC on both revisions.  
 
 ![Aleck64 E90 X3](/figures/fig43_aleck64_e90_x3.png)  
 *Aleck64 E90 motherboard showing `D140B8` (14.0 MHz) at X3 against `14.3181MHz` silkscreen, and `D143B8` (315/22 MHz nominal) at X4; MX8330 and PQ7VZ5 visible. Source: HSBallina, [newastrocity.wordpress.com](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/)*
 
-[^x3]: Analogously to retail hardware, video timing derives from X4; X3 does not participate.
+[^x3]: X3 frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead populate a `D140B8` crystal (Daishinku, 14.0 MHz, February 1998) at X3, despite the silkscreen reading `14.3181MHz`; X4 on the same boards carries `D143B8` (nominal NTSC video timing crystal). The X3 discrepancy is unresolved at time of writing.
 
 ---
 
@@ -1031,7 +1031,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | eb1560 N64 Clock Diagram (NTSC) | `fig40_n64-clock-diagram-eb1560_ag.png` | *Comprehensive NTSC N64 clock diagram, derived frequencies (Source: eb1560, oscilloscope measurements and crystal swap experimentation, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=25918)).* |  
 | CCIR Rep. 624-4 Table II (item 2.11) | `fig41_ccir-1990-rep.624-4.png` | *Chrominance subcarrier frequency (item 2.11a nominal values and tolerances; item 2.11b subcarrier-to-line-frequency relationships) for M/NTSC, M/PAL, B/D/G/H/N/PAL, I/PAL, and SECAM colour television systems (Source: CCIR Rep. 624-4, XVIth Plenary Assembly, Düsseldorf, 1990, Table II).* |  
 | N64 Emulator Board PAL Crystal Alteration | `fig42_x6_swap.png` | *PAL conversion procedure for the N64 Emulator Board (Figure 5-3-4): X6 crystal exchange (14.3 MHz to 17.7 MHz), R8 removal (4.7 kΩ), and R6 population (0 Ω) (Source: Nintendo 64 Online Manuals v5.2, [ultra64.ca](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/kantan/step2/5/5_3.htm)).* |  
-| Ultra 64 Development Board (Rev 2.0) | `fig45_ultra64_rev2.jpg` | *Ultra 64 Development Board Rev 2.0 (Silicon Graphics, Inc., © 1995) showing X6 and X7 crystal positions and IS-130 label. Source: Jax184, [jax184.com](https://web.archive.org/web/20160525232126/http://www.jax184.com/projects/ultra64/) / [AssemblerGames](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165).* |  
+| Ultra 64 Development Board (Rev 2.0) | `fig48_ultra64_rev2_crop.png` | *Ultra 64 Development Board Rev 2.0 (Silicon Graphics, Inc., © 1995) showing X6 and X7 crystal positions and IS-130 label. Source: Jax184, [jax184.com](https://web.archive.org/web/20160525232126/http://www.jax184.com/projects/ultra64/) / [AssemblerGames](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165).* |  
 | Aleck64 E92 Motherboard | `fig44_aleck64_e92.jpg` | *Aleck64 E92 motherboard (Source: brizzo, [arcade-projects.com](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/)).* |
 | Aleck64 E90 Crystal Discrepancy | `fig43_aleck64_e90_x3.png` | *Aleck64 E90 board detail showing X3 crystal marked `D140B8` (Daishinku, 14.0 MHz, Feb 1998) silkscreened `14.3181MHz`; Macronix MX8330MC at U9; Sharp PQ7VZ5 voltage regulator visible (Source: HSBallina, [Magical Tetris Challenge (マジカルテトリスチャレンジ featuring ミッキー) -- New Astro City, 2015](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/)).* |  
 | iQue Player PCB (Rev 1.03) | `fig47_ique_pcb_crop_marshallh.jpg` | *iQue Player motherboard (Rev 1.03) showing NEC custom ASIC (`D800044F2511`, date code `0336KK002`, week 36, 2003) and OSC1 crystal position. Source: marshallh, [retroactive.be](https://retroactive.be/personal/ique).* |
