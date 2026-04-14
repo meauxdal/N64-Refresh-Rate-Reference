@@ -524,7 +524,7 @@ VI timings are inferred identical to NTSC on both revisions.
 ![Aleck64 E90 X3](/figures/fig43_aleck64_e90_x3.png)  
 *Aleck64 E90 motherboard showing `D140B8` (14.0 MHz) at X3 against `14.3181MHz` silkscreen, and `D143B8` (315/22 MHz nominal) at X4; MX8330 and PQ7VZ5 visible. Source: HSBallina, [newastrocity.wordpress.com](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/)*
 
-[^x3]: X3 frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead populate a `D140B8` crystal (Daishinku, 14.0 MHz, February 1998) at X3, despite the silkscreen reading `14.3181MHz`; X4 on the same boards carries `D143B8` (nominal NTSC video timing crystal). The presence of an MX8330MC IC constrains RCLCK to datasheet-listed PLL capabilities, which cannot meet retail N64 RCLK timings exactly. Both the X3 oscillator frequency deviation from retail and the silkscreen discrepancy are unresolved at time of writing.
+[^x3]: X3 frequency varies by revision. E92 boards match retail hardware at 250/17 MHz (silkscreened `14.705882MHz`). E90 boards instead populate a `D140B8` crystal (Daishinku, 14.0 MHz, February 1998) at X3, despite the silkscreen reading `14.3181MHz`; X4 on the same boards carries `D143B8` (nominal NTSC video timing crystal). The presence of an MX8330MC IC constrains RCLK to datasheet-listed PLL capabilities, which cannot meet retail N64 RCLK timings exactly. Both the X3 oscillator frequency deviation from retail and the silkscreen discrepancy are unresolved at time of writing.
 
 ---
 
@@ -990,14 +990,14 @@ For general conversions.
 
 For mathematically precise conversions. Fractions are fully reduced and traceable to the canonical values in [§2](#2-n64-video-output-summary).  
 
-| From \ To | NTSC-P          | NTSC-I          | PAL-P               | PAL-I               | PAL-M-P               | PAL-M-I           |
-| :---      | :---            | :---            | :---                | :---                | :---                  | :---              |
-| NTSC-P    | 1/1             | 526/525         | 37609/45072         | 37609/45000         | 4064139/4063394       | 159378/158995     |
-| NTSC-I    | 525/526         | 1/1             | 25025/30048         | 1001/1200           | 8112825/8126788       | 31815/31799       |
-| PAL-P     | 45072/37609     | 30048/25025     | 1/1                 | 626/625             | 348248808/290532671   | 27313632/22736285 |
-| PAL-I     | 45000/37609     | 1200/1001       | 625/626             | 1/1                 | 347692500/290532671   | 5454000/4547257   |
-| PAL-M-P   | 4063394/4064139 | 8126788/8112825 | 290532671/348248808 | 290532671/347692500 | 1/1                   | 8126788/8108745   |
-| PAL-M-I   | 158995/159378   | 31799/31815     | 22736285/27313632   | 4547257/5454000     | 8108745/8126788       | 1/1               |
+| From \ To | NTSC-P          | NTSC-I          | PAL-P               | PAL-I               | PAL-M-P               | PAL-M-I           |  
+| :---      | :---            | :---            | :---                | :---                | :---                  | :---              |  
+| NTSC-P    | 1/1             | 525/526         | 45072/37609         | 45000/37609         | 4063394/4064139       | 158995/159378     |  
+| NTSC-I    | 526/525         | 1/1             | 30048/25025         | 1200/1001           | 8126788/8112825       | 31799/31815       |  
+| PAL-P     | 37609/45072     | 25025/30048     | 1/1                 | 625/626             | 290532671/348248808   | 22736285/27313632 |  
+| PAL-I     | 37609/45000     | 1001/1200       | 626/625             | 1/1                 | 290532671/347692500   | 4547257/5454000   |  
+| PAL-M-P   | 4064139/4063394 | 8112825/8126788 | 348248808/290532671 | 347692500/290532671 | 1/1                   | 8108745/8126788   |  
+| PAL-M-I   | 159378/158995   | 31815/31799     | 27313632/22736285   | 5454000/4547257     | 8126788/8108745       | 1/1               |  
 
 ---
 
@@ -1029,10 +1029,10 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | eb1560 N64 Clock Diagram (NTSC) | `fig40_n64-clock-diagram-eb1560_ag.png` | *Comprehensive NTSC N64 clock diagram, derived frequencies (Source: eb1560, oscilloscope measurements and crystal swap experimentation, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=25918)).* |  
 | CCIR Rep. 624-4 Table II (item 2.11) | `fig41_ccir-1990-rep.624-4.png` | *Chrominance subcarrier frequency (item 2.11a nominal values and tolerances; item 2.11b subcarrier-to-line-frequency relationships) for M/NTSC, M/PAL, B/D/G/H/N/PAL, I/PAL, and SECAM colour television systems (Source: CCIR Rep. 624-4, XVIth Plenary Assembly, Düsseldorf, 1990, Table II).* |  
 | N64 Emulator Board PAL Crystal Alteration | `fig42_x6_swap.png` | *PAL conversion procedure for the N64 Emulator Board (Figure 5-3-4): X6 crystal exchange (14.3 MHz to 17.7 MHz), R8 removal (4.7 kΩ), and R6 population (0 Ω) (Source: Nintendo 64 Online Manuals v5.2, [ultra64.ca](https://ultra64.ca/files/documentation/online-manuals/man-v5-2/allman52/kantan/step2/5/5_3.htm)).* |  
-| Ultra 64 Development Board (Rev 2.0) | `fig48_ultra64_rev2_crop.png` | *Ultra 64 Development Board Rev 2.0 (Silicon Graphics, Inc., © 1995) showing X6 and X7 crystal positions and IS-130 label. Source: Jax184, [jax184.com](https://web.archive.org/web/20160525232126/http://www.jax184.com/projects/ultra64/) / [AssemblerGames](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165).* |  
+| Ultra 64 Development Board (Rev 2.0) | `fig48_ultra64_rev2_crop.png` | *Ultra 64 Development Board Rev 2.0 (Silicon Graphics, Inc., © 1995) showing X6 and X7 crystal positions. Source: Jax184, [jax184.com](https://web.archive.org/web/20160525232126/http://www.jax184.com/projects/ultra64/) / [AssemblerGames](https://web.archive.org/web/20160408132756/http://assemblergames.com/l/threads/my-complete-sgi-ultra64-dev-set-manual-scans-dev-software.45165).* |  
 | Aleck64 E92 Motherboard | `fig44_aleck64_e92.jpg` | *Aleck64 E92 motherboard (Source: brizzo, [arcade-projects.com](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/)).* |
 | Aleck64 E90 Crystal Discrepancy | `fig43_aleck64_e90_x3.png` | *Aleck64 E90 board detail showing X3 crystal marked `D140B8` (Daishinku, 14.0 MHz, Feb 1998) silkscreened `14.3181MHz`; Macronix MX8330MC at U9; Sharp PQ7VZ5 voltage regulator visible (Source: HSBallina, [Magical Tetris Challenge (マジカルテトリスチャレンジ featuring ミッキー) -- New Astro City, 2015](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/)).* |  
-| iQue Player PCB (Rev 1.03) | `fig47_ique_pcb_crop_marshallh.jpg` | *iQue Player motherboard (Rev 1.03) showing NEC custom ASIC (`D800044F2511`, date code `0336KK002`, week 36, 2003) and OSC1 crystal position. Source: marshallh, [retroactive.be](https://retroactive.be/personal/ique).* |
+| iQue Player PCB (Rev 1.03) | `fig47_ique_pcb_crop_marshallh.png` | *iQue Player motherboard (Rev 1.03) showing NEC custom ASIC (`D800044F2511`, date code `0336KK002`, week 36, 2003) and OSC1 crystal position. Source: marshallh, [retroactive.be](https://retroactive.be/personal/ique).* |
 | S-RGB A SNES | `fig33_S-RGB_A-SNS.png` | *ROHM BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))* |
 | `Ⓜ` and `D` Markings | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Instalação do RGB Converter v2 no Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | `Ⓜ` Marking | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal resonators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
@@ -1145,7 +1145,7 @@ The decode convention is consistent across all three regional crystal frequencie
 
 [^mpal_mark]: The circular-M (`Ⓜ`) observed on some PAL-M boards appears to be an `M`PAL-specific mark applied to distinguish these X1 units from NTSC X1 crystals, as they otherwise appear identical (e.g. `D143K7` could be either NTSC or PAL-M, whereas the presence of `Ⓜ` disambiguates). This symbol may also be observed on some PAL-M SNES motherboard crystals.  
 
-[^x1_prefix]: Near-universal presence. `D` prefix missing in a single observed CPU-NUS-(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place of* `D`.  
+[^x1_prefix]: Near-universal presence. `D` prefix missing in a single observed CPU-NUS(M)-05-1 example across entire board corpus. On said PAL-M X1, `Ⓜ` is seemingly marked *in place of* `D`.  
 
 ![`Ⓜ` marking](/figures/fig23_X1_(M)143G0_stamp_code.png)  
 *`Ⓜ` marking visible on some PAL-M X1 crystal resonators. Source: Mielke - MiSTer FPGA Discord ([imgur.com](https://imgur.com/a/mielke-board-photos-SjqcjYj))*  
