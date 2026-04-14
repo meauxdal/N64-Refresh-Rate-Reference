@@ -1406,7 +1406,7 @@ A quick reference for terminology used in this document.
 
 * **Interlaced (I):** A scan method in which lines are interleaved across two successive vertical scans in alternating stripes of even-odd (262.5 lines per vertical scan in NTSC and PAL-M interlaced modes). The VI offsets vertical sync by one half-line on every other scan, each constituting a field in broadcast terminology. fV represents the rate of each individual vertical scan. *See also: Progressive, Half-line, fV.*
 
-* **iQue Player** - A Nintendo 64–derived system integrating the CPU, RCP, and other previously-discrete components into a single ASIC. Released in 2003 and sold exclusively in China. Uses a single NTSC-derived crystal (315/22 MHz). The Video Interface (VI) timing model is preserved exactly, retaining the NTSC pixel clock (5355/110 MHz, 17/5 × f_xtal). Additional clocks are generated via separate PLL ratios (e.g., 57/17 ≈ 48.008 MHz) and further scaling for higher-frequency domains (e.g., DDR); Rambus RDRAM is replaced by DDR SDRAM.
+* **iQue Player** - A Nintendo 64–derived system integrating the CPU, RCP, and other previously-discrete components into a single ASIC. Released in 2003 and sold exclusively in China. Strongly inferred to match retail NTSC video timing based on primary crystal frequency.
 
 * **L (VI Clocks per Line):** Symbol for the number of VI clock cycles that constitute one full horizontal scanline, as defined by the `VI_H_TOTAL` register. The effective value is `VI_H_TOTAL` + 1 (terminal-count convention). Values are 3,094 (NTSC), 3,178 (PAL), and 3,090 (PAL-M progressive) / 3,089 (PAL-M interlaced). *See also: Terminal Count, VI.*
 
@@ -1441,7 +1441,7 @@ A quick reference for terminology used in this document.
 
 * **Terminal Count:** A register convention used by the N64's Video Interface in which the stored value is one less than the effective hardware count. To derive the actual number of clocks or half-lines, add 1 to the register value: effective half-lines = `VI_V_TOTAL` + 1; effective clocks per line = `VI_H_TOTAL` + 1. Timing derivations in this document apply this correction before calculation.  
 
-* **Ultra 64 Development Board:** A proprietary GPIO PCB (for integration in an SGI Indy workstation) representing Nintendo's official N64 development hardware. Video and system timings are strongly inferred identical to retail (NTSC by default, capable of PAL function by modification). Two revisions are known to exist; the first revision was designed for use with prototype controllers that attach directly to the board via RJ-11 connectors, while the second revision provides an Additional Joybus Board (NUS-AJB). This breakout PCB utilizes four RJ-11 connectors to interface with the dev board, while providing standard N64 controller ports to accomodate retail peripherals.
+* **Ultra 64 Development Board:** A proprietary GPIO PCB (for integration in an SGI Indy workstation) representing Nintendo's official N64 development hardware. Video and system timings are strongly inferred identical to retail (NTSC by default, capable of PAL function by modification). Two revisions are known to exist.
 
 * **Vertical Scan Frequency (fV):** The rate of vertical scans per second, measured from one VSYNC pulse to the next, expressed in Hz. Also referred to as refresh rate. In progressive modes, fV refers to frame rate; in interlaced modes fV is the rate of each individual field. *See also: VSYNC, Horizontal Scan Frequency.*
 
