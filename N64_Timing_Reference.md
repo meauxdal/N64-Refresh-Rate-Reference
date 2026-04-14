@@ -1094,6 +1094,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Mielke - NUS-CPU(M)-05-1 Images](https://imgur.com/a/SjqcjYj) - Photos of late PAL-M model, shared by Mielke (MiSTer FPGA Discord).
 * [grav - NUS-CPU(M)-01 Images](https://imgur.com/a/fD0AuBj) - Photos of early PAL-M model, shared by grav (Discord64 Discord).
 * [Aringon - NUS-CPU-09-1 Images](https://imgur.com/a/yfoPbqS) - Photos of late NTSC model, shared by Aringon (Video Game Preservation Collective Discord).  
+* [Behind The Code with Gerry - Ultra 64 Dev Kit](https://www.behindthecode.ca/ultra64-dev-kit/) - Details regarding both known revisions of the Ultra 64 Development Board.
 * [marshallh - iQue Player Notes](https://retroactive.be/personal/ique) - iQue Player reverse-engineering; identification of single-oscillator layout, 57/17 PLL ratio, VI pixel clock measurement, and libultra CPU timing compensation details.  
 * [大狗 via iQue Historia - Record Issue 17: iQue China](https://iquehistoria.neocities.org/articletl/RecordiQueChina/article) - Additional iQue Player details and historical context.
 * [eb1560 - AssemblerGames - N64 Clock Relationship Diagram](https://assemblergames.org/viewtopic.php?t=25918) - Complete retail N64 clock relationship diagram; establishes X1/X2 domain relationships and derived frequencies.
@@ -1268,20 +1269,20 @@ NTSC   | NTSC_HPF2    | 640   | 480    | Interlaced  | Point    | 32-bit | 525  
 
 Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
 :----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
-PAL    | PAL_LAN1     | 320   | 288    | Progressive | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_LAN2     | 320   | 288    | Progressive | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_LPN1     | 320   | 288    | Progressive | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_LPN2     | 320   | 288    | Progressive | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_LAF1     | 320   | 288    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_LAF2     | 320   | 288    | Interlaced  | AA       | 32-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_LPF1     | 320   | 288    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_LPF2     | 320   | 288    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_HAN1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_HAF1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_HPN1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_HPN2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_HPF1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3182, 3183
-PAL    | PAL_HPF2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3182, 3183
+PAL    | PAL_LAN1     | 320   | 288    | Progressive | AA       | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_LAN2     | 320   | 288    | Progressive | AA       | 32-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_LPN1     | 320   | 288    | Progressive | Point    | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_LPN2     | 320   | 288    | Progressive | Point    | 32-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_LAF1     | 320   | 288    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_LAF2     | 320   | 288    | Interlaced  | AA       | 32-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_LPF1     | 320   | 288    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_LPF2     | 320   | 288    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_HAN1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_HAF1     | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_HPN1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_HPN2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_HPF1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 21           | 3183, 3184
+PAL    | PAL_HPF2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 21           | 3183, 3184
 
 
 ### B.2.4 MPAL (SGI, 1996)
@@ -1439,6 +1440,8 @@ A quick reference for terminology used in this document.
 * **S-Video:** Two-channel analog video interface that carries luminance (Y) and chrominance (C) as separate signals, mitigating chroma/luma quality loss via composite's single-channel muxing. *On N64 hardware, S-Video output is generated natively by the ENC-NUS, DENC-NUS, AVDC-NUS, and MAV-NUS encoder variants. S-RGB A encoder variants do not output S-Video.*  
 
 * **Terminal Count:** A register convention used by the N64's Video Interface in which the stored value is one less than the effective hardware count. To derive the actual number of clocks or half-lines, add 1 to the register value: effective half-lines = `VI_V_TOTAL` + 1; effective clocks per line = `VI_H_TOTAL` + 1. Timing derivations in this document apply this correction before calculation.  
+
+* **Ultra 64 Development Board:** A proprietary GPIO PCB (for integration in an SGI Indy workstation) representing Nintendo's official N64 development hardware. Video and system timings are strongly inferred identical to retail (NTSC by default, capable of PAL function by modification). Two revisions are known to exist; the first revision was designed for use with prototype controllers that attach directly to the board via RJ-11 connectors, while the second revision provides an Additional Joybus Board (NUS-AJB). This breakout PCB utilizes four RJ-11 connectors to interface with the dev board, while providing standard N64 controller ports to accomodate retail peripherals.
 
 * **Vertical Scan Frequency (fV):** The rate of vertical scans per second, measured from one VSYNC pulse to the next, expressed in Hz. Also referred to as refresh rate. In progressive modes, fV refers to frame rate; in interlaced modes fV is the rate of each individual field. *See also: VSYNC, Horizontal Scan Frequency.*
 
