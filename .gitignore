@@ -1,6 +1,2 @@
-.github/
-.ignore/
-.vs/
-tools/__pycache__
 dir*.txt
-
+*ignore*

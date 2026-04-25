@@ -173,7 +173,7 @@ Hardware constants derived from f_xtal and the Video Interface (VI) registers. L
 #### 3.1.1 Clock Generator Hardware Revisions  
 
 ![Clock Generation Circuits](/figures/fig1_clock_gen_schematic.png)  
-*N64 Clock Generation Circuits - U7 & U15 (Macronix MX8330MC). Source: RWeick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
+*N64 Clock Generation Circuits - U7 & U15 (Macronix MX8330MC). Source: Richard Weick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce f_vi. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. Later revisions substitute the pin-compatible MX9911MC at one or both synthesizer positions before consolidating both clocks into a single MX8350 dual-channel chip at U17 from NUS-CPU-08 onward. These substitutions do not affect derived timing values. See [§3.5.1.1](#3511-x1-identification) for visual identification.
  
@@ -187,10 +187,10 @@ Early revisions use a single-channel clock synthesizer at U7, driven by crystal 
 The RCP (Reality Co-Processor) processes video timings through the following memory-mapped I/O (MMIO) registers:  
 
 ![RCP-NUS in circuit](/figures/fig2_rcp_schematic.png)  
-*RCP-NUS (U9) in circuit. Source: RWeick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
+*RCP-NUS (U9) in circuit. Source: Richard Weick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 ![VDC schematic detail](/figures/fig9_rcp_vdc_schematic.png)  
-*VDC pin assignments - 7-bit digital output. Source: RWeick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
+*VDC pin assignments - 7-bit digital output. Source: Richard Weick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 The VDC bus carries:  
 * VDC_D0 through VDC_D6: 7-bit digital video data  
@@ -223,7 +223,7 @@ Timing values in this section are calculated from the fundamental constants in [
 
 ### 3.4 Hardware Signal Path
 
-Video signal timing follows a deterministic path from crystal oscillation through digital counting to analog output. The following applies to NUS-CPU-01 through NUS-CPU-04, as documented in RWeick's NUS-CPU-03 schematics.
+Video signal timing follows a deterministic path from crystal oscillation through digital counting to analog output. The following applies to NUS-CPU-01 through NUS-CPU-04, as documented in Richard Weick's NUS-CPU-03 schematics.
 
 1. Source: Crystal X1 oscillates at f_xtal; the clock generator (U7)[^mx8350] multiplies this by M to produce f_vi. f_xtal is the hardware primitive for N64 video timing. 
 2. Logic: The RCP (Reality Co-Processor, U9) receives f_vi to drive the internal VI logic.
@@ -460,7 +460,7 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 #### 4.2.1 Subcarrier Frequency Relationships  
 
 ![Relationship between chrominance subcarrier and line frequency](/figures/fig41_ccir-1990-rep.624-4.png)  
-*Chrominance subcarrier nominal values and line frequency relationships. Source: [CCIR - XVIIth Plenary Assembly (Düsseldorf, 1990), Volume XI - Part 1: Recommendations: Broadcasting Service (Television)](/references/4.283.43.en.1030.pdf)*
+*Chrominance subcarrier nominal values and line frequency relationships. Source: [CCIR - XVIIth Plenary Assembly (Düsseldorf, 1990), Volume XI - Part 1: Recommendations: Broadcasting Service (Television)](https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/4.283.43.en.1030.pdf)*
 
 All N64 video modes adhere to broadcast standard relationships between subcarrier frequency (fS) and horizontal scan frequency (fH):  
 
@@ -1007,13 +1007,13 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | :--- | :--- | :--- |  
 | NUS-CPU-01 Motherboard | `fig35_NUS-CPU-01_Prominos.jpg` | *Nintendo 64 motherboard (NUS-CPU-01 revision) showing the Reality Coprocessor and system layout (Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET)).* |
 | US6331856 | `fig34_US6331856-pp46-47.png` | *Nintendo 64 Video Interface (VI) register layout showing control, sync timing, video window, burst, and scaling registers (Source: [U.S. Patent 6,331,856](https://patents.google.com/patent/US6331856B1/en), sheets 46-47).* |
-| Clock Generation Circuits | `fig1_clock_gen_schematic.png` | *N64 Clock Generation Circuits - U7 (NTSC/PAL-M) and U15 (PAL) (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
+| Clock Generation Circuits | `fig1_clock_gen_schematic.png` | *N64 Clock Generation Circuits - U7 (NTSC/PAL-M) and U15 (PAL) (Source: Richard Weick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
 | MX8350 Table | `fig6_mx8350_table.png` | *MX8350 output frequencies for NTSC/PAL/MPAL configurations (Source: [MX8350 datasheet](/references/Macronix-MX8350-ocr.pdf))* |  
-| RCP-NUS in Circuit | `fig2_rcp_schematic.png` | *RCP-NUS Pinout showing VDC (Video Digital Complex) Timing Outputs (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
-| VDC Schematic Detail | `fig9_rcp_vdc_schematic.png` | *Video Digital Complex (VDC) pin assignments showing 7-bit digital video output (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
+| RCP-NUS in Circuit | `fig2_rcp_schematic.png` | *RCP-NUS Pinout showing VDC (Video Digital Complex) Timing Outputs (Source: Richard Weick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
+| VDC Schematic Detail | `fig9_rcp_vdc_schematic.png` | *Video Digital Complex (VDC) pin assignments showing 7-bit digital video output (Source: Richard Weick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
 | N64 Video System | `fig13_n64videosys.png` | *N64 Video System - 4-cycle VDC bus protocol, VDC_DSYNC waveform, and byte contents (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
-| VDC-NUS in Circuit | `fig18_VDC-NUS.png` | *VDC-NUS (BU9801F, U4) in circuit - digital input side and analog output stage (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
-| ENC-NUS in Circuit | `fig17_ENC-NUS.png` | *ENC-NUS (U5) in circuit - YOUT (luma/S-Video Y) and VOUT (composite video) outputs; SCIN subcarrier input via R13/R12 divider (Source: RWeick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
+| VDC-NUS in Circuit | `fig18_VDC-NUS.png` | *VDC-NUS (BU9801F, U4) in circuit - digital input side and analog output stage (Source: Richard Weick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
+| ENC-NUS in Circuit | `fig17_ENC-NUS.png` | *ENC-NUS (U5) in circuit - YOUT (luma/S-Video Y) and VOUT (composite video) outputs; SCIN subcarrier input via R13/R12 divider (Source: Richard Weick, NUS-CPU-03-Nintendo-64-Motherboard, [github.com](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard))* |  
 | NUS-CPU-03 Video Output Circuit | `fig28_n64-nus-03_video_output_circuit_worthington.png` | *NUS-CPU-03 video output circuit: VDC-NUS (U4, BU9801F) to ENC-NUS (U5); R13/R12 divider; RGB output resistors; LUMINANCE/COMPOSITE/CHROMINANCE outputs (Source: Tim Worthington, GameSX Wiki, N64 RGB NTSC, [gamesx.com](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc))* |
 | VDC-NUS Pinout | `fig14_vdc-nus.png` | *VDC-NUS (BU9801F) pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
 | DENC-NUS Pinout | `fig15_denc-nus.png` | *DENC-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
@@ -1053,18 +1053,17 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer; functional equivalent to MX8330MC.    
 * [Rohm BA7242F Datasheet](/references/Rohm-BA7242F-(ENC-NUS)-datasheet-ocr.pdf) - ENC-NUS (U5) video encoder IC; YOUT (pin 13) luminance, VOUT (pin 12) composite video, COUT (pin 10) chrominance outputs; SCIN input level 0.45-0.60 Vpp corroborating the R13/R12 attenuation network; NT/PAL pin logic (HIGH = NTSC, LOW = PAL).  
 * [NUS-CPU-07 Annotated Circuit Board (ChipWorks, Rev 1.0, Nov 2000)](/references/NUS-CPU-07-Annotated-PCB-ChipWorks-ocr.pdf) - Professional teardown; board-level IC identification, manufacturer attribution, and component revision corroboration.  
-* [CCIR Rep. 624-4 (XVIth Plenary Assembly, Düsseldorf, 1990)](/references/4.283.43.en.1030.pdf)- Final CCIR publication of M/PAL chrominance subcarrier data; item 2.11a carries 3,575,611.49 Hz, consistent with the 909/4 × fH relationship.  
-* [ITU-R Recommendation BT.470-6 (1998)](/references/R-REC-BT.470-6-199811-S!!PDF-E.pdf) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; item 2.11a value 3,579,611.49 Hz is a digit transposition introduced in BT.470-3 (1993) and propagated unchanged.*  
-* [ITU-R Recommendation BT.1700 Annex 1 (2005)](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_1700-e.pdf) - Composite video signal characteristics for NTSC, PAL, and SECAM; signal levels, sync timing, chrominance subcarrier frequencies and modulation.  
-* [ITU-R Recommendation BT.1700 Annex 2 (2005)](/references/R-REC-BT.1700-0-200502-I!!ZPF-E_S170m-2004.pdf) - SMPTE 170M-2004 (incorporated by reference); NTSC composite analog video for studio applications; subcarrier frequency, line/field frequency specifications, horizontal/vertical blanking and sync timing.  
-* [ITU-R Recommendation BT.1701 (2005)](/references/R-REC-BT.1701-1-200508-I!!PDF-E.pdf) - Horizontal/vertical timing for composite video.  
+* [CCIR Rep. 624-4 (XVIth Plenary Assembly, Düsseldorf, 1990)](https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/4.283.43.en.1030.pdf)- Final CCIR publication of M/PAL chrominance subcarrier data; item 2.11a carries 3,575,611.49 Hz, consistent with the 909/4 × fH relationship.  
+* [ITU-R Recommendation BT.470-6 (1998)](https://www.itu.int/rec/R-REC-BT.470-6-199811-S/en) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; item 2.11a value 3,579,611.49 Hz is a digit transposition introduced in BT.470-3 (1993) and propagated unchanged.*  
+* [ITU-R Recommendation BT.1700 (2005)](https://www.itu.int/rec/R-REC-BT.1700-0-200502-I/en) - Composite video signal characteristics for NTSC, PAL, and SECAM; signal levels, sync timing, chrominance subcarrier frequencies and modulation.  
+* [ITU-R Recommendation BT.1701 (2005)](https://www.itu.int/rec/R-REC-BT.1701-1-200508-I/en) - Horizontal/vertical timing for composite video.  
 * [US4054919A - Video Image Positioning Control (1977)](https://patents.google.com/patent/US4054919A/en) - Sync counter generation and display positioning.  
 * [US6239810B1 - High Performance Low Cost Video Game System (2001)](https://patents.google.com/patent/US6239810B1/en) - VI register set; HSYNC LEAP register; VSYNC/HSYNC timing registers; interlaced odd/even line handling; crystal-controlled clock generator.  
 * [US6331856B1 - Video Game System with Coprocessor (2001)](https://patents.google.com/patent/US6331856B1/en) - VI register architecture; HSYNC LEAP register with LEAP_A/LEAP_B fields; interlaced display field toggling; clock generator crystal timing chain.  
 * [US6556197B1 - Programmable Video Timing Registers (2003)](https://patents.google.com/patent/US6556197B1/en) - Horizontal/vertical sync generation; color burst gate timing.  
 * [F. R. Lack, G. W. Willard, I. E. Fair - Some Improvements in Quartz Crystal Circuit Elements (1934)](https://ieeexplore.ieee.org/document/6772950) - Original AT cut paper; Bell System Technical Journal; establishes zero temperature coefficient orientation and names the AT cut.  
 * [Ian Poole - Electronics Notes - Quartz Crystal Cuts: AT, BT, SC, CT](https://www.electronics-notes.com/articles/electronic_components/quartz-crystal-xtal/crystal-resonator-cuts-at-bt-sc-ct.php) - AT cut crystal properties; temperature coefficient; frequency range; thickness shear mode of vibration.  
-* [RWeick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete NUS-CPU-03 KiCAD schematic; component values; signal paths.  
+* [Richard Weick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete NUS-CPU-03 KiCAD schematic; component values; signal paths.  
 * [Tim Worthington - GamesX Wiki - N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc) - NUS-CPU-03 video output circuit schematic by Tim Worthington; corroborates YOUT/VOUT/COUT routing to Multi-AV connector.  
 * [Tim Worthington - N64RGB Page](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html) - 4-cycle VDC bus protocol diagram and DAC pinouts.  
 * [Rodrigo Copetti - Nintendo 64 Architecture - A Practical Analysis](https://www.copetti.org/writings/consoles/nintendo-64/) - High-level hardware overview; encoder revision corroboration.  
@@ -1079,7 +1078,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Libdragon - vi.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/src/vi.h) - Video Interface Subsystem information.
 * [Libdragon - display.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/include/display.h) - VI -> RDP hardware rasterizer details.
 * [pseultra](https://github.com/pseudophpt/pseultra) / [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) / [n64dev](https://sourceforge.net/projects/n64dev/) - Open-source SDK implementations; VI handling abstraction.  
-* [n64.readthedocs.io - N64 Hardware Reference](https://n64.readthedocs.io/index.html#video-interface) - Emulator developer reference; SDK register naming corroboration; interrupt handling detail.  
+* [n64.readthedocs.io - Video Interface](https://n64.readthedocs.io/index.html#video-interface) - Emulator developer reference; SDK register naming corroboration; interrupt handling detail.  
 * [ares - N64](https://github.com/ares-emulator/ares/tree/master/ares/n64) / [CEN64](https://github.com/n64dev/cen64) / [MAME N64](https://github.com/mamedev/mame/blob/master/src/mame/nintendo/n64.cpp) - Software implementations of VI timing.  
 * [Robert Peip et al - MiSTer FPGA N64 Core](https://github.com/MiSTer-devel/N64_MiSTer) - FPGA implementation of N64 VI timing; corroboration of NTSC 237/474 libultra bounds via Clean HDMI function.  
 * [Wikipedia - NTSC](https://en.wikipedia.org/wiki/NTSC) / [PAL](https://www.wikipedia.org/wiki/PAL) / [PAL-M](https://www.wikipedia.org/wiki/PAL-M) - Broadcast standard overviews.  
@@ -1097,7 +1096,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [大狗 via iQue Historia - Record Issue 17: iQue China](https://iquehistoria.neocities.org/articletl/RecordiQueChina/article) - Additional iQue Player details and historical context.
 * [eb1560 - AssemblerGames - N64 Clock Relationship Diagram](https://assemblergames.org/viewtopic.php?t=25918) - Complete retail N64 clock relationship diagram; establishes X1/X2 domain relationships and derived frequencies.
 * [System16 - Aleck64 Hardware (Mickey's Magical Tetris Challenge)](https://system16.com/hardware.php?id=816) - Aleck64 E90 board photography; confirms crystal placement (X3/X4) and component layout.  
-* [HSBallina -- New Astro City -- Magical Tetris Challenge (マジカルテトリスチャレンジ featuring ミッキー)](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/) -- Aleck64 E90 board photography; X4 `D140B8` crystal and silkscreen discrepancy observation.  
+* [HSBallina - New Astro City - Magical Tetris Challenge (マジカルテトリスチャレンジ featuring ミッキー)](https://newastrocity.wordpress.com/2015/04/09/magical-tetris-challenge/) - Aleck64 E90 board photography; X3 `D140B8` crystal and silkscreen discrepancy observation.  
 * [Ikotsu Blog - Aleck64 (SETA/Nintendo 1998)](https://ikotsu.blogspot.com/2019/07/aleck64-seta-nintendo-1998.html) - Aleck64 E92 board images; corroborates crystal population and silkscreen markings.  
 * [Arcade-Projects - SETA Aleck64 JAMMA Board Thread](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/post-259421) - Additional E90/E92 board images; cross-verification of component variation and crystal markings across revisions.  
 * [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.  
