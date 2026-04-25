@@ -52,7 +52,7 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
 *Nintendo 64 motherboard (NUS-CPU-01) showing the Nintendo Reality Coprocessor (RCP-NUS, U9) and NEC VR4300 (CPU-NUS, U10). The Video Interface (VI), part of the RCP, generates composite video timing for NTSC, PAL, and PAL-M output modes. Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET).*  
 
 
-The Nintendo 64 **Video Interface (VI)** supports three television standards (**NTSC**, **PAL**, and **PAL-M**), each with both **progressive** and **interlaced** scan modes, resulting in six video timing configurations. This document provides exact timing values derived from hardware specifications, with presented results expressed in irreducible fractions and high-precision decimals.  
+The Nintendo 64 **Video Interface (VI)** supports three television standards (**NTSC**, **PAL**, and **PAL-M**), each with both **progressive** and **interlaced** scan modes. This document provides timing values derived from hardware specifications, with presented results expressed in irreducible fractions and high-precision decimals.  
 
 Video Modes:  
 
@@ -348,7 +348,7 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 ### 4.1 Signal Parameters by Mode  
 
-The following table defines the relationship between VI clock rate (f_vi) and the resulting display timing. See §3.1 for crystal frequencies and register values; fully reduced refresh rate fractions and line frequencies are in §3.3. Values are effective.  
+The following table defines the relationship between VI clock rate (f_vi) and the resulting display timing. See [§3.1](#31-fundamental-constants) for crystal frequencies and register values; fully reduced refresh rate fractions and line frequencies are in [§3.3](#33-derived-timing-values). Values are effective.  
 
 | Mode    | f_vi (VI Clock)      | L (Clocks / Line) | S (Half-Lines) | fV (Refresh Rate) |  
 | :---    | :---                 | :---              | :---           | :---              |  
@@ -494,7 +494,7 @@ Both observed revisions of the Ultra 64 development board (designed for use in c
 * Retail X1 → X6
 * Retail X2 → X7
 
-X6 is populated with a 315/22 MHz crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz crystal (≈ 14.70588 MHz), consistent with retail relationships. 2x Macronix MX8330MC clock generators are visible in circuit with X6/X7.
+X6 is populated with a 315/22 MHz crystal (≈ 14.31818 MHz) and X7 with a 250/17 MHz crystal (≈ 14.70588 MHz), consistent with retail relationships. Macronix MX8330MC clock generators are visible in circuit with X6/X7.  
 
 Documented PAL conversion modifies only the X6 domain: the crystal is exchanged for a PAL-nominal 17.7 MHz part, R6 is populated (0 Ω), and R8 (4.7 kΩ) is removed.
 
@@ -537,7 +537,7 @@ The iQue Player is a localized hardware revision for the Chinese market that con
 
 Clock generation is handled by an ICS420BG clock synthesizer driven by a single 315/22 MHz crystal resonator[^ique-pll] (one example is marked `TXC 14.3k88F`[^txc]). Hardware measurements confirm a VI pixel clock of approximately 48.68 MHz (marshallh), consistent with NTSC VI timing. There is no published datasheet for ICS420BG, but the presence of an NTSC-nominal crystal as well as NTSC-consistent VI clock measurements strongly suggest iQue Player video timings are identical to N64 NTSC.
 
-[^ique-pll]: Per marshallh reverse-engineering, a PLL path of 57/17 from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock. The CPU operates at 140.625 MHz (1.5 × the standard N64 frequency). Because many titles rely on the CPU count register for timing, a modified libultra compensates by scaling the observed counter rate. This adjustment does not impact VI timing.
+[^ique-pll]: Per marshallh reverse-engineering, a PLL path of 57/17 from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock.  
 
 [^txc]: [TXC Corporation](https://www.txccrystal.com/) appears to be the manufacturer based on the marking.
 
@@ -969,9 +969,7 @@ fH = f_vi / L_avg
 
 This section provides practical conversion matrices, most commonly for the purpose of speedrun timing comparison. The aim is to ease synchronization (thus, subsequent comparative analysis) of realtime speedruns recorded across regional hardware.  
 
-These multipliers assume game logic is bound to video refresh rate (fV), and that the NTSC-to-PAL performance ratio corresponds exactly with the fV ratio, as well as signal homogeneity per source (some games switch between progressive and interlaced modes, which complicates things considerably). Given those conditions, a longer duration recorded on PAL hardware directly corresponds to a shorter equivalent time on NTSC hardware, and vice versa.  
-
-> When comparing runs recorded at separate refresh rates, questions invariably arise regarding relative degree of difficulty. This document does not seek to provide judgment on the parity of conversion for any given software title. 
+These multipliers assume game logic is bound to video refresh rate (fV), that the NTSC-to-PAL performance ratio corresponds exactly with the fV ratio, and signal homogeneity per source (some games switch between progressive and interlaced modes, which complicates things considerably). Given those conditions, a run recorded on PAL hardware directly corresponds to a shorter equivalent time on NTSC hardware, and vice versa.  
 
 ### 6.1 Approximate Decimal Conversions
 
