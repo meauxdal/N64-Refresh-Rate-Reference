@@ -1,0 +1,178 @@
+The Video DAC is a chip – VDC-NUS, DENC-NUS, AVDC-NUS, or MAV-NUS depending on mainboard revision – that converts the 7-bit-wide synchronous [[Video Interface]] output to analog video.
+
+Early revisions (VDC-NUS) use an external encoder (ENC-NUS) to generate composite and S-Video. Later revisions (DENC-NUS, AVDC-NUS, MAV-NUS) integrate this functionality. A variant using S-RGB A exists on some PAL systems; this is an RGB DAC, but RGB output is not populated in retail units.
+
+---
+
+## Bus Operation
+
+The VI outputs video over a 7-bit synchronous bus (VDC_D0–D6) with VDC_DSYNC (!DSYNC). Data is multiplexed over four VI clock cycles per pixel:
+
+* 1 pixel = 4 VI clocks
+* 7 bits × 3 channels = 21-bit RGB
+
+The Video DAC clock operates at **4× the pixel clock** (f_vi = 4 × f_pixel).
+
+[[File:N64videosys.png|thumb|Video DAC Bus and waveform. Image from: [http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html](http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)]]
+
+The 4-cycle sequence carries both pixel data and control signals and restarts whenever !DSYNC is low.
+
+The Video Interface transmits control signals continuously during blanking by holding !DSYNC low across multiple cycles.
+
+---
+
+## VDC Bus Timing
+
+{| class="wikitable"
+|+
+! !DSYNC
+!LOW
+!HIGH
+!HIGH
+
+| !HIGH   |
+| ------- |
+| ! stage |
+| Cycle 0 |
+| Cycle 1 |
+| Cycle 2 |
+| Cycle 3 |
+| -       |
+| D0      |
+| !Csync  |
+| Red 0   |
+| Green 0 |
+| Blue 0  |
+| -       |
+| D1      |
+| !Hsync  |
+| Red 1   |
+| Green 1 |
+| Blue 1  |
+| -       |
+| D2      |
+| !Clamp  |
+| Red 2   |
+| Green 2 |
+| Blue 2  |
+| -       |
+| D3      |
+| !Vsync  |
+| Red 3   |
+| Green 3 |
+| Blue 3  |
+| -       |
+| D4      |
+| —       |
+| Red 4   |
+| Green 4 |
+| Blue 4  |
+| -       |
+| D5      |
+| —       |
+| Red 5   |
+| Green 5 |
+| Blue 5  |
+| -       |
+| D6      |
+| —       |
+| Red 6   |
+| Green 6 |
+| Blue 6  |
+| }       |
+
+---
+
+## Clocking
+
+The video clock (f_vi) is generated from the system crystal (f_xtal) by the clock synthesizer (U7). Early boards use MX8330MC; later revisions may use MX9911MC or consolidate both clock generators into a single MX8350.
+
+There are three video clock configurations corresponding to NTSC, PAL, and MPAL:
+
+{| class="wikitable"
+|+
+!TV Signal Type
+!f_xtal
+!FSEL
+!Multiplier
+
+| !f_vi (nominal)        |
+| ---------------------- |
+| NTSC                   |
+| 14.31818 MHz           |
+| HIGH                   |
+| 17 / 5                 |
+| 48.681818 MHz ± 30 ppm |
+| -                      |
+| PAL                    |
+| 17.734475 MHz          |
+| LOW                    |
+| 14 / 5                 |
+| 49.656530 MHz ± 30 ppm |
+| -                      |
+| MPAL                   |
+| 14.30245 MHz           |
+| HIGH                   |
+| 17 / 5                 |
+| 48.628322 MHz ± 30 ppm |
+| }                      |
+
+The [[Audio Interface]] uses this same clock.
+
+---
+
+## Precision
+
+Each pixel period transmits 28 bits (7 bits × 4 cycles), of which 21 bits are used for RGB data. The remaining capacity is used for control signaling during blanking. No documented mode uses more than 7 bits per channel.
+
+---
+
+## Hardware Variants
+
+{| class="wikitable"
+|+
+!Chip
+!Function
+!External encoder
+!Output
+
+| !Notes                          |
+| ------------------------------- |
+| VDC-NUS                         |
+| Video DAC                       |
+| ENC-NUS                         |
+| RGB → encoded                   |
+| Early boards                    |
+| -                               |
+| ENC-NUS                         |
+| Encoder                         |
+| —                               |
+| Composite, S-Video              |
+| Used with VDC-NUS               |
+| -                               |
+| DENC-NUS                        |
+| Video DAC + encoder             |
+| No                              |
+| Composite, S-Video              |
+|                                 |
+| -                               |
+| AVDC-NUS                        |
+| Video DAC + encoder + Audio DAC |
+| No                              |
+| Composite, S-Video              |
+|                                 |
+| -                               |
+| MAV-NUS                         |
+| Video DAC + encoder + Audio DAC |
+| No                              |
+| Composite, S-Video              |
+| Late boards                     |
+| -                               |
+| S-RGB A                         |
+| RGB DAC                         |
+| No                              |
+| Composite only*                 |
+| PAL (FRA); RGB path unpopulated |
+| }                               |
+
+* RGB output circuit not populated in retail units.
