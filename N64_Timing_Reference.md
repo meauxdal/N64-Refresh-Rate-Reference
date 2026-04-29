@@ -335,7 +335,7 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | NTSC Color Subcarrier (FSC) | U7        | 8    | 3.58 MHz           | 3.0 Vpp            |  
 | NTSC Video Clock (VCLK)     | U7        | 1    | 48.68 MHz          | 3.3 Vpp            |  
 | PAL Video Clock (VCLK)      | U15       | 1    | 49.66 MHz          | 3.3 Vpp            |  
-| Master Clock[^masterclock]            | U10       | 16   | 62.51 MHz          | -                  |  
+| Master Clock[^masterclock]  | U10       | 16   | 62.51 MHz          | -                  |  
 | Rambus Clock (RCLK)         | U1        | 5    | 250.2 MHz          | -                  |  
 
 [^masterclock]: The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
@@ -1018,7 +1018,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | VDC-NUS Pinout | `fig14_vdc-nus.png` | *VDC-NUS (BU9801F) pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
 | DENC-NUS Pinout | `fig15_denc-nus.png` | *DENC-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
 | MAV-NUS Pinout | `fig16_mav-nus.png` | *MAV-NUS pinout (Source: Tim Worthington, N64RGB documentation, [web.archive.org](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html))* |  
-| MX8330MC Table | `fig8_mx8330MC_table.png` | *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient (Source: [MX8330MC datasheet](/references/Macronix-MX8330MC-ocr.pdf))* |  
+| MX8330MC Table | `fig8_mx8330MC_table.png` | *MX8330MC Rev. E application notice illustrating feedback divider stabilization and startup transient (Source: [MX8330MC datasheet](https://wiki.console5.com/tw/images/e/e3/MX8330.pdf))* |  
 | MX8330MC Image | `fig25_mx8330mc_macro_prominos.jpg` | *MX8330MC (U7); 8-pin SOP package; lot code TEB61102 (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
 | MX9911MC Image | `fig31_MX9911MC.png` | *MX9911MC (U7); 8-pin SOP package (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
 | MX8350MC Image | `fig32_MX8350MC.png` | *MX8350MC (U17); 14-pin SOP package; lot code TA022201 (Source: Prominos, Video Game Preservation Collective Discord, [imgur.com](https://imgur.com/a/YpyuRET))* |  
