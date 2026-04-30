@@ -98,7 +98,7 @@ The clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the necess
 
 Video clock frequency is calculated using the following formula:
 
-:<math>VCLK = \frac{X1 \times \text{Multiplier}}{5}</math>
+<math>VCLK = \frac{X1 \times \text{Multiplier}}{5}</math>
 
 There are three video clock configurations corresponding to NTSC, PAL, and MPAL:
 
