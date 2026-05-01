@@ -1,6 +1,6 @@
 The '''Video DAC''' is a chip on the N64 motherboard that converts the 7-bit-wide synchronous [[Video Interface]] output to analog video.
 
-Early revisions pair a discrete Video DAC (VDC-NUS or VDC-NUS A) with an external encoder (ENC-NUS or S-RGB A) to generate video output.<ref>S-RGB A appears exclusively on NUS-001(FRA) models. While this encoder is RGB-capable, the necessary amplification components are unpopulated on the motherboard in retail units. S-RGB A lacks S-Video encoding entirely, limiting unmodified NUS-CPU(R)-01 boards to composite output.</ref> Other revisions consolidate these functions into a single integrated chip (DENC-NUS, AVDC-NUS, MAV-NUS).<ref>Later PAL revisions NUS-CPU(P)-03 and -03-1 lack S-Video output due to board-level omissions; traces from the MAV-NUS encoder are severed and the supporting surface-mount components are unpopulated.</ref>
+Early revisions pair a discrete Video DAC (VDC-NUS or VDC-NUS A) with an external encoder (ENC-NUS or S-RGB A) to generate video output.<ref>S-RGB A appears exclusively on NUS-001(FRA) models. While this encoder is RGB-capable, the necessary amplification components are unpopulated on the motherboard in retail units. S-RGB A lacks S-Video encoding entirely, limiting unmodified NUS-CPU(R)-01 boards to composite output.</ref> Other revisions consolidate these functions into a single integrated chip (DENC-NUS, AVDC-NUS, MAV-NUS).<ref>Later PAL revisions NUS-CPU(P)-03 and -03-1 lack S-Video output due to board-level omissions; the Y (luma) and C (chroma) traces from the MAV-NUS encoder to the Multi Out are severed and the supporting surface-mount components are unpopulated. S-Video output can be restored with a flex cable mod tapping directly from the MAV-NUS.</ref>
 
 == Bus Operation ==
 
@@ -28,7 +28,7 @@ The Video Interface transmits control signals every clock during blanking by hol
 | !Hsync || Red 1 || Green 1 || Blue 1
 |-
 ! D2
-| !Clamp<ref>!Clamp here refers to colorburst / color subcarrier / chrominance sub-carrier frequency.</ref> || Red 2 || Green 2 || Blue 2
+| !Clamp<ref>The !Clamp signal (! = active low) is asserted during the horizontal back porch. The video DAC samples the reference voltage in this window to restore the DC component after AC coupling. Because the color burst is transmitted in the same interval, some sources refer to this period as "clamp/burst."</ref> || Red 2 || Green 2 || Blue 2
 |-
 ! D3
 | !Vsync || Red 3 || Green 3 || Blue 3
@@ -55,7 +55,7 @@ A quartz crystal resonator on the N64 motherboard supplies the X'tal1 (X1) refer
 
 [[File:CCIR-1990-Rep.624-4-Table.png|thumb|alt=Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz|Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz. Image from: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990)]]]
 
-Each regional broadcast standard defines a horizontal line frequency (<math>f_H</math>), from which the chrominance subcarrier frequency (<math>f_{SC}</math>) is derived as a fixed rational multiple. X1 is nominally defined as 4 × <math>f_{SC}</math>.
+Each regional broadcast standard defines a horizontal line frequency (<math>f_H</math>), from which the chrominance subcarrier frequency (<math>f_{SC}</math>)<ref>The carrier frequency on which color (hue and saturation) is encoded in composite video. Also referred to as colorburst, color burst, burst frequency, color subcarrier, colour subcarrier, chroma subcarrier, chrominance sub-carrier. Note that "burst" refers to the portion of the scanline during which the subcarrier is sent.</ref> is derived as a fixed rational multiple. X1 is nominally defined as 4 × <math>f_{SC}</math>.
 
 All frequencies are given in hertz (Hz).
 
@@ -76,7 +76,7 @@ Converted to decimal (Hz):
 |-
 | '''NTSC''' || 15,734.2657 || 227.5 <math>f_H</math> || 3,579,545.4545 || 14,318,181.8182
 |-
-| '''PAL''' || 15,625.0 || 283.7516 <math>f_H</math> || 4,433,618.75 || 17,734,475.0
+| '''PAL''' || 15,625 || 283.7516 <math>f_H</math> || 4,433,618.75 || 17,734,475
 |-
 | '''MPAL''' || 15,734.2657 || 227.25 <math>f_H</math> || 3,575,611.8881 || 14,302,447.5524
 |}
@@ -122,7 +122,7 @@ The [[Audio Interface]] also uses this clock.
 {| class="wikitable" style="text-align: center;"
 ! Video output path !! Board revision !! Region !! Role !! Signal encoding !! Notes
 |-
-| '''VDC-NUS (A) + ENC-NUS''' || NUS-CPU-01 thru 04; NUS-CPU(M)-01 thru 03 || NTSC, MPAL || Two-stage video DAC + encoder || composite + S-Video || VDC-NUS outputs RGB which is converted to composite + S-Video by ENC-NUS; VDC-NUS A revision changeover aligns with 1996/1997 boundary (alongside CPU-NUS A)<ref>The latest observed VDC-NUS/CPU-NUS is 1996, wk 47; the earliest observed VDC-NUS A/CPU-NUS A is 1997, wk 6. Source: original research by Elle (meauxdal).</ref>
+| '''VDC-NUS (A) + ENC-NUS''' || NUS-CPU-01 thru 04; NUS-CPU(M)-01 thru 03 || NTSC, MPAL || Two-stage video DAC + encoder || composite + S-Video || VDC-NUS outputs RGB which is converted to composite + S-Video by ENC-NUS; VDC-NUS A revision changeover aligns with 1996/1997 boundary (alongside CPU-NUS A)<ref>The latest observed VDC-NUS/CPU-NUS is 1996, wk 47; the earliest observed VDC-NUS A/CPU-NUS A is 1997, wk 6. Source: original research by [[User:Elle (meauxdal)|Elle (meauxdal)]].</ref>
 |-
 | '''VDC-NUS (A) + S-RGB A''' || NUS-CPU(R)-01 || PAL (NUS-001(FRA) only) || Two-stage video DAC + encoder || composite + RGB<ref>RGB is encoded but not functional without modification.</ref> || RGB output not functional without modification; does not encode S-Video
 |-
@@ -130,7 +130,7 @@ The [[Audio Interface]] also uses this clock.
 |-
 | '''AVDC-NUS''' || Early NUS-CPU-05 || NTSC || One-stage integrated video DAC + encoder + audio DAC || composite + S-Video || Present on earlier NUS-CPU-05 examples
 |-
-| '''MAV-NUS''' || Later NUS-CPU-05 and all later revisions || All regions || One-stage integrated video DAC + encoder + audio DAC || composite + S-Video || Pin-compatible with AVDC-NUS and used as drop-in replacement; present on late NUS-CPU-05 examples and all later revisions in all regions
+| '''MAV-NUS''' || Later NUS-CPU-05 and all later revisions || All regions || One-stage integrated video DAC + encoder + audio DAC || composite + S-Video || Pin-compatible with AVDC-NUS and used as drop-in replacement; present on later NUS-CPU-05 examples and all later revisions in all regions
 |}
 
 == References ==
@@ -141,6 +141,8 @@ The [[Audio Interface]] also uses this clock.
 * [https://www.datasheetarchive.com/datasheet/MX9911/Macronix-International?term=mx9911 Datasheet Archive - MX9911MC Datasheet]
 * [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - MX8350 Datasheet]
 * [https://patents.google.com/patent/US6310814B1 Google Patents - US6310814B1, ''Rambus DRAM (RDRAM) apparatus and method for performing refresh operations'']
+* [https://patents.google.com/patent/US6956621B2/ Google Patents - US6956621B2, ''High impedance digital full line video clamp'']
+* [https://consoles4you.ch/guides/n64svideorestore.html consoles4you.ch - N64 S-Video Restore Install Guide]
 * [https://web.archive.org/web/20170107153330/http://nfggames.com/forum2/index.php?topic=5251.0 nfggames.com - Fix S-Video for PAL N64 NUS-CPU(P)-03-1] (archived from [https://nfggames.com/forum2/index.php?topic=5251.0 the original])
 * [https://web.archive.org/web/20140729192310/http://nfggames.com/forum2/index.php?topic=3083.0 nfggames.com - N64 RGB "Mod" on NUS-001(FRA)] (archived from [https://nfggames.com/forum2/index.php?topic=3083.40 the original])
 
