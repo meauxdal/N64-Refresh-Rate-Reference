@@ -28,7 +28,7 @@ The Video Interface transmits control signals every clock during blanking by hol
 | !Hsync || Red 1 || Green 1 || Blue 1
 |-
 ! D2
-| !Clamp<ref>The !Clamp signal (! = active low) is asserted during the horizontal back porch. The video DAC samples the reference voltage in this window to restore the DC component after AC coupling. Because the color burst is transmitted in the same interval, some sources refer to this period as "clamp/burst."</ref> || Red 2 || Green 2 || Blue 2
+| !Clamp<ref>The !Clamp signal (! = active low) is asserted during the horizontal back porch to restore the DC component of an AC-coupled signal. This "clamping" process re-establishes the black level reference (0 IRE) in this window to stabilize signal brightness. Because the color burst is transmitted concurrently, some sources refer to this period as "clamp/burst."</ref> || Red 2 || Green 2 || Blue 2
 |-
 ! D3
 | !Vsync || Red 3 || Green 3 || Blue 3
@@ -53,9 +53,9 @@ A quartz crystal resonator on the N64 motherboard supplies the X'tal1 (X1) refer
 
 === Crystal Frequency Derivation ===
 
-[[File:CCIR-1990-Rep.624-4-Table.png|thumb|alt=Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz|Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz. Image from: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990)]]]
+[[File:CCIR-1990-Rep.624-4-Table.png|thumb|alt=Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz|Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz. Image from: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990), Table II]]]
 
-Each regional broadcast standard defines a horizontal line frequency (<math>f_H</math>), from which the chrominance subcarrier frequency (<math>f_{SC}</math>)<ref>The carrier frequency on which color (hue and saturation) is encoded in composite video. Also referred to as colorburst, color burst, burst frequency, color subcarrier, colour subcarrier, chroma subcarrier, chrominance sub-carrier. Note that "burst" refers to the portion of the scanline during which the subcarrier is sent.</ref> is derived as a fixed rational multiple. X1 is nominally defined as 4 × <math>f_{SC}</math>.
+Each regional broadcast standard defines a horizontal line frequency (<math>f_H</math>), from which the chrominance subcarrier frequency (<math>f_{SC}</math>)<ref>The carrier frequency on which color (hue and saturation) is modulated for analog video. Also referred to as colorburst, color subcarrier, or chrominance sub-carrier. Note that "burst" refers specifically to the sample of this subcarrier transmitted during the back porch to establish a phase and frequency reference. Standard NTSC (System M) specifies 9 ± 1 cycles of the carrier wave during burst; PAL (System B/G) specifies 10 ± 1 cycles. Source: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990), Table I].</ref> is derived as a fixed rational multiple. X1 is nominally defined as 4 × <math>f_{SC}</math>.
 
 All frequencies are given in hertz (Hz).
 
