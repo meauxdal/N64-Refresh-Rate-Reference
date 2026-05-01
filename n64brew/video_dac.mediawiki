@@ -122,7 +122,7 @@ The [[Audio Interface]] also uses this clock.
 {| class="wikitable" style="text-align: center;"
 ! Video output path !! Board revision !! Region !! Role !! Signal encoding !! Notes
 |-
-| '''VDC-NUS (A) + ENC-NUS''' || NUS-CPU-01 thru 04; NUS-CPU(M)-01 thru 03 || NTSC, MPAL || Two-stage video DAC + encoder || composite + S-Video || VDC-NUS outputs RGB which is converted to composite + S-Video by ENC-NUS; VDC-NUS A revision changeover aligns with 1996/1997 boundary (alongside CPU-NUS A)<ref>The latest observed VDC-NUS/CPU-NUS is 1996, wk 47; the earliest observed VDC-NUS A/CPU-NUS A is 1997, wk 6. Source: original research by [[User:Elle (meauxdal)|Elle (meauxdal)]].</ref>
+| '''VDC-NUS (A) + ENC-NUS''' || NUS-CPU-01 thru 04; NUS-CPU(M)-01 thru 02 || NTSC, MPAL || Two-stage video DAC + encoder || composite + S-Video || VDC-NUS outputs RGB which is converted to composite + S-Video by ENC-NUS; VDC-NUS A revision changeover aligns with 1996/1997 boundary (alongside CPU-NUS A)<ref>The latest observed VDC-NUS/CPU-NUS is 1996, wk 47; the earliest observed VDC-NUS A/CPU-NUS A is 1997, wk 6. Source: original research by [[User:Elle (meauxdal)|Elle (meauxdal)]].</ref>
 |-
 | '''VDC-NUS (A) + S-RGB A''' || NUS-CPU(R)-01 || PAL (NUS-001(FRA) only) || Two-stage video DAC + encoder || composite + RGB<ref>RGB is encoded but not functional without modification.</ref> || RGB output not functional without modification; does not encode S-Video
 |-
