@@ -1,30 +1,31 @@
 # N64 Video Timing Reference
 
-Reference sheet for various N64 clock rates, primarily video clocks. Further video timing details and shown work in the [primary document](/N64_Timing_Reference.md).
+Quick reference for N64 clock rates and video timing. Derivations, signal analysis, VI modes, and crystal corpus: [`N64_Timing_Reference.md`](N64_Timing_Reference.md).
 
 ---
 
 ## System Clocks
 
-### X1 Domain
+### X1 
 
-Region | X1 (f_xtal) Fraction | X1 Decimal (MHz)  | M    | VCLK (f_vi) Fraction | VCLK Decimal (MHz)
-:----- | :------------------- | :---------------- | :--- | :------------------- | :-----------------
-NTSC   | 315/22 MHz           | 14.3181818182     | 17/5 | 5,355/110 MHz        | 48.6818181818
-PAL    | 17,734,475 Hz        | 17.734475 (exact) | 14/5 | 49,656,530 Hz        | 49.65653 (exact)
-PAL-M  | 2,045,250,000/143 Hz | 14.3024475524     | 17/5 | 6,953,850,000/143 Hz | 48.6283216783
+| Region | $f_{\text{xtal}}$ | $f_{\text{xtal}}$ (MHz) | $M$ | $f_{\text{vi}}$ | $f_{\text{vi}}$ (MHz) |
+| :----- | :---------------- | :---------------------- | :-- | :-------------- | :-------------------- |
+| NTSC  | $\frac{315}{22}$ MHz           | 14.3181818182 | $\frac{17}{5}$ | $\frac{5{,}355}{110}$ MHz        | 48.6818181818 |
+| PAL   | 17,734,475 Hz                  | 17.734475     | $\frac{14}{5}$ | 49,656,530 Hz                    | 49.65653      |
+| PAL-M | $\frac{2{,}045{,}250{,}000}{143}$ Hz | 14.3024475524 | $\frac{17}{5}$ | $\frac{6{,}953{,}850{,}000}{143}$ Hz | 48.6283216783 |
 
 
-### X2 Domain (Region-Independent)
+### X2 
 
-Clock           | Derivation   | Exact Value | Decimal (MHz)
-:-------------- | :----------- | :---------- | :------------------------
-X2              | --           | 250/17 MHz  | 14.7058823529
-RCLK            | X2 × 17      | 250 MHz     | 250 (exact)
-RAC / MClock    | RCLK ÷ 4     | 250/4 MHz   | 62.5 (exact)
-CPU (nominal)   | MClock × 3/2 | 750/8 MHz   | 93.75 (nominal)[^divmode]
-SI              | MClock ÷ 4   | 250/16 MHz  | 15.625 (exact)
-Cartridge / PIF | SI ÷ 8       | 250/128 MHz | 1.953125 (exact)
+| Clock           | Derivation          | Exact                  | MHz           |
+| :-------------- | :------------------ | :--------------------- | :------------ |
+| X2              | —                   | $\frac{250}{17}$ MHz   | 14.7058823529 |
+| RCLK            | X2 $\times$ 17      | 250 MHz                | 250           |
+| MClock          | RCLK $\div$ 4       | $\frac{250}{4}$ MHz    | 62.5          |
+| CPU             | MClock $\times$ 3/2 | $\frac{750}{8}$ MHz    | 93.75 (nominal)[^divmode] |
+| SI              | MClock $\div$ 4     | $\frac{250}{16}$ MHz   | 15.625        |
+| Cartridge / PIF | SI $\div$ 8         | $\frac{250}{128}$ MHz  | 1.953125      |
+
 
 
 [^divmode]: CPU clock is software-configurable via DivMode registers. 93.75 MHz is the nominal operating frequency.
@@ -33,49 +34,44 @@ Cartridge / PIF | SI ÷ 8       | 250/128 MHz | 1.953125 (exact)
 
 ## Video Timing
 
-### Per-Mode Timing Values
+| Mode  | Scan        | Resolution | $L$  | $S$ | $f_H$ (fraction)                                          | $f_H$ (Hz)        | $f_V$ (fraction)                                     | $f_V$ (Hz)    |
+| :---- | :---------- | :--------- | :--- | :-- | :-------------------------------------------------------- | :---------------- | :--------------------------------------------------- | :------------ |
+| NTSC  | Progressive | 640×240p   | 3094 | 526 | $\frac{2{,}250{,}000}{143}$                               | 15,734.2657342657 | $\frac{2{,}250{,}000}{37{,}609}$                     | 59.8261054535 |
+| NTSC  | Interlaced  | 640×480i   | 3094 | 525 | $\frac{2{,}250{,}000}{143}$                               | 15,734.2657342657 | $\frac{60{,}000}{1{,}001}$                           | 59.9400599401 |
+| PAL   | Progressive | 640×288p   | 3178 | 626 | $\frac{15{,}625}{1}$                                      | 15,625            | $\frac{15{,}625}{313}$                               | 49.9201277955 |
+| PAL   | Interlaced  | 640×576i   | 3178 | 625 | $\frac{15{,}625}{1}$                                      | 15,625            | $\frac{50}{1}$                                       | 50            |
+| PAL-M | Progressive | 640×240p   | 3090 | 526 | $\frac{4{,}572{,}156{,}375{,}000}{290{,}532{,}671}$      | 15,737.1505217050 | $\frac{17{,}384{,}625{,}000}{290{,}532{,}671}$       | 59.8370742270 |
+| PAL-M | Interlaced  | 640×480i   | 3089 | 525 | $\frac{71{,}583{,}750{,}000}{4{,}547{,}257}$             | 15,742.1825949138 | $\frac{272{,}700{,}000}{4{,}547{,}257}$              | 59.9702194092 |
 
-Resolutions reflect standard libultra VI modes as used by retail software.[^retail]
-
-Mode  | Scan        | Resolution | L    | S   | fH (Fraction)                   | fH (Hz, Decimal)  | fV (Fraction)                | fV (Hz, Decimal)
-:---- | :---------- | :--------- | :--- | :-- | :------------------------------ | :---------------- | :--------------------------- | :---------------
-NTSC  | Progressive | 640×240p   | 3094 | 526 | 2,250,000 / 143                 | 15,734.2657342657 | 2,250,000 / 37,609           | 59.8261054535
-NTSC  | Interlaced  | 640×480i   | 3094 | 525 | 2,250,000 / 143                 | 15,734.2657342657 | 60,000 / 1,001               | 59.9400599401
-PAL   | Progressive | 640×288p   | 3178 | 626 | 15,625 / 1                      | 15,625 (exact)    | 15,625 / 313                 | 49.9201277955
-PAL   | Interlaced  | 640×576i   | 3178 | 625 | 15,625 / 1                      | 15,625 (exact)    | 50 / 1                       | 50 (exact)
-PAL-M | Progressive | 640×240p   | 3090 | 526 | 4,572,156,375,000 / 290,532,671 | 15,737.1505217050 | 17,384,625,000 / 290,532,671 | 59.8370742270
-PAL-M | Interlaced  | 640×480i   | 3089 | 525 | 71,583,750,000 / 4,547,257      | 15,742.1825949138 | 272,700,000 / 4,547,257      | 59.9702194092
-
-
-[^retail]: L (VI clocks per line) and S (half-lines per vertical scan) are effective register values. The N64 VI is programmable at the baremetal level; these values do not represent hardware limits.
+$L$: VI clocks per line (effective). $S$: half-lines per vertical scan (effective).
 
 ---
 
 ## Subcarrier & Crystal Reference
 
-Standard | f_xtal (Exact)       | fS (Exact)         | fS (Hz, Decimal)     | fS : fH
-:------- | :------------------- | :----------------- | :------------------- | :------------
-NTSC     | 315/22 MHz           | 315/88 MHz         | 3,579,545.4545...    | 227.5 × fH
-PAL      | 17,734,475 Hz        | 17,734,475/4 Hz    | 4,433,618.75 (exact) | 283.7516 × fH
-PAL-M    | 2,045,250,000/143 Hz | 511,312,500/143 Hz | 3,575,611.8881...    | 227.25 × fH
+| Standard | $f_{\text{xtal}}$                    | $f_S$                              | $f_S$ (Hz)    | $f_S : f_H$          |
+| :------- | :----------------------------------- | :--------------------------------- | :------------ | :------------------- |
+| NTSC     | $\frac{315}{22}$ MHz                 | $\frac{315}{88}$ MHz               | 3,579,545.4545… | $227.5 \times f_H$  |
+| PAL      | 17,734,475 Hz                        | $\frac{17{,}734{,}475}{4}$ Hz      | 4,433,618.75  | $283.7516 \times f_H$ |
+| PAL-M    | $\frac{2{,}045{,}250{,}000}{143}$ Hz | $\frac{511{,}312{,}500}{143}$ Hz   | 3,575,611.8881… | $227.25 \times f_H$ |
 
 
 ---
 
 ## VI Register Reference
 
-L and S are effective values (register + 1). LEAP(A, B) values are effective.
+$L$ and $S$ are effective values (register + 1). LEAP(A, B) values are effective.
 
-Mode              | VI_V_TOTAL      | L (VI_H_TOTAL+1) | LEAP Pattern | LEAP (A, B) | Notes
-:---------------- | :-------------- | :--------------- | :----------- | :---------- | :--------------------------
-NTSC Progressive  | 0x20D (S = 526) | 3094             | 0b00000 (0)  | 3094, 3094  | No LEAP compensation
-NTSC Interlaced   | 0x20C (S = 525) | 3094             | 0b00000 (0)  | 3094, 3094  | No LEAP compensation
-PAL Progressive   | 0x271 (S = 626) | 3178             | 0b10101 (21) | 3183, 3184  | SGI 1996 / pre-OS2.0H
-PAL Interlaced    | 0x270 (S = 625) | 3178             | 0b10101 (21) | 3183, 3184  | SGI 1996 / pre-OS2.0H
-PAL Progressive   | 0x271 (S = 626) | 3178             | 0b10111 (23) | 3182, 3184  | OS2.0H+ (from Feb 24, 1997)
-PAL Interlaced    | 0x270 (S = 625) | 3178             | 0b10111 (23) | 3182, 3184  | OS2.0H+ (from Feb 24, 1997)
-PAL-M Progressive | 0x20D (S = 526) | 3090             | 0b00100 (4)  | 3099, 3098  |
-PAL-M Interlaced  | 0x20C (S = 525) | 3089             | 0b00000 (0)  | 3101, 3101  |
+| Mode              | `VI_V_TOTAL`    | $L$  | LEAP pattern  | LEAP (A, B) | Notes                       |
+| :---------------- | :-------------- | :--- | :------------ | :---------- | :-------------------------- |
+| NTSC Progressive  | `0x20D` ($S$ = 526) | 3094 | `0b00000` (0)  | 3094, 3094  | No LEAP compensation        |
+| NTSC Interlaced   | `0x20C` ($S$ = 525) | 3094 | `0b00000` (0)  | 3094, 3094  | No LEAP compensation        |
+| PAL Progressive   | `0x271` ($S$ = 626) | 3178 | `0b10101` (21) | 3183, 3184  | SGI 1996 / pre-OS2.0H       |
+| PAL Interlaced    | `0x270` ($S$ = 625) | 3178 | `0b10101` (21) | 3183, 3184  | SGI 1996 / pre-OS2.0H       |
+| PAL Progressive   | `0x271` ($S$ = 626) | 3178 | `0b10111` (23) | 3182, 3184  | OS2.0H+ (from Feb 24, 1997) |
+| PAL Interlaced    | `0x270` ($S$ = 625) | 3178 | `0b10111` (23) | 3182, 3184  | OS2.0H+ (from Feb 24, 1997) |
+| PAL-M Progressive | `0x20D` ($S$ = 526) | 3090 | `0b00100` (4)  | 3099, 3098  |                             |
+| PAL-M Interlaced  | `0x20C` ($S$ = 525) | 3089 | `0b00000` (0)  | 3101, 3101  |                             |
 
 
 ---
@@ -108,7 +104,12 @@ Multipliers convert a time recorded on the *row* hardware to equivalent time on 
 
 ---
 
-## Documentation
+## Internal Links
 
-[`N64_Timing_Reference.md`](N64_Timing_Reference.md) — Derivations, signal analysis, hardware detail, VI modes, crystal corpus  
-[`canonical_values.json`](tools/canonical_values.json) — Machine-readable canonical refresh rates
+[`N64_Timing_Reference.md`](N64_Timing_Reference.md) - Derivations, signal analysis, hardware detail, VI modes, crystal corpus  
+[`canonical_values.json`](tools/canonical_values.json) - Machine-readable canonical refresh rates
+
+## External Links
+
+[N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite on the N64brew Video DAC article.
+[https://meauxdal.neocities.org/n64-converter](N64 Refresh Rate Conversion Tool) - Convert run times between different N64 regions and video modes.
