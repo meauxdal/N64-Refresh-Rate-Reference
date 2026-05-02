@@ -107,10 +107,10 @@ Multipliers convert a time recorded on the *row* hardware to equivalent time on 
 
 ## Internal Links
 
-[`N64_Timing_Reference.md`](N64_Timing_Reference.md) - Derivations, signal analysis, hardware detail, VI modes, crystal corpus  
-[`canonical_values.json`](tools/canonical_values.json) - Machine-readable canonical refresh rates
+* [`N64_Timing_Reference.md`](N64_Timing_Reference.md) - Derivations, signal analysis, hardware detail, VI modes, crystal corpus  
+* [`canonical_values.json`](tools/canonical_values.json) - Machine-readable canonical refresh rates
 
 ## External Links
 
-[N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite on the N64brew Video DAC article.
-[N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes.
+* [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite on the N64brew Video DAC article.
+* [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes.
