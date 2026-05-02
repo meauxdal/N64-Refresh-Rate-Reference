@@ -79,7 +79,7 @@ $L$ and $S$ are effective values (register + 1). LEAP(A, B) values are effective
 
 ## Refresh Rate Conversion
 
-Multipliers convert a time recorded on the *row* hardware to equivalent time on the *column* hardware, assuming game logic is frame-locked. My [https://meauxdal.neocities.org/n64-converter](N64 Refresh Rate Conversion Tool) can do this for you automatically.
+Multipliers convert a time recorded on the *row* hardware to equivalent time on the *column* hardware, assuming game logic is frame-locked. The [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) can do this for you automatically.
 
 ### Decimal
 
@@ -113,4 +113,4 @@ Multipliers convert a time recorded on the *row* hardware to equivalent time on 
 ## External Links
 
 [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite on the N64brew Video DAC article.
-[https://meauxdal.neocities.org/n64-converter](N64 Refresh Rate Conversion Tool) - Convert run times between different N64 regions and video modes.
+[N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes.
