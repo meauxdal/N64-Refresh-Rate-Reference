@@ -9,22 +9,23 @@ Quick reference for N64 clock rates and video timing. Derivations, signal analys
 ### X1 
 
 | Region | $f_{\text{xtal}}$ | $f_{\text{xtal}}$ (MHz) | $M$ | $f_{\text{vi}}$ | $f_{\text{vi}}$ (MHz) |
-| :----- | :---------------- | :---------------------- | :-- | :-------------- | :-------------------- |
-| NTSC  | $\frac{315}{22}$ MHz           | 14.3181818182 | $\frac{17}{5}$ | $\frac{5{,}355}{110}$ MHz        | 48.6818181818 |
-| PAL   | 17,734,475 Hz                  | 17.734475     | $\frac{14}{5}$ | 49,656,530 Hz                    | 49.65653      |
-| PAL-M | $\frac{2{,}045{,}250{,}000}{143}$ Hz | 14.3024475524 | $\frac{17}{5}$ | $\frac{6{,}953{,}850{,}000}{143}$ Hz | 48.6283216783 |
+| :----: | :---------------: | :---------------------: | :-: | :-------------: | :-------------------: |
+| NTSC  | $\frac{315}{22} \text{ MHz}$           | 14.3181818182 | $\frac{17}{5}$ | $\frac{5{,}355}{110} \text{ MHz}$        | 48.6818181818 |
+| PAL   | $17{,}734{,}475 \text{ Hz}$            | 17.734475     | $\frac{14}{5}$ | $49{,}656{,}530 \text{ Hz}$              | 49.65653      |
+| PAL-M | $\frac{2{,}045{,}250{,}000}{143} \text{ Hz}$ | 14.3024475524 | $\frac{17}{5}$ | $\frac{6{,}953{,}850{,}000}{143} \text{ Hz}$ | 48.6283216783 |
+
 
 
 ### X2 
 
-| Clock           | Derivation          | Exact                  | MHz           |
-| :-------------- | :------------------ | :--------------------- | :------------ |
-| X2              | —                   | $\frac{250}{17}$ MHz   | 14.7058823529 |
-| RCLK            | X2 $\times$ 17      | 250 MHz                | 250           |
-| MClock          | RCLK $\div$ 4       | $\frac{250}{4}$ MHz    | 62.5          |
-| CPU             | MClock $\times$ 3/2 | $\frac{750}{8}$ MHz    | 93.75 (nominal)[^divmode] |
-| SI              | MClock $\div$ 4     | $\frac{250}{16}$ MHz   | 15.625        |
-| Cartridge / PIF | SI $\div$ 8         | $\frac{250}{128}$ MHz  | 1.953125      |
+| Clock           | Derivation               | Exact (MHz)            | MHz           |
+| :-------------: | :----------------------: | :--------------------: | :-----------: |
+| X2              | —                        | $\frac{250}{17}$       | 14.7058823529 |
+| RCLK            | $\text{X2} \times 17$    | $250$                  | 250           |
+| MClock          | $\text{RCLK} \div 4$     | $\frac{250}{4}$        | 62.5          |
+| CPU             | $\text{MClock} \times \frac{3}{2}$ | $\frac{750}{8}$ | 93.75 (nominal)[^divmode] |
+| SI              | $\text{MClock} \div 4$   | $\frac{250}{16}$       | 15.625        |
+| Cartridge / PIF | $\text{SI} \div 8$       | $\frac{250}{128}$      | 1.953125      |
 
 
 
@@ -34,14 +35,14 @@ Quick reference for N64 clock rates and video timing. Derivations, signal analys
 
 ## Video Timing
 
-| Mode  | Scan        | Resolution | $L$  | $S$ | $f_H$ (fraction)                                          | $f_H$ (Hz)        | $f_V$ (fraction)                                     | $f_V$ (Hz)    |
-| :---- | :---------- | :--------- | :--- | :-- | :-------------------------------------------------------- | :---------------- | :--------------------------------------------------- | :------------ |
-| NTSC  | Progressive | 640×240p   | 3094 | 526 | $\frac{2{,}250{,}000}{143}$                               | 15,734.2657342657 | $\frac{2{,}250{,}000}{37{,}609}$                     | 59.8261054535 |
-| NTSC  | Interlaced  | 640×480i   | 3094 | 525 | $\frac{2{,}250{,}000}{143}$                               | 15,734.2657342657 | $\frac{60{,}000}{1{,}001}$                           | 59.9400599401 |
-| PAL   | Progressive | 640×288p   | 3178 | 626 | $\frac{15{,}625}{1}$                                      | 15,625            | $\frac{15{,}625}{313}$                               | 49.9201277955 |
-| PAL   | Interlaced  | 640×576i   | 3178 | 625 | $\frac{15{,}625}{1}$                                      | 15,625            | $\frac{50}{1}$                                       | 50            |
-| PAL-M | Progressive | 640×240p   | 3090 | 526 | $\frac{4{,}572{,}156{,}375{,}000}{290{,}532{,}671}$      | 15,737.1505217050 | $\frac{17{,}384{,}625{,}000}{290{,}532{,}671}$       | 59.8370742270 |
-| PAL-M | Interlaced  | 640×480i   | 3089 | 525 | $\frac{71{,}583{,}750{,}000}{4{,}547{,}257}$             | 15,742.1825949138 | $\frac{272{,}700{,}000}{4{,}547{,}257}$              | 59.9702194092 |
+| Mode  | Scan | Resolution | $L$ | $S$ | $f_H$ (Hz, exact) | $f_H$ (Hz) | $f_V$ (Hz, exact) | $f_V$ (Hz) |
+| :---: | :--: | :--------: | :-: | :-: | :---------------: | :--------: | :---------------: | :--------: |
+| NTSC  | Progressive | 640×240p | 3094 | 526 | $\frac{2{,}250{,}000}{143}$                          | 15,734.2657342657 | $\frac{2{,}250{,}000}{37{,}609}$                     | 59.8261054535 |
+| NTSC  | Interlaced  | 640×480i | 3094 | 525 | $\frac{2{,}250{,}000}{143}$                          | 15,734.2657342657 | $\frac{60{,}000}{1{,}001}$                           | 59.9400599401 |
+| PAL   | Progressive | 640×288p | 3178 | 626 | $\frac{15{,}625}{1}$                                 | 15,625            | $\frac{15{,}625}{313}$                               | 49.9201277955 |
+| PAL   | Interlaced  | 640×576i | 3178 | 625 | $\frac{15{,}625}{1}$                                 | 15,625            | $\frac{50}{1}$                                       | 50            |
+| PAL-M | Progressive | 640×240p | 3090 | 526 | $\frac{4{,}572{,}156{,}375{,}000}{290{,}532{,}671}$ | 15,737.1505217050 | $\frac{17{,}384{,}625{,}000}{290{,}532{,}671}$       | 59.8370742270 |
+| PAL-M | Interlaced  | 640×480i | 3089 | 525 | $\frac{71{,}583{,}750{,}000}{4{,}547{,}257}$        | 15,742.1825949138 | $\frac{272{,}700{,}000}{4{,}547{,}257}$              | 59.9702194092 |
 
 $L$: VI clocks per line (effective). $S$: half-lines per vertical scan (effective).
 
@@ -49,11 +50,11 @@ $L$: VI clocks per line (effective). $S$: half-lines per vertical scan (effectiv
 
 ## Subcarrier & Crystal Reference
 
-| Standard | $f_{\text{xtal}}$                    | $f_S$                              | $f_S$ (Hz)    | $f_S : f_H$          |
-| :------- | :----------------------------------- | :--------------------------------- | :------------ | :------------------- |
-| NTSC     | $\frac{315}{22}$ MHz                 | $\frac{315}{88}$ MHz               | 3,579,545.4545… | $227.5 \times f_H$  |
-| PAL      | 17,734,475 Hz                        | $\frac{17{,}734{,}475}{4}$ Hz      | 4,433,618.75  | $283.7516 \times f_H$ |
-| PAL-M    | $\frac{2{,}045{,}250{,}000}{143}$ Hz | $\frac{511{,}312{,}500}{143}$ Hz   | 3,575,611.8881… | $227.25 \times f_H$ |
+| Standard | $f_{\text{xtal}}$ | $f_S$ | $f_S$ (Hz) | $f_S : f_H$ |
+| :------: | :---------------: | :---: | :--------: | :---------: |
+| NTSC  | $\frac{315}{22} \text{ MHz}$           | $\frac{315}{88} \text{ MHz}$         | 3,579,545.4545… | $227.5 \times f_H$    |
+| PAL   | $17{,}734{,}475 \text{ Hz}$            | $\frac{17{,}734{,}475}{4} \text{ Hz}$ | 4,433,618.75    | $283.7516 \times f_H$ |
+| PAL-M | $\frac{2{,}045{,}250{,}000}{143} \text{ Hz}$ | $\frac{511{,}312{,}500}{143} \text{ Hz}$ | 3,575,611.8881… | $227.25 \times f_H$ |
 
 
 ---
@@ -78,7 +79,7 @@ $L$ and $S$ are effective values (register + 1). LEAP(A, B) values are effective
 
 ## Refresh Rate Conversion
 
-Multipliers convert a time recorded on the *row* hardware to equivalent time on the *column* hardware, assuming game logic is frame-locked.
+Multipliers convert a time recorded on the *row* hardware to equivalent time on the *column* hardware, assuming game logic is frame-locked. My [https://meauxdal.neocities.org/n64-converter](N64 Refresh Rate Conversion Tool) can do this for you automatically.
 
 ### Decimal
 
