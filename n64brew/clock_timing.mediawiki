@@ -1,15 +1,18 @@
-The N64 '''System Clock Architecture''' is driven by quartz crystal resonators that provide two reference clocks to the system's clock synthesizer. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2), and drive the [[Video Interface]] and [[RDRAM]], respectively.
+The N64 system clock is driven by two quartz crystal resonators that provide reference clocks to the clock synthesizer. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2), driving the [[Video Interface]] and [[RDRAM]], respectively.
 
-=== Crystal Specifications ===
+Video clocks derive from X1; all other system clocks derive from X2. X1 varies by region to account for differing broadcast standards.
 
-Based on standard KDS specifications for the AT-49 series, these components exhibit the following characteristics:
-* Frequency Range: <math>3.072</math> to <math>33.9</math> MHz (Fundamental).
-* Frequency Tolerance: <math>\pm 30</math> ppm (at <math>25^{\circ}C</math>).
-* Frequency Stability over Temperature: <math>\pm 30</math> ppm (<math>-10^{\circ}C</math> to <math>+60^{\circ}C</math>).
-* Load Capacitance: Series, <math>8</math> pF, <math>10</math> pF, or <math>12</math> pF.
-* Drive Level: <math>10</math> <math>\mu W</math> (<math>300</math> <math>\mu W</math> maximum).
+== Crystal Specifications ==
 
-== System Clock Synthesis ==
+Based on standard AT-49 series specifications, the X1 and X2 crystal resonators exhibit the following characteristics:
+
+* Frequency Range: <math>3.072</math> to <math>33.9</math> MHz (Fundamental)
+* Frequency Tolerance: <math>\pm 30</math> ppm (at <math>25^{\circ}C</math>)
+* Frequency Stability over Temperature: <math>\pm 30</math> ppm (<math>-10^{\circ}C</math> to <math>+60^{\circ}C</math>)
+* Load Capacitance: Series, <math>8</math> pF, <math>10</math> pF, or <math>12</math> pF
+* Drive Level: <math>10</math> <math>\mu W</math> (<math>300</math> <math>\mu W</math> maximum)
+
+== Crystal 1 (X1) ==
 
 === Reference Clock ===
 
@@ -48,6 +51,7 @@ Converted to decimal (Hz):
 |}
 
 === Clock Synthesis ===
+
 [[File:MX8350-Table.png|thumb|alt=MX8350 functional description and frequency table.|MX8350 functional description and frequency table. Image from: [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - Macronix MX8350 datasheet mirror]]]
 [[File:MX8330 video maths.png|thumb|alt=MX8330MC description. FSEL (frequency select) logic and Revision E notice|MX8330 description. FSEL (frequency select) logic and Revision E notice. Image from: [https://wiki.console5.com/tw/images/e/e3/MX8330.pdf Console5 - Macronix MX8330MC datasheet mirror]]]
 
@@ -55,18 +59,55 @@ The clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the necess
 
 * '''FSC''': Chrominance subcarrier = X1 ÷ 4
 * '''VCLK''': Video clock = X1 × multiplier ÷ 5
+
 '''FSEL (NTSC/!PAL)''':<ref>This pin is marked FSEL on the MX8330MC and MX9911MC datasheets; the equivalent pin on the MX8350 is referred to as '''NTSC/!PAL'''.</ref> Input pin; tied high or low. Selects the VCLK multiplier:
 
 {| class="wikitable" style="text-align: center;"
 ! Standard !! FSEL Pin State !! Multiplier
 |-
-| '''NTSC, MPAL'''   || High || 17×
+| '''NTSC, MPAL''' || High || 17×
 |-
-| '''PAL'''    || Low  || 14×
+| '''PAL''' || Low || 14×
 |}
+
+Video clock frequency is calculated as:
+
+<math>VCLK = \frac{X1 \times \text{Multiplier}}{5}</math>
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! FSC (<math>f_{SC}</math>) !! Crystal 1 (X1) !! FSEL (NTSC/!PAL) !! Multiplier !! Divider !! VCLK
+|-
+| '''NTSC''' || 3.57954545 MHz || 14.31818182 MHz || High || 17 || 5 || 48.68181818 MHz
+|-
+| '''PAL''' || 4.43361875 MHz || 17.734475 MHz || Low || 14 || 5 || 49.65653 MHz
+|-
+| '''MPAL''' || 3.57561189 MHz || 14.30244755 MHz || High || 17 || 5 || 48.62832167 MHz
+|}
+
+The [[Audio Interface]] also uses this clock.
 
 === Hardware Notes ===
 
 <blockquote>
-'''Note (MX8330MC Rev.E):''' Because the VCO and the counter in the FEEDBACK DIVIDER can not operate in accordance with each other in the initial stage, the counter must be reset if the power on voltage is less than 3.3V. This is achieved by toggling the '''FSEL''' pin after VDD exceeds 3.0V. It takes 5ms for the signal to stabilize after toggling.
+'''Note (MX8330MC Rev. E):''' Because the VCO and the counter in the FEEDBACK DIVIDER cannot operate in accordance with each other in the initial stage, the counter must be reset if the power-on voltage is less than 3.3V. This is achieved by toggling the '''FSEL''' pin after VDD exceeds 3.0V. It takes 5ms for the signal to stabilize after toggling.
 </blockquote>
+
+== References ==
+
+* [http://handle.itu.int/11.1004/020.1000/4.283 ITU Digital Collection - CCIR Report 624-4 (1990)]
+* [https://wiki.console5.com/wiki/MX8330 Console5 Tech Wiki - MX8330MC Pinout & Datasheet]
+* [https://www.datasheetarchive.com/datasheet/MX9911/Macronix-International?term=mx9911 Datasheet Archive - MX9911MC Datasheet]
+* [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - MX8350 Datasheet]
+* [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS - AT-38/AT-49 Miniature Crystal Resonators Datasheet (kds.info)]
+* [https://datasheet.datasheetarchive.com/originals/scans/Scans-107/DSASCANS15-48627.pdf KDS America - AT-49, AT-38, UM-5, UM-1, UM-2, HC-49/U specifications]
+* [https://txccrystal.com/images/pdf/9b.pdf TXC - 9B Series Quartz Crystal Datasheet]
+* [https://patents.google.com/patent/US6310814B1 Google Patents - US6310814B1, ''Rambus DRAM (RDRAM) apparatus and method for performing refresh operations'']
+* [https://gbhwdb.gekkio.fi/ Gekkio et al - Game Boy hardware database]
+* [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC - Test Report No. : 11319287S-A-R2]
+* [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg Evan-Amos, Wikimedia Commons - Nintendo-N64-Motherboard-Top.jpg]
+* [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg Evan-Amos, Wikimedia Commons - Nintendo-Famicom-Motherboard-BL.jpg]
+
+== Footnotes ==
+<references />
+
+[[Category:Motherboard components]]
