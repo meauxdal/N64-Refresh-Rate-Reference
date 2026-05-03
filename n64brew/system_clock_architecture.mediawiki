@@ -1,0 +1,72 @@
+The N64 '''System Clock Architecture''' is driven by quartz crystal resonators that provide two reference clocks to the system's clock synthesizer. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2), and drive the [[Video Interface]] and [[RDRAM]], respectively.
+
+=== Crystal Specifications ===
+
+Based on standard KDS specifications for the AT-49 series, these components exhibit the following characteristics:
+* Frequency Range: <math>3.072</math> to <math>33.9</math> MHz (Fundamental).
+* Frequency Tolerance: <math>\pm 30</math> ppm (at <math>25^{\circ}C</math>).
+* Frequency Stability over Temperature: <math>\pm 30</math> ppm (<math>-10^{\circ}C</math> to <math>+60^{\circ}C</math>).
+* Load Capacitance: Series, <math>8</math> pF, <math>10</math> pF, or <math>12</math> pF.
+* Drive Level: <math>10</math> <math>\mu W</math> (<math>300</math> <math>\mu W</math> maximum).
+
+== System Clock Synthesis ==
+
+=== Reference Clock ===
+
+A quartz crystal resonator on the N64 motherboard supplies the X'tal1 (X1) reference clock to the clock synthesizer (U7 or U17<ref>Early boards use the 8-pin Macronix MX8330MC at U7; later revisions substitute with equivalent MX9911MC. "Funtastic"-era and later models consolidate U7 and U15 into a single 14-pin MX8350 synthesizer at U17.</ref>) in order to generate the VI clock frequency (VCLK).
+
+The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (KDS)<ref>Corroborated by [https://gbhwdb.gekkio.fi/ Game Boy hardware database] explicitly identifying identical crystals as Daishinku Co., Ltd. (est. 1959 as Daiwa Shinku Kogyosho), [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg "KDS" markings on Famicom and NES resonators], and an [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC report] indicating an ongoing supplier relationship between Nintendo and Daishinku. Crystals identical in appearance and marking convention to those positively identified as KDS crystals have been confirmed to appear on at least Game Boy, SNES, Virtual Boy, N64, and Game Boy Color hardware.</ref> with a baseline frequency tolerance of ±30 ppm<ref>X1 and X2 are visually identified as AT-49 hermetically sealed through-hole AT-cut crystal resonators from [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg N64 motherboard photography (Evan-Amos, Wikimedia Commons)], consistent with KDS AT-49 package dimensions ([https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 Datasheet]). ±30 ppm is the base grade frequency tolerance specified for commercial AT-49 crystals by the same manufacturer (KDS AT-38/AT-49 Datasheet). The TXC 9B Series ([https://txccrystal.com/images/pdf/9b.pdf TXC 9B Series Datasheet]) independently corroborates this figure; TXC crystal resonators are confirmed present in N64-derived hardware (iQue Player).</ref>; derived signals inherit this proportional error.
+
+=== Crystal Frequency Derivation ===
+
+[[File:CCIR-1990-Rep.624-4-Table.png|thumb|alt=Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz|Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz. Image from: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990), Table II]]]
+
+Each regional broadcast standard defines a horizontal line frequency (<math>f_H</math>), from which the chrominance subcarrier frequency (<math>f_{SC}</math>)<ref>The carrier frequency on which color (hue and saturation) is modulated for analog video. Also referred to as colorburst, color subcarrier, or chrominance sub-carrier. Note that "burst" refers specifically to the sample of this subcarrier transmitted during the back porch to establish a phase and frequency reference. Standard NTSC (System M) specifies 9 ± 1 cycles of the carrier wave during burst; PAL (System B/G) specifies 10 ± 1 cycles. Source: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990), Table I].</ref> is derived as a fixed rational multiple. The X1 resonant frequency is specified as 4 × <math>f_{SC}</math>.
+
+All frequencies are given in hertz (Hz).
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! <math>f_H</math> !! <math>f_{SC}</math> : <math>f_H</math> !! <math>f_{SC}</math> !! X1
+|-
+| '''NTSC''' || <math>\frac{2{,}250{,}000}{143}</math> || <math>f_{SC} = \frac{455}{2} f_H</math> || <math>\frac{315}{88} \times 10^6</math> || <math>\frac{315}{22} \times 10^6</math>
+|-
+| '''PAL''' || <math>15{,}625</math> || <math>f_{SC} = \left(\frac{1135}{4} + \frac{1}{625}\right) f_H</math> || <math>\frac{17{,}734{,}475}{4}</math> || <math>17{,}734{,}475</math>
+|-
+| '''MPAL''' || <math>\frac{2{,}250{,}000}{143}</math> || <math>f_{SC} = \frac{909}{4} f_H</math> || <math>\frac{511{,}312{,}500}{143}</math> || <math>\frac{2{,}045{,}250{,}000}{143}</math>
+|}
+
+Converted to decimal (Hz):
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! <math>f_H</math> !! <math>f_{SC}</math> : <math>f_H</math> !! <math>f_{SC}</math> !! X1
+|-
+| '''NTSC''' || 15,734.2657 || 227.5 <math>f_H</math> || 3,579,545.4545 || 14,318,181.8182
+|-
+| '''PAL''' || 15,625 || 283.7516 <math>f_H</math> || 4,433,618.75 || 17,734,475
+|-
+| '''MPAL''' || 15,734.2657 || 227.25 <math>f_H</math> || 3,575,611.8881 || 14,302,447.5524
+|}
+
+=== Clock Synthesis ===
+[[File:MX8350-Table.png|thumb|alt=MX8350 functional description and frequency table.|MX8350 functional description and frequency table. Image from: [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - Macronix MX8350 datasheet mirror]]]
+[[File:MX8330 video maths.png|thumb|alt=MX8330MC description. FSEL (frequency select) logic and Revision E notice|MX8330 description. FSEL (frequency select) logic and Revision E notice. Image from: [https://wiki.console5.com/tw/images/e/e3/MX8330.pdf Console5 - Macronix MX8330MC datasheet mirror]]]
+
+The clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the necessary clocks from the X1 crystal input:<ref>'''RCLK''': Rambus clock derived from a second crystal (X2). The output frequency is X2 × 17, with a nominal X2 of 250 MHz ÷ 17 ≈ 14.705882 MHz. This clock is driven via the high-speed, low-voltage swing RSL (Rambus Signaling Logic; sometimes expanded in third-party documentation as "Rambus Signaling Level") '''FSO''' output pin, rather than the TTL-compatible '''FSO/5''' used in VCLK generation (FSC output is also TTL-compatible).</ref>
+
+* '''FSC''': Chrominance subcarrier = X1 ÷ 4
+* '''VCLK''': Video clock = X1 × multiplier ÷ 5
+'''FSEL (NTSC/!PAL)''':<ref>This pin is marked FSEL on the MX8330MC and MX9911MC datasheets; the equivalent pin on the MX8350 is referred to as '''NTSC/!PAL'''.</ref> Input pin; tied high or low. Selects the VCLK multiplier:
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! FSEL Pin State !! Multiplier
+|-
+| '''NTSC, MPAL'''   || High || 17×
+|-
+| '''PAL'''    || Low  || 14×
+|}
+
+=== Hardware Notes ===
+
+<blockquote>
+'''Note (MX8330MC Rev.E):''' Because the VCO and the counter in the FEEDBACK DIVIDER can not operate in accordance with each other in the initial stage, the counter must be reset if the power on voltage is less than 3.3V. This is achieved by toggling the '''FSEL''' pin after VDD exceeds 3.0V. It takes 5ms for the signal to stabilize after toggling.
+</blockquote>
