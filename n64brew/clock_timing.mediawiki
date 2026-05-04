@@ -1,24 +1,14 @@
-The N64 system clock is driven by two quartz crystal resonators that provide reference clocks to the clock synthesizer. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2), driving the [[Video Interface]] and [[RDRAM]], respectively.
+N64 '''Clock Timing''' is driven by two quartz crystal resonators that provide reference clocks to the clock synthesizer. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2), driving the [[Video Interface]] and [[RDRAM]], respectively.
 
-Video clocks derive from X1; all other system clocks derive from X2. X1 varies by region to account for differing broadcast standards.
-
-== Crystal Specifications ==
-
-Based on standard AT-49 series specifications, the X1 and X2 crystal resonators exhibit the following characteristics:
-
-* Frequency Range: <math>3.072</math> to <math>33.9</math> MHz (Fundamental)
-* Frequency Tolerance: <math>\pm 30</math> ppm (at <math>25^{\circ}C</math>)
-* Frequency Stability over Temperature: <math>\pm 30</math> ppm (<math>-10^{\circ}C</math> to <math>+60^{\circ}C</math>)
-* Load Capacitance: Series, <math>8</math> pF, <math>10</math> pF, or <math>12</math> pF
-* Drive Level: <math>10</math> <math>\mu W</math> (<math>300</math> <math>\mu W</math> maximum)
+Video and audio subsystem clocks derive from X1; all other system clocks derive from X2. X1 varies by region to account for differing broadcast standards.
 
 == Crystal 1 (X1) ==
 
-=== Reference Clock ===
+=== VCLK and FSC ===
 
 A quartz crystal resonator on the N64 motherboard supplies the X'tal1 (X1) reference clock to the clock synthesizer (U7 or U17<ref>Early boards use the 8-pin Macronix MX8330MC at U7; later revisions substitute with equivalent MX9911MC. "Funtastic"-era and later models consolidate U7 and U15 into a single 14-pin MX8350 synthesizer at U17.</ref>) in order to generate the VI clock frequency (VCLK).
 
-The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (KDS)<ref>Corroborated by [https://gbhwdb.gekkio.fi/ Game Boy hardware database] explicitly identifying identical crystals as Daishinku Co., Ltd. (est. 1959 as Daiwa Shinku Kogyosho), [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg "KDS" markings on Famicom and NES resonators], and an [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC report] indicating an ongoing supplier relationship between Nintendo and Daishinku. Crystals identical in appearance and marking convention to those positively identified as KDS crystals have been confirmed to appear on at least Game Boy, SNES, Virtual Boy, N64, and Game Boy Color hardware.</ref> with a baseline frequency tolerance of ±30 ppm<ref>X1 and X2 are visually identified as AT-49 hermetically sealed through-hole AT-cut crystal resonators from [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg N64 motherboard photography (Evan-Amos, Wikimedia Commons)], consistent with KDS AT-49 package dimensions ([https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 Datasheet]). ±30 ppm is the base grade frequency tolerance specified for commercial AT-49 crystals by the same manufacturer (KDS AT-38/AT-49 Datasheet). The TXC 9B Series ([https://txccrystal.com/images/pdf/9b.pdf TXC 9B Series Datasheet]) independently corroborates this figure; TXC crystal resonators are confirmed present in N64-derived hardware (iQue Player).</ref>; derived signals inherit this proportional error.
+The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (KDS)<ref>Corroborated by [https://gbhwdb.gekkio.fi/ Game Boy hardware database] explicitly identifying identical crystals as Daishinku Co., Ltd. (est. 1959 as Daiwa Shinku Kogyosho), [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg "KDS" markings on Famicom and NES resonators], and an [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC report] indicating an ongoing supplier relationship between Nintendo and Daishinku. Crystals identical in appearance and marking convention to those positively identified as KDS crystals have been confirmed to appear on at least Game Boy, SNES, Virtual Boy, N64, and Game Boy Color hardware.</ref> specified at 16 pF load capacitance, with a baseline frequency tolerance of ±30 ppm<ref>X1 and X2 are visually identified as AT-49 hermetically sealed through-hole AT-cut crystal resonators from [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg N64 motherboard photography (Evan-Amos, Wikimedia Commons)], consistent with KDS AT-49 package dimensions ([https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 Datasheet]). ±30 ppm is the base grade frequency tolerance specified for commercial AT-49 crystals by the same manufacturer (KDS AT-38/AT-49 Datasheet). The TXC 9B Series ([https://txccrystal.com/images/pdf/9b.pdf TXC 9B Series Datasheet]) independently corroborates this figure; TXC crystal resonators are confirmed present in N64-derived hardware (iQue Player).</ref>; derived signals inherit this proportional error.
 
 === Crystal Frequency Derivation ===
 
@@ -55,7 +45,7 @@ Converted to decimal (Hz):
 [[File:MX8350-Table.png|thumb|alt=MX8350 functional description and frequency table.|MX8350 functional description and frequency table. Image from: [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - Macronix MX8350 datasheet mirror]]]
 [[File:MX8330 video maths.png|thumb|alt=MX8330MC description. FSEL (frequency select) logic and Revision E notice|MX8330 description. FSEL (frequency select) logic and Revision E notice. Image from: [https://wiki.console5.com/tw/images/e/e3/MX8330.pdf Console5 - Macronix MX8330MC datasheet mirror]]]
 
-The clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the necessary clocks from the X1 crystal input:<ref>'''RCLK''': Rambus clock derived from a second crystal (X2). The output frequency is X2 × 17, with a nominal X2 of 250 MHz ÷ 17 ≈ 14.705882 MHz. This clock is driven via the high-speed, low-voltage swing RSL (Rambus Signaling Logic; sometimes expanded in third-party documentation as "Rambus Signaling Level") '''FSO''' output pin, rather than the TTL-compatible '''FSO/5''' used in VCLK generation (FSC output is also TTL-compatible).</ref>
+The clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the necessary clocks from the X1 crystal input:
 
 * '''FSC''': Chrominance subcarrier = X1 ÷ 4
 * '''VCLK''': Video clock = X1 × multiplier ÷ 5
@@ -86,7 +76,55 @@ Video clock frequency is calculated as:
 
 The [[Audio Interface]] also uses this clock.
 
-=== Hardware Notes ===
+== Crystal 2 (X2) ==
+
+=== Rambus Clock Path (RCLK) ===
+
+A second quartz crystal resonator (X2) provides the reference for the Rambus subsystem. This crystal frequency is multiplied by a fixed factor of 17 to produce the high-speed Rambus clock domain.
+
+For a nominal X2 frequency of 14.705882 MHz, the synthesizer generates:
+
+* '''RCLK = 250 MHz''' (X2 × 17)
+
+Unlike the video clock path (X1), this clock is distributed using Rambus Signaling Logic (RSL), a low-voltage swing interface optimized for high-speed operation. The synthesizer drives this signal via the '''FSO''' output pin, rather than the TTL-compatible '''FSO/5''' used in VCLK generation<ref>FSC output is also TTL-compatible</ref>.
+
+RCLK is routed directly to the RDRAM devices and into the Rambus ASIC Clock (RAC) domain within the RCP. From this point, the clock is synchronously divided to produce the internal system timing hierarchy, including the memory clock (MClock), system interface (SI), and downstream peripheral clocks.
+
+The CPU clock originates from the Rambus clock domain via MClock, and is further scaled by programmable divisors (DivMode registers).
+
+=== X2 Clock Distribution ===
+
+{| class="wikitable" style="text-align:center;"
+|-
+! Stage !! Clock !! Derivation !! Exact (MHz) !! MHz !! Notes
+|-
+| 1 || X2 || — || <math>\frac{250}{17}</math> || 14.7058823529 || Secondary crystal dedicated to Rambus timing
+|-
+| 2 || RCLK || X2 × 17 || <math>250</math> || 250 || Generated by synthesizer; driven via RSL (FSO)
+|-
+| 3 || MClock (RAC) || RCLK ÷ 4 || <math>\frac{250}{4}</math> || 62.5 || Internal RCP memory/control domain
+|-
+| 4 || CPU || MClock × <math>\frac{3}{2}</math> || <math>\frac{750}{8}</math> || 93.75<ref>CPU clock is software-configurable via DivMode registers. 93.75 MHz is the nominal operating frequency.</ref> || Central Processing Unit
+|-
+| 5 || SI || MClock ÷ 4 || <math>\frac{250}{16}</math> || 15.625 || System interface and peripheral timing base
+|-
+| 6 || Cartridge / PIF || SI ÷ 8 || <math>\frac{250}{128}</math> || 1.953125 || Cartridge bus and PIF clock domain
+|}
+
+=== Notes ===
+
+* The use of a dedicated crystal for the Rambus domain isolates high-speed memory timing from the video clock domain (X1), minimizing jitter coupling between subsystems.
+* The RSL-driven FSO output is electrically distinct from TTL outputs and is required to meet Rambus signaling constraints at 250 MHz.
+* The division chain (÷4 → ×3/2 → ÷4 → ÷8) establishes a fully synchronous hierarchy of sub-clocks across the RCP, CPU, and peripheral interfaces.
+* Although 93.75 MHz is the nominal CPU frequency, the actual operating frequency depends on DivMode configuration and may vary accordingly.
+
+<references>
+
+</references>
+
+== Errata ==
+
+Transient behavior is noted in the MX8330MC datasheet.
 
 <blockquote>
 '''Note (MX8330MC Rev. E):''' Because the VCO and the counter in the FEEDBACK DIVIDER cannot operate in accordance with each other in the initial stage, the counter must be reset if the power-on voltage is less than 3.3V. This is achieved by toggling the '''FSEL''' pin after VDD exceeds 3.0V. It takes 5ms for the signal to stabilize after toggling.

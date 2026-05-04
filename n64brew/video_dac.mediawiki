@@ -2,18 +2,6 @@ The '''Video DAC''' is a chip on the N64 motherboard that converts the 7-bit-wid
 
 Early revisions pair a discrete Video DAC (VDC-NUS or VDC-NUS A) with an external encoder (ENC-NUS or S-RGB A) to generate video output.<ref>S-RGB A is only observed on NUS-001(FRA) models. While this encoder is RGB-capable, the necessary amplification components are unpopulated on the motherboard in retail units. S-RGB A lacks S-Video encoding entirely, limiting unmodified NUS-CPU(R)-01 boards to composite output.</ref> Other revisions consolidate these functions into a single integrated chip (DENC-NUS, AVDC-NUS, MAV-NUS).<ref>Later PAL revisions NUS-CPU(P)-03 and -03-1 lack S-Video output due to board-level omissions; the Y (luma) and C (chroma) traces from the MAV-NUS encoder to the Multi Out are severed and the supporting surface-mount components are unpopulated. S-Video output can be restored with a flex cable mod tapping directly from the MAV-NUS.</ref>
 
-== Reference Clocks ==
-
-The Video DAC is driven by two clock signals derived from the X1 crystal by the clock synthesizer (U7 / U17). See [[Clock Timing]] for derivations.
-
-{| class="wikitable" style="text-align: center;"
-! Signal !! Role !! NTSC !! PAL !! MPAL
-|-
-| '''VCLK''' (FSO/5) || DAC pixel clock || 48.6818 MHz || 49.6565 MHz || 48.6283 MHz
-|-
-| '''FSC''' || Subcarrier reference (SCIN) || 3.5795 MHz || 4.4336 MHz || 3.5756 MHz
-|}
-
 == Bus Operation ==
 
 The Video DAC operates at four times the pixel clock frequency. Four consecutive VI clock cycles are multiplexed over the VI bus to form one 21-bit color value per emitted pixel.
@@ -27,7 +15,7 @@ The 4-cycle sequence carries both pixel data and control signals and restarts wh
 
 The Video Interface transmits control signals every clock during blanking by holding !DSYNC low across multiple VI clock cycles.
 
-{| class="wikitable"
+{| class="wikitable" style="text-align: center;"
 ! !! Cycle 0 !! Cycle 1 !! Cycle 2 !! Cycle 3
 |-
 ! !DSYNC
@@ -59,6 +47,76 @@ The Video Interface transmits control signals every clock during blanking by hol
 
 The Video DAC outputs 21-bit RGB color. Each pixel period transmits 28 bits (7 bits × 4 cycles), of which 21 bits are used for RGB data. Four of the remaining bits are used for control signaling during blanking; three bits are unused.<ref>Since there are three unused bits in the multiplex sequence, it is unclear why the DAC has only 7 bits of precision instead of 8; no documentation yet found explains this.</ref>
 
+== Video Clock (VCLK) ==
+
+The Video DAC is driven by two clock domains: the '''video clock''' (VCLK) and the '''color subcarrier''' (FSC).
+
+Both clocks are derived from the X1 crystal resonator. The synthesizer (Macronix MX8330MC / MX9911MC / MX8350 depending on board revision) multiplies and divides the crystal frequency to produce the required rates.
+
+The video clock frequency is calculated as:
+
+<math>VCLK = \frac{X1 \times \text{Multiplier}}{5}</math>
+
+The multiplier is selected by the FSEL (NTSC/!PAL) pin:
+* High → 17× (NTSC / MPAL)
+* Low  → 14× (PAL)
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! FSC (MHz) !! Crystal (X1) (MHz) !! FSEL !! Multiplier !! VCLK (MHz)
+|-
+| '''NTSC''' || 3.57954545 || 14.31818182 || High || 17 || 48.68181818
+|-
+| '''PAL'''  || 4.43361875 || 17.734475   || Low  || 14 || 49.65653
+|-
+| '''MPAL''' || 3.57561189 || 14.30244755 || High || 17 || 48.62832167
+|}
+
+Crystal frequency tolerance is ±30 ppm. This error propagates to all derived clocks (see [[Clock Timing]]).
+
+== Default Output Modes ==
+
+Libultra and Libdragon software using SDK-provided default VI modes output signals corresponding with these profiles. Libdragon additionally defines PAL60 configurations combining NTSC resolutions and refresh rates with the PAL color subcarrier.
+
+{| class="wikitable" style="text-align: center;"
+! Mode !! Scan type !! Resolution !! Refresh rate (Hz)
+|-
+| NTSC || Progressive || 640×240p || 59.8261054535
+|-
+| NTSC || Interlaced || 640×480i || 59.9400599401
+|-
+| PAL || Progressive || 640×288p || 49.9201277955
+|-
+| PAL || Interlaced || 640×576i || 50.0000000000
+|-
+| MPAL || Progressive || 640×240p || 59.8370742270
+|-
+| MPAL || Interlaced || 640×480i || 59.9702194092
+|}
+
+== Output Constraints ==
+
+The VI defines the temporal bounds of the video signal through <code>VI_H_TOTAL</code>, <code>VI_V_TOTAL</code>, and associated sync and burst parameters. These registers determine the total scanline length and placement of the horizontal blanking interval, including the colorburst window.
+
+Within this structure, the nominal start of active video is defined by the end of the colorburst interval (<code>VI_BURST</code>). This establishes a theoretical maximum drawable width based purely on timing.
+
+However, the effective drawable region is reduced by behavior intrinsic to the VI itself. Hardware observations indicate that approximately 7 pixels at the left edge of the framebuffer are not output. <ref>This loss occurs within the VI's internal fetch and resampling pipeline and is independent of analog encoding or display characteristics.</ref> Because the VI performs horizontal scaling using fixed-point arithmetic (<code>VI_X_SCALE</code>), this framebuffer-domain loss transforms in VI output space according to the scaling factor:
+
+ lost_VI_pixels ≈ 7 × (1024 / X_SCALE)
+
+The remaining region represents the maximum digitally addressable output. Further extension of the display window beyond the burst boundary is technically possible via register configuration, but doing so overlaps the colorburst interval and disrupts chroma reference timing, leading to unstable or unusable output.
+
+Analog decoding and display hardware impose additional constraints. As the signal deviates from standard timing, visibility is not guaranteed<ref>Not to be conflated with visual obfuscation due to television overscan.</ref>, and compatibility degrades. These effects occur after digital generation and do not define the VI's internal limits, but they further restrict what is practically observable.
+
+{| class="wikitable" style="text-align:center;"
+! Mode !! H_TOTAL reg !! Effective (VI px) !! Burst start !! Burst width !! Burst end !! Drawable
+|-
+| NTSC || <code>0x0C15</code> || 773.5 || 62 || 34 || 96 || 677.5
+|-
+| PAL  || <code>0x0C69</code> || 794.5 || 64 || 35 || 99 || 695.5
+|-
+| MPAL || <code>0x0C10</code> || 772.25 || 70 || 30 || 100 || 672.25
+|}
+
 == Hardware Variants ==
 
 {| class="wikitable" style="text-align: center;"
@@ -78,6 +136,7 @@ The Video DAC outputs 21-bit RGB color. Each pixel period transmits 28 bits (7 b
 == References ==
 
 * [https://web.archive.org/web/20090103080549/http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html N64 RGB Mod (Tim Worthington)] (archived from [http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html the original])
+* [https://github.com/DragonMinded/libdragon/blob/preview/src/vi.c Libdragon - vi.c]
 * [https://patents.google.com/patent/US6956621B2/ Google Patents - US6956621B2, ''High impedance digital full line video clamp'']
 * [https://consoles4you.ch/guides/n64svideorestore.html consoles4you.ch - N64 S-Video Restore Install Guide]
 * [https://web.archive.org/web/20170107153330/http://nfggames.com/forum2/index.php?topic=5251.0 nfggames.com - Fix S-Video for PAL N64 NUS-CPU(P)-03-1] (archived from [https://nfggames.com/forum2/index.php?topic=5251.0 the original])
