@@ -6,7 +6,7 @@ Video and audio subsystem clocks derive from X1; all other system clocks derive 
 
 A quartz crystal resonator on the N64 motherboard supplies the X'tal1 (X1) reference clock to the clock synthesizer (U7 or U17<ref>Early boards use the 8-pin Macronix MX8330MC at U7; later revisions substitute with equivalent MX9911MC. "Funtastic"-era and later models consolidate U7 and U15 into a single 14-pin MX8350 synthesizer at U17.</ref>) in order to generate the VI clock frequency (VCLK).
 
-The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (KDS)<ref>Corroborated by [https://gbhwdb.gekkio.fi/ Game Boy hardware database] explicitly identifying identical crystals as Daishinku Co., Ltd. (est. 1959 as Daiwa Shinku Kogyosho), [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg "KDS" markings on Famicom and NES resonators], and an [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC report] indicating an ongoing supplier relationship between Nintendo and Daishinku. Crystals identical in appearance and marking convention to those positively identified as KDS crystals have been confirmed to appear on at least Game Boy, SNES, Virtual Boy, N64, and Game Boy Color hardware.</ref> specified at 16 pF load capacitance, with a baseline frequency tolerance of ±30 ppm<ref>X1 and X2 are visually identified as AT-49 hermetically sealed through-hole AT-cut crystal resonators from [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg N64 motherboard photography (Evan-Amos, Wikimedia Commons)], consistent with KDS AT-49 package dimensions ([https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 Datasheet]). ±30 ppm is the base grade frequency tolerance specified for commercial AT-49 crystals by the same manufacturer (KDS AT-38/AT-49 Datasheet). The TXC 9B Series ([https://txccrystal.com/images/pdf/9b.pdf TXC 9B Series Datasheet]) independently corroborates this figure; TXC crystal resonators are confirmed present in N64-derived hardware (iQue Player).</ref>; derived signals inherit this proportional error.
+The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (KDS)<ref>Corroborated by [https://gbhwdb.gekkio.fi/ Game Boy hardware database] explicitly identifying identical crystals as Daishinku Co., Ltd. (est. 1959 as Daiwa Shinku Kogyosho), [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg "KDS" markings on Famicom and NES resonators], and an [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC report] indicating an ongoing supplier relationship between Nintendo and Daishinku. Crystals identical in appearance and marking convention to those positively identified as KDS crystals have been confirmed to appear on at least Game Boy, SNES, Virtual Boy, N64, and Game Boy Color hardware.</ref> with a baseline frequency tolerance of ±30 ppm<ref>X1 and X2 are visually identified as AT-49 hermetically sealed through-hole AT-cut crystal resonators from [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg N64 motherboard photography (Evan-Amos, Wikimedia Commons)], consistent with KDS AT-49 package dimensions ([https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 Datasheet]). ±30 ppm is the base grade frequency tolerance specified for commercial AT-49 crystals by the same manufacturer.</ref>; derived signals inherit this proportional error.
 
 === Crystal Frequency Derivation ===
 
@@ -120,26 +120,18 @@ A second quartz crystal resonator (X2) drives the Rambus subsystem. X2 is multip
 |-
 ! Clock !! Derivation !! Exact (MHz) !! MHz
 |-
-| '''X2''' || — || <math>\frac{250}{17}</math> || 14.7058823529
+| '''X2''' || n/a || <math>\frac{250}{17}</math> || 14.7058823529
 |-
-| '''RCLK''' || X2 × 17 || <math>250</math> || 250<ref>RCLK is distributed via Rambus Signaling Logic (RSL), a low-voltage swing interface, via the synthesizer's '''FSO''' pin. This is distinct from the TTL-compatible '''FSO/5''' pin used for VCLK. FSC is also TTL-compatible.</ref>
+| '''RCLK'''<ref>RCLK is distributed via Rambus Signaling Logic (RSL), a low-voltage swing interface, via the synthesizer's '''FSO''' pin. This is distinct from the Transistor-Transistor Logic (TTL) '''FSO/5''' pin used for VCLK. FSC output is also TTL-compatible.</ref> || X2 × 17 || <math>250</math> || 250
 |-
-| '''MClock''' || RCLK ÷ 4 || <math>\frac{125}{2}</math> || 62.5
+| '''MClock'''<ref>Masterclock. See [[SysAD_Interface]].</ref> || RCLK ÷ 4 || <math>\frac{125}{2}</math> || 62.5
 |-
-| '''CPU''' || MClock × <math>\frac{3}{2}</math> || <math>\frac{375}{4}</math> || 93.75<ref>CPU clock is software-configurable via DivMode registers. 93.75 MHz is the nominal operating frequency.</ref>
+| '''[[VR4300|CPU]]''' || MClock × <math>\frac{3}{2}</math> || <math>\frac{375}{4}</math> || 93.75<ref>CPU clock multiplier set via [[VR4300]] DivMode static pin inputs. 93.75 MHz is the nominal operating frequency.</ref>
 |-
 | '''[[Serial Interface]]''' || MClock ÷ 4 || <math>\frac{125}{8}</math> || 15.625
 |-
-| '''Cartridge / PIF''' || SI ÷ 8 || <math>\frac{125}{64}</math> || 1.953125
+| '''[[Game_Pak|Cartridge]] / [[PIF]]''' || SI ÷ 8 || <math>\frac{125}{64}</math> || 1.953125
 |}
-
-== Notes ==
-
-Transient behavior is noted in the MX8330MC datasheet.
-
-<blockquote>
-'''Note (MX8330MC Rev. E):''' Because the VCO and the counter in the FEEDBACK DIVIDER cannot operate in accordance with each other in the initial stage, the counter must be reset if the power-on voltage is less than 3.3V. This is achieved by toggling the '''FSEL''' pin after VDD exceeds 3.0V. It takes 5ms for the signal to stabilize after toggling.
-</blockquote>
 
 == References ==
 
@@ -149,9 +141,10 @@ Transient behavior is noted in the MX8330MC datasheet.
 * [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - MX8350 Datasheet]
 * [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS - AT-38/AT-49 Miniature Crystal Resonators Datasheet (kds.info)]
 * [https://datasheet.datasheetarchive.com/originals/scans/Scans-107/DSASCANS15-48627.pdf KDS America - AT-49, AT-38, UM-5, UM-1, UM-2, HC-49/U specifications]
+* [https://ultra64.ca/files/documentation/silicon-graphics/SGI_R4300_RISC_Processor_Specification_REV2.2.pdf MIPS Technologies Inc. - R4300 RISC Processor Specification, Revision 2.2]
 * [https://assemblergames.org/viewtopic.php?t=25918 eb1560 - assmeblergames.org - Mapping N64 Overclockability]
-* [https://txccrystal.com/images/pdf/9b.pdf TXC - 9B Series Quartz Crystal Datasheet]
 * [https://patents.google.com/patent/US6310814B1 Google Patents - US6310814B1, ''Rambus DRAM (RDRAM) apparatus and method for performing refresh operations'']
+* [https://patents.google.com/patent/US3283170A Google Patents - US3283170A, ''Coupling transistor logic and other circuits'']
 * [https://gbhwdb.gekkio.fi/ Gekkio et al - Game Boy hardware database]
 * [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC - Test Report No. : 11319287S-A-R2]
 * [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg Evan-Amos, Wikimedia Commons - Nintendo-N64-Motherboard-Top.jpg]

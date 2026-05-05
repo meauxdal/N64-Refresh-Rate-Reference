@@ -71,7 +71,7 @@ There are three video clock configurations corresponding to NTSC, PAL, and MPAL 
 
 The encoder receives the FSC clock (X1 ÷ 4) via the subcarrier input (SCIN) pin in order to provide the correct colorburst frequency for the corresponding broadcast standard.
 
-Crystal frequency tolerance is ±30 ppm. This error propagates to all derived clocks (see [[Clock Timing]]).
+Crystal frequency tolerance is ±30 ppm at 25°C.<ref>See [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-49 datasheet] for more detail.</ref> This error propagates to all derived clocks (see [[Clock Timing]]).
 
 == Default Output Modes ==
 
@@ -97,11 +97,9 @@ Libdragon additionally defines PAL60 configurations combining NTSC resolutions a
 
 == Output Constraints ==
 
-The VI defines signal bounds through <code>VI_H_TOTAL</code>, <code>VI_V_TOTAL</code>, and associated sync and burst parameters. The left boundary of active video is set by the end of the colorburst interval (<code>VI_BURST</code>); extending the display window past this point overlaps the colorburst and disrupts chroma reference timing. Within the addressable region, hardware behavior further reduces the effective output: approximately 7 pixels at the left edge of the framebuffer are not output.<ref>This loss occurs within the VI's internal fetch and resampling pipeline and is independent of analog encoding or display characteristics.</ref> Because the VI performs horizontal scaling via fixed-point arithmetic (<code>VI_X_SCALE</code>), this translates to VI output space as:
+A common community question concerns the maximum theoretical resolution possible on the N64.
 
- 7 × (1024 / X_SCALE)
-
-Analog decoding imposes additional practical limits. As the signal increasingly deviates from expected parameters, visibility cannot be ensured<ref>Not to be conflated with visual obfuscation due to television overscan.</ref> and decoder compatibility degrades.
+The VI defines signal bounds through <code>VI_H_TOTAL</code>, <code>VI_V_TOTAL</code>, and associated sync and burst parameters. The left boundary of active video is set by the end of the colorburst interval (<code>VI_BURST</code>); extending the display window past this point overlaps H_BURST and disrupts chroma reference timing and/or black-level clamping. 
 
 {| class="wikitable" style="text-align:center;"
 ! Standard !! VI_H_TOTAL !! Effective (VI px) !! Burst start !! Burst width !! Burst end !! Drawable
@@ -112,6 +110,10 @@ Analog decoding imposes additional practical limits. As the signal increasingly 
 |-
 | '''MPAL''' || <code>0x0C10</code> || 772.25 || 70 || 30 || 100 || 672.25
 |}
+
+Within the addressable region, hardware behavior further reduces the effective output: approximately 7 pixels at the left edge of the framebuffer are not output.<ref>This loss occurs within the VI's internal fetch and resampling pipeline and is independent of analog encoding or display characteristics.</ref> Because the VI performs horizontal scaling via fixed-point arithmetic (<code>VI_X_SCALE</code>), this translates to VI output space as:
+
+ 7 × (1024 / X_SCALE)
 
 == Hardware Variants ==
 
@@ -133,6 +135,7 @@ Analog decoding imposes additional practical limits. As the signal increasingly 
 
 * [https://web.archive.org/web/20090103080549/http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html N64 RGB Mod (Tim Worthington)] (archived from [http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html the original])
 * [https://github.com/DragonMinded/libdragon/blob/preview/src/vi.c Libdragon - vi.c]
+* [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 datasheet]
 * [https://patents.google.com/patent/US6956621B2/ Google Patents - US6956621B2, ''High impedance digital full line video clamp'']
 * [https://consoles4you.ch/guides/n64svideorestore.html consoles4you.ch - N64 S-Video Restore Install Guide]
 * [https://web.archive.org/web/20170107153330/http://nfggames.com/forum2/index.php?topic=5251.0 nfggames.com - Fix S-Video for PAL N64 NUS-CPU(P)-03-1] (archived from [https://nfggames.com/forum2/index.php?topic=5251.0 the original])
