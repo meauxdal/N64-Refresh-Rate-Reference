@@ -49,17 +49,15 @@ The Video DAC outputs 21-bit RGB color. Each pixel period transmits 28 bits (7 b
 
 == Video Clock (VCLK) ==
 
-The Video DAC is driven by two clock domains: the '''video clock''' (VCLK) and the '''color subcarrier''' (FSC).
-
-Both clocks are derived from the X1 crystal resonator. The synthesizer (Macronix MX8330MC / MX9911MC / MX8350 depending on board revision) multiplies and divides the crystal frequency to produce the required rates.
+The Video DAC and encoder are driven by two clocks, each derived from the X1 crystal resonator by the synthesizer (Macronix MX8330MC / MX9911MC / MX8350, depending on board revision): the video clock (VCLK) and the color subcarrier (FSC).
 
 The video clock frequency is calculated as:
 
 <math>VCLK = \frac{X1 \times \text{Multiplier}}{5}</math>
 
-The multiplier is selected by the FSEL (NTSC/!PAL) pin:
-* High → 17× (NTSC / MPAL)
-* Low  → 14× (PAL)
+The multiplier is selected by the FSEL (NTSC/!PAL) pin: High → 17×, Low → 14×.
+
+There are three video clock configurations corresponding to NTSC, PAL, and MPAL (a.k.a [https://en.wikipedia.org/wiki/PAL-M PAL-M]):
 
 {| class="wikitable" style="text-align: center;"
 ! Standard !! FSC (MHz) !! Crystal (X1) (MHz) !! FSEL !! Multiplier !! VCLK (MHz)
@@ -71,50 +69,48 @@ The multiplier is selected by the FSEL (NTSC/!PAL) pin:
 | '''MPAL''' || 3.57561189 || 14.30244755 || High || 17 || 48.62832167
 |}
 
+The encoder receives the FSC clock (X1 ÷ 4) via the subcarrier input (SCIN) pin in order to provide the correct colorburst frequency for the corresponding broadcast standard.
+
 Crystal frequency tolerance is ±30 ppm. This error propagates to all derived clocks (see [[Clock Timing]]).
 
 == Default Output Modes ==
 
-Libultra and Libdragon software using SDK-provided default VI modes output signals corresponding with these profiles. Libdragon additionally defines PAL60 configurations combining NTSC resolutions and refresh rates with the PAL color subcarrier.
+Libultra and Libdragon software using SDK-provided default VI modes output signals corresponding with these profiles. Refresh rates are derived from the X1 crystal frequency and VI register values.<ref>Full <math>f_V</math> derivations are shown in [https://github.com/meauxdal/N64-Refresh-Rate-Reference N64 Refresh Rate Reference.]</ref>
 
 {| class="wikitable" style="text-align: center;"
-! Mode !! Scan type !! Resolution !! Refresh rate (Hz)
+! Standard !! Scan type !! Resolution !! Refresh rate (Hz)
 |-
-| NTSC || Progressive || 640×240p || 59.8261054535
+| '''NTSC''' || Progressive || 640×240p || 59.8261054535
 |-
-| NTSC || Interlaced || 640×480i || 59.9400599401
+| '''NTSC''' || Interlaced || 640×480i || 59.9400599401
 |-
-| PAL || Progressive || 640×288p || 49.9201277955
+| '''PAL''' || Progressive || 640×288p || 49.9201277955
 |-
-| PAL || Interlaced || 640×576i || 50.0000000000
+| '''PAL''' || Interlaced || 640×576i || 50.0000000000
 |-
-| MPAL || Progressive || 640×240p || 59.8370742270
+| '''MPAL''' || Progressive || 640×240p || 59.8370742270
 |-
-| MPAL || Interlaced || 640×480i || 59.9702194092
+| '''MPAL''' || Interlaced || 640×480i || 59.9702194092
 |}
+
+Libdragon additionally defines PAL60 configurations combining NTSC resolutions and refresh rates with the PAL color subcarrier.
 
 == Output Constraints ==
 
-The VI defines the temporal bounds of the video signal through <code>VI_H_TOTAL</code>, <code>VI_V_TOTAL</code>, and associated sync and burst parameters. These registers determine the total scanline length and placement of the horizontal blanking interval, including the colorburst window.
+The VI defines signal bounds through <code>VI_H_TOTAL</code>, <code>VI_V_TOTAL</code>, and associated sync and burst parameters. The left boundary of active video is set by the end of the colorburst interval (<code>VI_BURST</code>); extending the display window past this point overlaps the colorburst and disrupts chroma reference timing. Within the addressable region, hardware behavior further reduces the effective output: approximately 7 pixels at the left edge of the framebuffer are not output.<ref>This loss occurs within the VI's internal fetch and resampling pipeline and is independent of analog encoding or display characteristics.</ref> Because the VI performs horizontal scaling via fixed-point arithmetic (<code>VI_X_SCALE</code>), this translates to VI output space as:
 
-Within this structure, the nominal start of active video is defined by the end of the colorburst interval (<code>VI_BURST</code>). This establishes a theoretical maximum drawable width based purely on timing.
+ 7 × (1024 / X_SCALE)
 
-However, the effective drawable region is reduced by behavior intrinsic to the VI itself. Hardware observations indicate that approximately 7 pixels at the left edge of the framebuffer are not output. <ref>This loss occurs within the VI's internal fetch and resampling pipeline and is independent of analog encoding or display characteristics.</ref> Because the VI performs horizontal scaling using fixed-point arithmetic (<code>VI_X_SCALE</code>), this framebuffer-domain loss transforms in VI output space according to the scaling factor:
-
- lost_VI_pixels ≈ 7 × (1024 / X_SCALE)
-
-The remaining region represents the maximum digitally addressable output. Further extension of the display window beyond the burst boundary is technically possible via register configuration, but doing so overlaps the colorburst interval and disrupts chroma reference timing, leading to unstable or unusable output.
-
-Analog decoding and display hardware impose additional constraints. As the signal deviates from standard timing, visibility is not guaranteed<ref>Not to be conflated with visual obfuscation due to television overscan.</ref>, and compatibility degrades. These effects occur after digital generation and do not define the VI's internal limits, but they further restrict what is practically observable.
+Analog decoding imposes additional practical limits. As the signal increasingly deviates from expected parameters, visibility cannot be ensured<ref>Not to be conflated with visual obfuscation due to television overscan.</ref> and decoder compatibility degrades.
 
 {| class="wikitable" style="text-align:center;"
-! Mode !! H_TOTAL reg !! Effective (VI px) !! Burst start !! Burst width !! Burst end !! Drawable
+! Standard !! VI_H_TOTAL !! Effective (VI px) !! Burst start !! Burst width !! Burst end !! Drawable
 |-
-| NTSC || <code>0x0C15</code> || 773.5 || 62 || 34 || 96 || 677.5
+| '''NTSC''' || <code>0x0C15</code> || 773.5 || 62 || 34 || 96 || 677.5
 |-
-| PAL  || <code>0x0C69</code> || 794.5 || 64 || 35 || 99 || 695.5
+| '''PAL'''  || <code>0x0C69</code> || 794.5 || 64 || 35 || 99 || 695.5
 |-
-| MPAL || <code>0x0C10</code> || 772.25 || 70 || 30 || 100 || 672.25
+| '''MPAL''' || <code>0x0C10</code> || 772.25 || 70 || 30 || 100 || 672.25
 |}
 
 == Hardware Variants ==
