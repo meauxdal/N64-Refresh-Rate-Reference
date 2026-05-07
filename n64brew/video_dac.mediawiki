@@ -57,7 +57,7 @@ The video clock frequency is calculated as:
 
 The multiplier is selected by the FSEL (NTSC/!PAL) pin: High → 17×, Low → 14×.
 
-There are three video clock configurations corresponding to NTSC, PAL, and MPAL (a.k.a [https://en.wikipedia.org/wiki/PAL-M PAL-M]):
+There are three video clock configurations corresponding to NTSC, PAL, and MPAL (a.k.a. [https://en.wikipedia.org/wiki/PAL-M PAL-M]):
 
 {| class="wikitable" style="text-align: center;"
 ! Standard !! FSC (MHz) !! Crystal (X1) (MHz) !! FSEL !! Multiplier !! VCLK (MHz)
