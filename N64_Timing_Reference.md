@@ -1,3 +1,7 @@
+# Note
+
+As of the time of writing (May 6, 2026), there is a known discrepancy between the [preview branch of Libdragon](https://github.com/DragonMinded/libdragon/tree/preview) and prior definitions for PAL-M progressive signals. Currently, the Libdragon preview branch uses the PAL-M interlaced VI register configuration indicated in this document for both progressive and interlaced modes, rather than the differing profiles for progressive and interlaced of Libultra and Libdragon's trunk branch. This configuration produces a different refresh rate for PAL-M progressive that is not currently derived in this document. Thus, PAL-M progressive values given in this document do not correspond to software compiled with the Libdragon preview branch.
+
 # N64 Refresh Rate Reference  
 
 Reference for Nintendo 64 video refresh rates and timing specifications across all supported video modes. 
@@ -129,10 +133,13 @@ The table lists refresh rates (fV) for all video modes. The fully reduced fracti
 | NTSC  | Interlaced  | 60,000 / 1,001               | 59.9400599401                 |  
 | PAL   | Progressive | 15,625 / 313                 | 49.9201277955                 |  
 | PAL   | Interlaced  | 50 / 1                       | 50 (exact)                    |  
-| PAL-M | Progressive | 17,384,625,000 / 290,532,671 | 59.8370742270                 |  
+| PAL-M | Progressive | 17,384,625,000 / 290,532,671</note0> | 59.8370742270</note6>                 |  
 | PAL-M | Interlaced  | 272,700,000 / 4,547,257      | 59.9702194092                 |  
 
 > These values correspond to the derivations in [§5](#5-mathematical-derivations).  
+
+</note0>: See [Note](#note).
+</note6>: See [Note](#note).
 
 ### 2.2 Resolution  
 
@@ -220,6 +227,8 @@ Timing values in this section are calculated from the fundamental constants in [
 | PAL-I     | 15,625 (exact)                | 15625/1                         | 50/1                         |
 | PAL-M-P   | 15,737.1505217050             | 4,572,156,375,000 / 290,532,671 | 17,384,625,000 / 290,532,671 | 
 | PAL-M-I   | 15,742.1825949138             | 71,583,750,000 / 4,547,257      | 272,700,000 / 4,547,257      | 
+
+Libdragon values for the [current preview branch](https://github.com/DragonMinded/libdragon/blob/preview/include/vi.h) do not match the table. PAL-M Progressive profile is not present; PAL-M Interlaced profile is used for both modes.
 
 ### 3.4 Hardware Signal Path
 
@@ -338,7 +347,7 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | Master Clock[^masterclock]  | U10       | 16   | 62.51 MHz          | -                  |  
 | Rambus Clock (RCLK)         | U1        | 5    | 250.2 MHz          | -                  |  
 
-[^masterclock]: The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from the Rambus Clock (RCLK) synthesizer and is distinct from the crystal oscillator frequency (f_xtal) used in video timing derivations.  
+[^masterclock]: The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from X2 / RCLK and is distinct from the crystal oscillator frequency (f_xtal) used for video timing derivations in this document.  
 
 ---
 
@@ -356,8 +365,11 @@ The following table defines the relationship between VI clock rate (f_vi) and th
 | NTSC-I  | 48.6818181818 MHz    | 3094              | 525            | 59.9400599401 Hz  |  
 | PAL-P   | 49.65653 MHz (exact) | 3178              | 626            | 49.9201277955 Hz  |  
 | PAL-I   | 49.65653 MHz (exact) | 3178              | 625            | 50 Hz (exact)     |  
-| PAL-M-P | 48.6283216783 MHz    | 3090              | 526            | 59.8370742270 Hz  |  
+| PAL-M-P | 48.6283216783 MHz    | 3090</note1>      | 526            | 59.8370742270 Hz</note2>|  
 | PAL-M-I | 48.6283216783 MHz    | 3089              | 525            | 59.9702194092 Hz  |  
+
+</note1>: See [Note](#note).
+</note2>: See [Note](#note).
 
 > f_vi for PAL-M is derived as exactly 6,953,850,000 ÷ 143 Hz. The slight deviation in NTSC-equivalent timing (≈ 0.0129407959%) is a hardware constraint caused by the requirement of an integer value for the Clocks ÷ Line (L) register.  
 
@@ -378,12 +390,12 @@ The figure below is a visualization created by lidnariq after analysis of N64 vi
 | Yellow  | Color Burst            | `VI_BURST` values; must not overlap H_START        |  
 | Gray    | Active Area            | `VI_H_VIDEO` and `VI_V_VIDEO` start/end offsets    |  
 
-> Technically, the hardware *will* allow overlap of `VI_BURST` and H_START. Doing so on a revision with a two-stage encoder/decoder configuration produces color corruption that modulates with scene content (this has not been tested on single-stage output models, e.g. MAV-NUS). See figure below.  
+> In hardware testing, overlap of `VI_BURST` and H_START produces color corruption that modulates with scene content. See figure below.  
 
 ![VI_BURST overlapping H_START](/figures/fig22_VI_BURST-overlapping-H_START_devwizard.png)  
 *`VI_BURST` overlapping H_START in Super Mario 64 (1996). Source: devwizard (N64brew.dev Discord) ([youtube.com mirror](https://www.youtube.com/watch?v=hSFQPQb00ns))*  
 
-> Relatedly, if `VI_BURST` remains active at line end, the VI randomly fails to blank the left 7 VI pixels.  
+> The 7 leftmost *framebuffer* (not VI) pixels are normally blanked during VI resampling. However, if `VI_BURST` remains active at line end, the VI randomly fails to blank those pixels on the next line. The number of VI pixels affected depends on the VI scaling factor. Souce: lidnariq, Rasky, et al; N64brew.dev Discord.
 
 ### 4.1.2. Clock Diagram
 
@@ -815,7 +827,7 @@ f_vi = f_xtal × M
      
 ```
 
-### 5.3.1 PAL-M Progressive Derivation
+### 5.3.1 PAL-M Progressive Derivation</note3>
 
 ```
 VI clocks per line (base): L_base = 3,090
@@ -850,8 +862,9 @@ fV_prog = fH / (S_prog / 2)
         = 17,384,625,000 / 290,532,671  (canonical value)
         ≈ 59.8370742270 Hz
 ```
+</note3>: See [Note](#note).
 
-### 5.3.1.1 PAL-M Progressive Leap Adjustment
+### 5.3.1.1 PAL-M Progressive Leap Adjustment</note4>
 
 The PAL-M progressive configuration programs HSYNC(`3089`, `4`) and LEAP(`3097`, `3098`). Terminal-counted:
 
@@ -892,6 +905,8 @@ fH = f_vi / L_avg
    = 4,572,156,375,000 / 290,532,671  (canonical value)
    ≈ 15,737.1505217050 Hz
 ```
+
+</note4>: See [Note](#note).
 
 ---
 
@@ -1075,7 +1090,9 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identification of NUS-CPU(R)-01 motherboard; S-RGB A pinout documentation.  
 * [N64brew.dev](https://n64brew.dev/) - VI register descriptions and behavior; timing examples; leap explanation; OS interface functions for VI and hardware access.  
 * [Libdragon](https://libdragon.dev/) - Modernized open-source SDK; numerous implementation details.  
-* [Libdragon - vi.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/src/vi.h) - Video Interface Subsystem information.
+* [Libdragon - vi.c (preview branch)](https://github.com/DragonMinded/libdragon/blob/preview/src/vi.c) - Video Interface Subsystem information.
+* [Libdragon - vi.h (preview branch)](https://github.com/DragonMinded/libdragon/blob/preview/include/vi.h) - Video Interface Subsystem information.
+* [Libdragon - vi.h (main branch)](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/src/vi.h) - Video Interface Subsystem information.
 * [Libdragon - display.h](https://github.com/DragonMinded/libdragon/blob/c4f1d72a8a93e4e4426c19c1967a6426afcdf279/include/display.h) - VI -> RDP hardware rasterizer details.
 * [pseultra](https://github.com/pseudophpt/pseultra) / [hkz-libn64](https://github.com/mark-temporary/hkz-libn64) / [n64dev](https://sourceforge.net/projects/n64dev/) - Open-source SDK implementations; VI handling abstraction.  
 * [n64.readthedocs.io - Video Interface](https://n64.readthedocs.io/index.html#video-interface) - Emulator developer reference; SDK register naming corroboration; interrupt handling detail.  
@@ -1356,8 +1373,10 @@ FPAL   | FPAL_HPF2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625  
 | NTSC   | Interlaced   | 525               | 3094, 0            | 3094, 3094 |
 | PAL    | Progressive  | 626               | 3178, 21           | 3183, 3184 |
 | PAL    | Interlaced   | 625               | 3178, 21           | 3183, 3184 |
-| PAL-M  | Progressive  | 526               | 3090, 4            | 3099, 3098 |
+| PAL-M  | Progressive  | 526               | 3090, 4</note5>     | 3099, 3098 |
 | PAL-M  | Interlaced   | 525               | 3089, 0            | 3101, 3101 |
+
+</note5>: See [Note](#note).
 
 ### B.3.1 libdragon Display Initialization Behavior
 

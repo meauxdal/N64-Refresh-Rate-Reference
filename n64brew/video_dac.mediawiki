@@ -49,7 +49,7 @@ The Video DAC outputs 21-bit RGB color. Each pixel period transmits 28 bits (7 b
 
 == Video Clock (VCLK) ==
 
-The Video DAC and encoder are driven by two clocks, each derived from the X1 crystal resonator by the synthesizer (Macronix MX8330MC / MX9911MC / MX8350, depending on board revision): the video clock (VCLK) and the color subcarrier (FSC).
+The Video DAC and encoder are driven by two clocks, each derived from the X1 crystal resonator by the synthesizer (Macronix MX8330MC / MX9911MC / MX8350, depending on board revision): the video clock (VCLK)<ref>The [[Audio Interface]] also uses this clock.</ref> and the color subcarrier (FSC). 
 
 The video clock frequency is calculated as:
 
@@ -73,48 +73,6 @@ The encoder receives the FSC clock (X1 ÷ 4) via the subcarrier input (SCIN) pin
 
 Crystal frequency tolerance is ±30 ppm at 25°C.<ref>See [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-49 datasheet] for more detail.</ref> This error propagates to all derived clocks (see [[Clock Timing]]).
 
-== Default Output Modes ==
-
-Libultra and Libdragon software using SDK-provided default VI modes output signals corresponding with these profiles. Refresh rates are derived from the X1 crystal frequency and VI register values.<ref>Full <math>f_V</math> derivations are shown in [https://github.com/meauxdal/N64-Refresh-Rate-Reference N64 Refresh Rate Reference.]</ref>
-
-{| class="wikitable" style="text-align: center;"
-! Standard !! Scan type !! Resolution !! Refresh rate (Hz)
-|-
-| '''NTSC''' || Progressive || 640×240p || 59.8261054535
-|-
-| '''NTSC''' || Interlaced || 640×480i || 59.9400599401
-|-
-| '''PAL''' || Progressive || 640×288p || 49.9201277955
-|-
-| '''PAL''' || Interlaced || 640×576i || 50.0000000000
-|-
-| '''MPAL''' || Progressive || 640×240p || 59.8370742270
-|-
-| '''MPAL''' || Interlaced || 640×480i || 59.9702194092
-|}
-
-Libdragon additionally defines PAL60 configurations combining NTSC resolutions and refresh rates with the PAL color subcarrier.
-
-== Output Constraints ==
-
-A common community question concerns the maximum theoretical resolution possible on the N64.
-
-The VI defines signal bounds through <code>VI_H_TOTAL</code>, <code>VI_V_TOTAL</code>, and associated sync and burst parameters. The left boundary of active video is set by the end of the colorburst interval (<code>VI_BURST</code>); extending the display window past this point overlaps H_BURST and disrupts chroma reference timing and/or black-level clamping. 
-
-{| class="wikitable" style="text-align:center;"
-! Standard !! VI_H_TOTAL !! Effective (VI px) !! Burst start !! Burst width !! Burst end !! Drawable
-|-
-| '''NTSC''' || <code>0x0C15</code> || 773.5 || 62 || 34 || 96 || 677.5
-|-
-| '''PAL'''  || <code>0x0C69</code> || 794.5 || 64 || 35 || 99 || 695.5
-|-
-| '''MPAL''' || <code>0x0C10</code> || 772.25 || 70 || 30 || 100 || 672.25
-|}
-
-Within the addressable region, hardware behavior further reduces the effective output: approximately 7 pixels at the left edge of the framebuffer are not output.<ref>This loss occurs within the VI's internal fetch and resampling pipeline and is independent of analog encoding or display characteristics.</ref> Because the VI performs horizontal scaling via fixed-point arithmetic (<code>VI_X_SCALE</code>), this translates to VI output space as:
-
- 7 × (1024 / X_SCALE)
-
 == Hardware Variants ==
 
 {| class="wikitable" style="text-align: center;"
@@ -136,6 +94,8 @@ Within the addressable region, hardware behavior further reduces the effective o
 * [https://web.archive.org/web/20090103080549/http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html N64 RGB Mod (Tim Worthington)] (archived from [http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html the original])
 * [https://github.com/DragonMinded/libdragon/blob/preview/src/vi.c Libdragon - vi.c]
 * [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 datasheet]
+* [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Wiki - RDC - NUS-CPU-03/04 Schematic]
+* [https://datasheet.datasheetarchive.com/originals/library/Datasheet-011/DSA00196634.pdf Datasheet Archive - Rohm BA7242F Datasheet]
 * [https://patents.google.com/patent/US6956621B2/ Google Patents - US6956621B2, ''High impedance digital full line video clamp'']
 * [https://consoles4you.ch/guides/n64svideorestore.html consoles4you.ch - N64 S-Video Restore Install Guide]
 * [https://web.archive.org/web/20170107153330/http://nfggames.com/forum2/index.php?topic=5251.0 nfggames.com - Fix S-Video for PAL N64 NUS-CPU(P)-03-1] (archived from [https://nfggames.com/forum2/index.php?topic=5251.0 the original])
