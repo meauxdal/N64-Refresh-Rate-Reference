@@ -1,6 +1,6 @@
 # Note
 
-As of the time of writing (May 6, 2026), there is a discrepancy between the [preview branch of Libdragon](https://github.com/DragonMinded/libdragon/tree/preview) and prior definitions for PAL-M progressive signals. Currently, the Libdragon preview branch uses the PAL-M interlaced VI register configuration indicated in this document for both progressive and interlaced modes, rather than the differing profiles for progressive and interlaced of Libultra and Libdragon's trunk branch. This configuration produces a different refresh rate for PAL-M progressive that is not currently derived in this document. Thus, PAL-M progressive values given in this document do not correspond to software compiled with the Libdragon preview branch.
+As of the time of writing (May 6, 2026), there is a discrepancy between the [preview branch of Libdragon](https://github.com/DragonMinded/libdragon/commit/0290a16bf28b896bf85cac30ca101b8330702cea/src/vi.c) and prior definitions for PAL-M progressive signals. Currently, the Libdragon preview branch uses the PAL-M interlaced VI register configuration indicated in this document for both progressive and interlaced modes, rather than the differing profiles for progressive and interlaced of Libultra and Libdragon's trunk branch. This configuration produces a different refresh rate for PAL-M progressive that is not currently derived in this document. Thus, PAL-M progressive values given in this document do not correspond to software compiled with the Libdragon preview branch.
 
 # N64 Refresh Rate Reference  
 

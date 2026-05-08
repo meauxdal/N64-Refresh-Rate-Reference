@@ -1,6 +1,6 @@
 # Note
 
-As of the time of writing (May 6, 2026), there is a discrepancy between the [preview branch of Libdragon](https://github.com/DragonMinded/libdragon/tree/preview) and listed PAL-M progressive signals. Currently, the Libdragon prevew branch uses the PAL-M interlaced VI register configuration indicated in this document for both progressive and interlaced modes. See expanded note at the top of [`N64_Timing_Reference.md`](N64_Timing_Reference.md).
+As of the time of writing (May 6, 2026), there is a discrepancy between the [preview branch of Libdragon](https://github.com/DragonMinded/libdragon/commit/0290a16bf28b896bf85cac30ca101b8330702cea/src/vi.c) and listed PAL-M progressive signals. Currently, the Libdragon prevew branch uses the PAL-M interlaced VI register configuration indicated in this document for both progressive and interlaced modes. See expanded note at the top of [`N64_Timing_Reference.md`](N64_Timing_Reference.md).
 
 # N64 Video Timing Reference
 
