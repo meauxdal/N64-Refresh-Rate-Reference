@@ -94,7 +94,7 @@ Crystal frequency tolerance is ±30 ppm at 25°C.<ref>See [https://www.kds.info/
 * [https://web.archive.org/web/20090103080549/http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html N64 RGB Mod (Tim Worthington)] (archived from [http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html the original])
 * [https://github.com/DragonMinded/libdragon/blob/preview/src/vi.c Libdragon - vi.c]
 * [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 datasheet]
-* [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Wiki - RDC - NUS-CPU-03/04 Schematic]
+* [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Tech Wiki - RDC - NUS-CPU-03/04 Schematic]
 * [https://datasheet.datasheetarchive.com/originals/library/Datasheet-011/DSA00196634.pdf Datasheet Archive - Rohm BA7242F Datasheet]
 * [https://patents.google.com/patent/US6956621B2/ Google Patents - US6956621B2, ''High impedance digital full line video clamp'']
 * [https://consoles4you.ch/guides/n64svideorestore.html consoles4you.ch - N64 S-Video Restore Install Guide]

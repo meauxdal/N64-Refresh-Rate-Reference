@@ -116,7 +116,7 @@ Converted to decimal (Hz):
 
 == Default output modes ==
 
-As of the time of writing (May 6, 2026), there is a known discrepancy between the [https://github.com/DragonMinded/libdragon/tree/preview preview branch of Libdragon] and all known prior definitions for PAL-M progressive signals. Currently, the Libdragon prevew branch uses Libdragon main branch's PAL-M interlaced VI register configuration for *both* progressive and interlaced modes, rather than the differing profiles for progressive and interlaced of Libultra and Libdragon's main branch. Thus, the following table does not apply to software using MPAL progressive in conjunction with the Libdragon preview branch.
+As of the time of writing (May 6, 2026), there is a known discrepancy between the [https://github.com/DragonMinded/libdragon/tree/preview preview branch of Libdragon] and prior definitions for PAL-M progressive signals. Currently, the Libdragon prevew branch uses Libdragon main branch's PAL-M interlaced VI register configuration for both progressive and interlaced modes, rather than the differing profiles for progressive and interlaced of Libultra and Libdragon's main branch. Thus, the following table does not apply to software using MPAL progressive in conjunction with the Libdragon preview branch.
 
 Libultra and Libdragon software using SDK-provided default VI modes output signals corresponding with these profiles. Refresh rates are derived from the X1 crystal frequency and VI register values.<ref>Full <math>f_V</math> derivations are shown in [https://github.com/meauxdal/N64-Refresh-Rate-Reference N64 Refresh Rate Reference.]</ref>
 

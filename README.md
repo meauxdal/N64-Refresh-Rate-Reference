@@ -20,14 +20,14 @@ PAL-M  | $\frac{2{,}045{,}250{,}000}{143} \text{ Hz}$ |      14.3024475524      
 
 ### X2 
 
-Clock           |             Derivation             |  Fraction (MHz)   |       MHz
+Clock           |             Derivation             |  Fraction (MHz)   |   Decimal (MHz)
 :-------------: | :--------------------------------: | :---------------: | :-------------:
 X2              |                 --                 | $\frac{250}{17}$  |  14.7058823529
 RCLK            |       $\text{X2} \times 17$        |       $250$       |       250
-MClock          |        $\text{RCLK} \div 4$        |  $\frac{250}{4}$  |      62.5
-CPU             | $\text{MClock} \times \frac{3}{2}$ |  $\frac{750}{8}$  | 93.75[^divmode]
-SI              |       $\text{MClock} \div 4$       | $\frac{250}{16}$  |     15.625
-Cartridge / PIF |         $\text{SI} \div 8$         | $\frac{250}{128}$ |    1.953125
+MClock          |        $\text{RCLK} \div 4$        |  $\frac{125}{2}$  |      62.5
+CPU             | $\text{MClock} \times \frac{3}{2}$ |  $\frac{375}{4}$  | 93.75[^divmode]
+SI              |       $\text{MClock} \div 4$       | $\frac{125}{8}$  |     15.625
+Cartridge / PIF |         $\text{SI} \div 8$         | $\frac{125}{64}$ |    1.953125
 
 [^divmode]: CPU clock is software-configurable via DivMode registers. 93.75 MHz is the nominal operating frequency.
 
@@ -35,7 +35,7 @@ Cartridge / PIF |         $\text{SI} \div 8$         | $\frac{250}{128}$ |    1.
 
 ## Video Timing
 
-Mode  |    Scan     | Resolution | $L$  | $S$ |                $f_H$ (Hz, fraction)                 |    $f_H$ (Hz)     |              $f_V$ (Hz, decimal)               |  $f_V$ (Hz)
+Standard  |    Scan     | Resolution | $L$  | $S$ |                $f_H$ (Hz, fraction)                 |    $f_H$ (Hz)     |              $f_V$ (Hz, decimal)               |  $f_V$ (Hz)
 :---: | :---------: | :--------: | :--: | :-: | :-------------------------------------------------: | :---------------: | :--------------------------------------------: | :-----------:
 NTSC  | Progressive |  640×240p  | 3094 | 526 |             $\frac{2{,}250{,}000}{143}$             | 15,734.2657342657 |        $\frac{2{,}250{,}000}{37{,}609}$        | 59.8261054535
 NTSC  | Interlaced  |  640×480i  | 3094 | 525 |             $\frac{2{,}250{,}000}{143}$             | 15,734.2657342657 |           $\frac{60{,}000}{1{,}001}$           | 59.9400599401
@@ -52,7 +52,7 @@ $L$: VI clocks per line (effective). $S$: half-lines per vertical scan (effectiv
 
 # Subcarrier & Crystal Reference
 
-Standard |              $f_{\text{xtal}}$               |                  $f_S$                   |    $f_S$ (Hz)     |      $f_S : f_H$
+Standard |              $f_{\text{xtal}}$               |                  $f_{SC}$                   |    $f_{SC}$ (Hz)     |      $f_{SC} : f_H$
 :------: | :------------------------------------------: | :--------------------------------------: | :---------------: | :-------------------:
 NTSC     |         $\frac{315}{22} \text{ MHz}$         |       $\frac{315}{88} \text{ MHz}$       | 3,579,545.4545... |  $227.5 \times f_H$
 PAL      |         $17{,}734{,}475 \text{ Hz}$          |  $\frac{17{,}734{,}475}{4} \text{ Hz}$   |   4,433,618.75    | $283.7516 \times f_H$
@@ -75,7 +75,7 @@ PAL Interlaced    | `0x270` ($S$ = 625) | 3178 | `0b10111` (23) | 3182, 3184  | 
 PAL-M Progressive | `0x20D` ($S$ = 526) | 3090 | `0b00100` (4)  | 3099, 3098  |
 PAL-M Interlaced  | `0x20C` ($S$ = 525) | 3089 | `0b00000` (0)  | 3101, 3101  |
 
-
+Note: See [Note](/N64_Timing_Reference.md#note).
 
 ---
 
@@ -94,6 +94,8 @@ PAL-I     | 0.83576 | 0.83417 | 1.00160 | 1.00000 | 0.83560 | 0.83375
 PAL-M-P   | 1.00018 | 0.99828 | 1.19866 | 1.19674 | 1.00000 | 0.99778
 PAL-M-I   | 1.00241 | 1.00050 | 1.20132 | 1.19940 | 1.00223 | 1.00000
 
+Note: See [Note](/N64_Timing_Reference.md#note).
+
 
 ### Fraction
 
@@ -105,6 +107,8 @@ PAL-P     | 37609/45072     | 25025/30048     | 1/1                 | 625/626   
 PAL-I     | 37609/45000     | 1001/1200       | 626/625             | 1/1                 | 290532671/347692500 | 4547257/5454000
 PAL-M-P   | 4064139/4063394 | 8112825/8126788 | 348248808/290532671 | 347692500/290532671 | 1/1                 | 8108745/8126788
 PAL-M-I   | 159378/158995   | 31815/31799     | 27313632/22736285   | 5454000/4547257     | 8126788/8108745     | 1/1
+
+Note: See [Note](/N64_Timing_Reference.md#note).
 
 ---
 

@@ -1,4 +1,4 @@
-N64 '''Clock Timing''' is driven by two quartz crystal resonators that provide reference clocks to the clock synthesizer. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2). X1 drives the [[Reality Coprocessor|Reality Coprocessor's]] [[Video Interface]] and [[Audio Interface]] as well as providing the chrominance subcarrier frequency<ref>Also known as color subcarrier or colorburst, the broadcast standard-specific frequency that carries color information in composite video signals.</ref> to the video encoder (See [[Video DAC]]). X2 provides a reference clock which is synthesized to drive [[RDRAM]], from which downstream clocks for all non-AV systems are derived.
+N64 '''Clock Timing''' is driven by two quartz crystal resonators that provide reference clocks to phase-locked loop (PLL) clock synthesizers. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2). The PLL synthesizers generate the system clocks used throughout the console. X1 drives the [[Reality Coprocessor|Reality Coprocessor's]] [[Video Interface]] and [[Audio Interface]] as well as providing the chrominance subcarrier frequency<ref>Also known as color subcarrier or colorburst, the broadcast standard-specific frequency that carries color information in composite video signals.</ref> to the video encoder (See [[Video DAC]]). X2 provides a reference clock which is synthesized to drive [[RDRAM]], from which downstream clocks for all non-AV systems are derived.
 
 Video and audio subsystem clocks derive from X1; all other system clocks derive from X2. X1 varies by region to account for differing broadcast standards.
 
@@ -43,7 +43,7 @@ Converted to decimal (Hz):
 [[File:MX8350-Table.png|thumb|alt=MX8350 functional description and frequency table.|MX8350 functional description and frequency table. Image from: [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - Macronix MX8350 datasheet mirror]]]
 [[File:MX8330 video maths.png|thumb|alt=MX8330MC description. FSEL (frequency select) logic and Revision E notice|MX8330 description. FSEL (frequency select) logic and Revision E notice. Image from: [https://wiki.console5.com/tw/images/e/e3/MX8330.pdf Console5 - Macronix MX8330MC datasheet mirror]]]
 
-The clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the necessary clocks from the X1 crystal input:
+The PLL clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the necessary clocks from the X1 crystal input:
 
 * '''FSC''': Chrominance subcarrier = X1 ÷ 4
 * '''VCLK''': Video clock = X1 × multiplier ÷ 5
@@ -74,9 +74,43 @@ All values in MHz:
 | '''MPAL''' || 3.57561189 || 14.30244755 || High || 17 || 5 || 48.62832167
 |}
 
+==== MX8330MC and MX9911MC pinout ====
+{| class="wikitable"
+|+
+! Name !! Pin !! !! Pin !! Name
+|-
+| FSO/5 || 1 || || 8 || FSC
+|-
+| GND || 2 || || 7 || OSCIN
+|-
+| FSEL || 3 || || 6 || VDD
+|-
+| FSO || 4 || || 5 || OSCOUT
+|}
+
+==== MX8350 pinout ====
+{| class="wikitable"
+|+
+! Name !! Pin !! !! Pin !! Name
+|-
+| FSC || 1 || || 14 || !RESET
+|-
+| GND || 2 || || 13 || OSC1 IN
+|-
+| VCLK || 3 || || 12 || OSC1 OUT
+|-
+| VDD || 4 || || 11 || GND
+|-
+| OSC2 IN || 5 || || 10 || TEST
+|-
+| OSC2 OUT || 6 || || 9 || VDD
+|-
+| NTSC/!PAL || 7 || || 8 || RCLK
+|}
+
 == Crystal 2 (X2) ==
 
-A second quartz crystal resonator (X2) produces another reference clock which is synthesized by the clock generator and routed to RDRAM. X2 is multiplied by 17<ref>On early boards using MX8330MC/MX9911MC, this multiplier requires FSEL to be tied high on X2's paired discrete synthesizer. On boards with MX8350, this is a fixed 17× multiplier regardless of NTSC/!PAL pin state.</ref> to produce RCLK,<ref>RCLK is distributed via Rambus Signaling Logic (RSL), a low-voltage swing interface, via the synthesizer's '''FSO''' pin. This is distinct from the Transistor-Transistor Logic (TTL) '''FSO/5''' pin used for VCLK. FSC output is also TTL-compatible.</ref> from which all non-AV system clocks are derived, including the Masterclock (MClock).<ref>See [[SysAD_Interface]].</ref>
+A second quartz crystal resonator (X2) produces another reference clock which is synthesized by the PLL clock generator and routed to RDRAM. X2 is multiplied by 17<ref>On early boards using MX8330MC/MX9911MC, this multiplier requires FSEL to be tied high on X2's paired discrete synthesizer. On boards with MX8350, this is a fixed 17× multiplier regardless of NTSC/!PAL pin state.</ref> to produce RCLK,<ref>RCLK is distributed via Rambus Signaling Logic (RSL), a low-voltage swing interface, via the synthesizer's '''FSO''' pin. This is distinct from the Transistor-Transistor Logic (TTL) '''FSO/5''' pin used for VCLK. FSC output is also TTL-compatible.</ref> from which all non-AV system clocks are derived, including the MasterClock (MClock).<ref>See [[SysAD_Interface]].</ref>
 
 All values in MHz:
 
@@ -90,31 +124,55 @@ All values in MHz:
 |-
 | '''MClock''' || RCLK ÷ 4 || <math>\frac{125}{2}</math> || 62.5
 |-
-| '''[[VR4300|CPU]]''' || MClock × <math>\frac{3}{2}</math> || <math>\frac{375}{4}</math> || 93.75<ref>CPU clock multiplier set via [[VR4300]] DivMode static pin inputs. 93.75 MHz is the nominal operating frequency.</ref>
+| '''[[VR4300|CPU]]''' || MClock × <math>\frac{3}{2}</math> || <math>\frac{375}{4}</math> || 93.75<ref>CPU clock multiplier set via [[VR4300]] DivMode (Divide Mode) static pin inputs. 93.75 MHz is the nominal operating frequency.</ref>
 |-
 | '''[[Serial Interface]]''' || MClock ÷ 4 || <math>\frac{125}{8}</math> || 15.625
 |-
 | '''[[Game_Pak|Cartridge]] / [[PIF]]''' || SI ÷ 8 || <math>\frac{125}{64}</math> || 1.953125
 |}
 
+=== [[VR4300]] Clock Domains ===
+
+The NUS-CPU itself generates clock domains using an integrated PLL, referenced to the MClock input. This clock architecture is described in the NEC VR4300 documentation:
+
+* '''PClock''': Principal operating frequency; generated from MClock via PLL using DivMode configuration pins (sampled on cold reset). Frequency is divided by 4 in low-power mode.
+* '''SClock''': Internal system interface clock; normally equal to MClock. Reduced in tandem with PClock in low-power mode.
+* '''TClock''': Transmit clock output for external agents. Always equal to MasterClock regardless of DivMode setting.
+
+{| class="wikitable" style="text-align:center"
+|-
+! DivMode (1:0) !! MClock : PClock !! MClock (MHz) !! PClock (MHz)
+|-
+| <code>0b00</code><ref>DivMode value <code>0b00</code> is marked RFU (Reserved for Future Use) in the VR4300 User's Manual. In the MTI R4300i documentation, this mode is indicated to use a 1:1 ratio.</ref> || 1 : 1 || 62.5 || 62.5
+|-
+| <code>0b01</code> || 1 : 1.5 || 62.5 || 93.75
+|-
+| <code>0b10</code> || 1 : 2 || 62.5 || 125
+|-
+| <code>0b11</code> || 1 : 3 || 62.5 || 187.5
+|}
+
+The [https://n64brew.dev/wiki/File:VR4300-Users-Manual.pdf VR4300 manual] also notes: "The maximum value of PClock is the same as the maximum internal operating frequency of each product regardless of the frequency ratio." The higher DivMode ratios exceed the nominal operating specification of an umodified N64 CPU.
+
 == References ==
 
 * [http://handle.itu.int/11.1004/020.1000/4.283 ITU Digital Collection - CCIR Report 624-4 (1990)]
-* [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Wiki - RDC - NUS-CPU-03/04 Schematic]
-* [https://wiki.console5.com/wiki/MX8330 Console5 Tech Wiki - MX8330MC Pinout & Datasheet]
-* [https://www.datasheetarchive.com/datasheet/MX9911/Macronix-International?term=mx9911 Datasheet Archive - MX9911MC Datasheet]
-* [http://www.datasheet.hk/view_download.php?id=1145313&file=0069%5Cmx8350_566191.pdf IC-ON-LINE - MX8350 Datasheet]
-* [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS - AT-38/AT-49 Miniature Crystal Resonators Datasheet (kds.info)]
-* [https://datasheet.datasheetarchive.com/originals/scans/Scans-107/DSASCANS15-48627.pdf KDS America - AT-49, AT-38, UM-5, UM-1, UM-2, HC-49/U specifications]
-* [https://ultra64.ca/files/documentation/silicon-graphics/SGI_R4300_RISC_Processor_Specification_REV2.2.pdf MIPS Technologies Inc. - R4300 RISC Processor Specification, Revision 2.2]
-* [https://assemblergames.org/viewtopic.php?t=25918 eb1560 - assemblergames.org - Mapping N64 Overclockability]
+* [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Tech Wiki - RDC - NUS-CPU-03/04 Schematic]
+* [https://www.datasheetarchive.com/datasheet/MX8330/Macronix-International?term=MX8330 Datasheet Archive - Macronix - MX8330MC datasheet (mirror)]
+* [https://www.datasheetarchive.com/datasheet/MX9911/Macronix-International?term=mx9911 Datasheet Archive - Macronix MX9911MC datasheet (mirror)]
+* [https://www.datasheetarchive.com/datasheet/MX8350/Macronix-International?term=MX8350 Datasheet Archive - Macronix MX8350 datasheet (mirror)]
+* [https://www.datasheetarchive.com/datasheet/0a2c800efae9bfe2 Datasheet Archive - KDS America - Quartz Crystals - AT-49, AT-38, UM-5, UM-1, UM-2, HC-49/U, p.6 (1993) (mirror)]
+* [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS - AT-38/AT-49 Miniature Crystal Resonators datasheet (2011)]
+* [https://n64brew.dev/wiki/File:VR4300-Users-Manual.pdf NEC - VR4300 User's Manual (mirror)]
+* [https://ultra64.ca/files/documentation/silicon-graphics/SGI_R4300_RISC_Processor_Specification_REV2.2.pdf ultra64.ca - MIPS Technologies Inc. - R4300 RISC Processor Specification, Revision 2.2 (mirror)]
+* [https://assemblergames.org/viewtopic.php?t=25918 assemblergames.org - eb1560 et al - Mapping N64 Overclockability]
 * [https://patents.google.com/patent/US6310814B1 Google Patents - US6310814B1, ''Rambus DRAM (RDRAM) apparatus and method for performing refresh operations'']
 * [https://patents.google.com/patent/US3283170A Google Patents - US3283170A, ''Coupling transistor logic and other circuits'']
-* [https://gbhwdb.gekkio.fi/ Gekkio et al - Game Boy hardware database]
+* [https://gbhwdb.gekkio.fi/ Game Boy hardware database - Gekkio et al ]
 * [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC - Test Report No. : 11319287S-A-R2]
-* [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg Evan-Amos, Wikimedia Commons - Nintendo-N64-Motherboard-Top.jpg]
-* [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg Evan-Amos, Wikimedia Commons - Nintendo-Famicom-Motherboard-BL.jpg]
-* [https://github.com/meauxdal/N64-Refresh-Rate-Reference meauxdal - N64 Video Timing Reference]
+* [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg Wikimedia Commons - Evan-Amos - Nintendo-N64-Motherboard-Top.jpg]
+* [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg Wikimedia Commons - Evan-Amos - Nintendo-Famicom-Motherboard-BL.jpg]
+* [https://github.com/meauxdal/N64-Refresh-Rate-Reference github.com - meauxdal - N64 Video Timing Reference]
 
 == Footnotes ==
 
