@@ -74,13 +74,14 @@ Scan Types:
 
 All video timing derives from a quartz crystal piezoelectric resonator (designated **X1** on the N64 mainboard), whose oscillation frequency in circuit is designated **$f_{XTAL}$**. The VI clock (**$f_{VI}$**) is produced by multiplying $f_{XTAL}$ by a region-specific rational multiplier **$M$** (17/5 for NTSC and PAL-M; 14/5 for PAL). **$f_H$** (horizontal scan frequency) follows by dividing $f_{VI}$ by **L**, the integer VI clock count per horizontal line. **$f_V$** follows by dividing $f_H$ by the number of full scanlines ($S$/2, where **$S$** is the vertical half-line count).  
 
-```
-f_vi = f_xtal × M
-fH   = f_vi / L
-fV   = fH / (S / 2)
-
-fV   = (f_xtal × M) / (L × (S / 2))
-```
+$
+\begin{aligned}
+f_{VI} &= f_{XTAL} \times M \\
+f_H    &= \frac{f_{VI}}{L} \\
+f_V    &= \frac{2f_H}{S}
+       = \frac{2(f_{XTAL} \times M)}{L \times S}
+\end{aligned}
+$
 
 All VI timing frequencies are rational derivatives of $f_{XTAL}$.  
 
@@ -97,13 +98,13 @@ Parenthetical annotations clarify numerical representations:
 
 #### 1.3.1 Counting Units
 
-**Half-line (S)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modeling to align with hardware counting. See [§5.1.1](#511-ntsc-leap-adjustment).  
+**Half-line ($S$)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modeling to align with hardware counting. See [§5.1.1](#511-ntsc-leap-adjustment).  
 
 #### 1.3.2 Registers
 
-The document uses N64brew naming conventions throughout. SDK equivalents are noted here for cross-reference.
+This document favors modern N64brew register naming convention. Official (Libultra) equivalents are noted.
 
-| N64brew Name | SDK Name | Address | Description |
+| N64brew Name | Libultra Name | Address | Description |
 |:---|:---|:---|:---|
 | `VI_V_TOTAL` | `VI_V_SYNC_REG` | `0x04400018` | Terminal half-line count; effective half-lines = REG + 1 |
 | `VI_H_TOTAL` | `VI_H_SYNC_REG` | `0x0440001C` | Terminal VI clock count per scanline; effective clocks = REG + 1 |
@@ -126,26 +127,26 @@ All registers are terminal-counted; add 1 to the register value to derive the ef
 
 The table lists refresh rates ($f_V$) for all video modes. The fully reduced fractions shown below serve as reference values for the remainder of this text.  
 
-| Mode  | Scan Type   | $f_V$ (Hz, fraction)            | $f_V$ (Hz, decimal)              |  
-| :---  | :---        | :---                         | :---                          |  
-| NTSC  | Progressive | 2,250,000 / 37,609           | 59.8261054535                 |  
-| NTSC  | Interlaced  | 60,000 / 1,001               | 59.9400599401                 |  
-| PAL   | Progressive | 15,625 / 313                 | 49.9201277955                 |  
-| PAL   | Interlaced  | 50 / 1                       | 50 (exact)                    |  
-| PAL-M | Progressive | 17,384,625,000 / 290,532,671</note0> | 59.8370742270</note6>                 |  
-| PAL-M | Interlaced  | 272,700,000 / 4,547,257      | 59.9702194092                 |  
+| Mode  | Scan Type   | $f_V$ (Hz, fraction)                                           | $f_V$ (Hz, decimal) |
+| :---: | :---------: | :------------------------------------------------------------: | :-----------------: |
+| NTSC  | Progressive | $\frac{2,\!250,\!000}{37,\!609}$                               | 59.8261054535       |
+| NTSC  | Interlaced  | $\frac{60,\!000}{1,\!001}$                                     | 59.9400599401       |
+| PAL   | Progressive | $\frac{15,\!625}{313}$                                         | 49.9201277955       |
+| PAL   | Interlaced  | $50$                                                 | 50 (exact)          |
+| PAL-M | Progressive | $\frac{17,\!384,\!625,\!000}{290,\!532,\!671}$[^note0]         | 59.8370742270[^note6] |
+| PAL-M | Interlaced  | $\frac{272,\!700,\!000}{4,\!547,\!257}$                        | 59.9702194092       |
 
 > These values correspond to the derivations in [§5](#5-mathematical-derivations).  
 
-</note0>: See [Note](#note).
-</note6>: See [Note](#note).
+[^note0]: See [Note](#note).
+[^note6]: See [Note](#note).
 
 ### 2.2 Resolution  
 
 In the context of contemporary retail software, the N64 outputs four distinct raster formats:  
 
 | Signal | Scan Type   | Resolution |  
-| :---   | :---        | :---       |  
+| :---:  | :---:       | :---:      |  
 | NTSC   | Progressive | 640x240p   |  
 | NTSC   | Interlaced  | 640x480i   |  
 | PAL    | Progressive | 640x288p   |   
@@ -164,13 +165,13 @@ Hardware constants and register mapping.
 Hardware constants derived from $f_{XTAL}$ and the Video Interface (VI) registers. $L$ and $S$ below are effective values. 
 
 | Mode              | Crystal Frequency ($f_{XTAL}$) | Multiplier ($M$) | VI Clocks / Line ($L$) | Half-Lines ($S$) | `VI_V_TOTAL` |  
-| :---              | :---                       | :---           | :---                 | :---           | :---         |  
-| NTSC Progressive  | 14.3181818182 MHz          | 17 / 5         | 3094                 | 526            | `0x20D`      |  
-| NTSC Interlaced   | 14.3181818182 MHz          | 17 / 5         | 3094                 | 525            | `0x20C`      |  
-| PAL Progressive   | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 626            | `0x271`      |  
-| PAL Interlaced    | 17.734475 MHz (exact)      | 14 / 5         | 3178                 | 625            | `0x270`      |  
-| PAL-M Progressive | 14.3024475524 MHz          | 17 / 5         | 3090                 | 526            | `0x20D`      |  
-| PAL-M Interlaced  | 14.3024475524 MHz          | 17 / 5         | 3089                 | 525            | `0x20C`      |  
+| :--:              | :--:                       | :--:           | :--:                 | :--:           | :--:         |  
+| NTSC Progressive  | 14.3181818182 MHz          | $\frac{17}{5}$ | 3094                 | 526            | `0x20D`      |  
+| NTSC Interlaced   | 14.3181818182 MHz          | $\frac{17}{5}$ | 3094                 | 525            | `0x20C`      |  
+| PAL Progressive   | 17.734475 MHz (exact)      | $\frac{14}{5}$ | 3178                 | 626            | `0x271`      |  
+| PAL Interlaced    | 17.734475 MHz (exact)      | $\frac{14}{5}$ | 3178                 | 625            | `0x270`      |  
+| PAL-M Progressive | 14.3024475524 MHz          | $\frac{17}{5}$ | 3090                 | 526            | `0x20D`      |  
+| PAL-M Interlaced  | 14.3024475524 MHz          | $\frac{17}{5}$ | 3089                 | 525            | `0x20C`      |  
 
 * NTSC $f_{XTAL}$ target: 315/22 MHz (exact) (≈ 14.3181818182 MHz)  
 * PAL $f_{XTAL}$ target: 17,734,475 Hz (exact) = 17.734475 MHz  
@@ -218,14 +219,14 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 
 Timing values in this section are calculated from the fundamental constants in [§3.1](#31-fundamental-constants). $f_H$ is line frequency; $f_V$ is vertical scan frequency (refresh rate). Values are derived from $f_H$ and half-line count $S$. Progressive modes use the full half-line count, interlaced modes offset vertical sync by 0.5 lines per field.  
 
-| Mode      | $f_H$ (Hz, decimal)              | $f_H$ (Hz, fraction)               | $f_V$ (Hz)                      | 
-| :----     | :---                          | :---                            | :---                         |
-| NTSC-P    | 15,734.2657342657             | 2250000/143                     | 2250000/37609                | 
-| NTSC-I    | 15,734.2657342657             | 2250000/143                     | 60000/1001                   |
-| PAL-P     | 15,625 (exact)                | 15625/1                         | 15625/313                    | 
-| PAL-I     | 15,625 (exact)                | 15625/1                         | 50/1                         |
-| PAL-M-P   | 15,737.1505217050             | 4,572,156,375,000 / 290,532,671 | 17,384,625,000 / 290,532,671 | 
-| PAL-M-I   | 15,742.1825949138             | 71,583,750,000 / 4,547,257      | 272,700,000 / 4,547,257      | 
+ Mode   | $f_H$ (Hz, decimal) |             $f_H$ (Hz, fraction)              |                $f_V$ (Hz)
+:-----: | :-----------------: | :-------------------------------------------: | :---------------------------------------:
+NTSC-P  |  15,734.2657342657  |             $\frac{2250000}{143}$             |          $\frac{2250000}{37609}$
+NTSC-I  |  15,734.2657342657  |             $\frac{2250000}{143}$             |           $\frac{60000}{1001}$
+ PAL-P  |    15625 (exact)    |                    $15625$                    |            $\frac{15625}{313}$
+ PAL-I  |    15625 (exact)    |                    $15625$                    |                   $50$
+PAL-M-P |  15,737.1505217050  | $\frac{4,!572,!156,!375,!000}{290,!532,!671}$ | $\frac{17,!384,!625,!000}{290,!532,!671}$
+PAL-M-I |  15,742.1825949138  |    $\frac{71,!583,!750,!000}{4,!547,!257}$    |    $\frac{272,!700,!000}{4,!547,!257}$
 
 Libdragon values for the [current preview branch](https://github.com/DragonMinded/libdragon/blob/preview/include/vi.h) do not match the table. PAL-M Progressive profile is not present; PAL-M Interlaced profile is used for both modes.
 
@@ -261,18 +262,22 @@ The derivations in [§5](#5-mathematical-derivations) assume ideal oscillation f
 
 N64 video timings are derived from the per-region quartz crystal resonator at X1. Variance in this component therefore propagates through the timing chain.  
 
-##### 3.5.1.1 X1 Specifications  
+##### 3.5.1.1 Load Capacitance  
 
 The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (Daiwa Shinku Kogyosho, a.k.a. KDS, est. 1959). These AT-49 crystal resonators appear on numerous Nintendo hardware examples throughout the 90s. Game Boy hardware database gbhwdb.gekkio.fi attributes crystals with identical appearance and date encoding to Daishinku.
 
 The NUS-CPU-03 oscillator circuit presents a load capacitance ($C_L$) of 19.5 pF + $C_{stray}$ to X1, derived from C39 = C40 = 39 pF in a series configuration (See [§3.1](#31-fundamental-constants)):  
 
-```  
-CL = (39 × 39) / (39 + 39) + C_stray
-   = 19.5 pF + C_stray
-```  
+$
+\begin{aligned}
+C_L &= \frac{39 \times 39}{39 + 39} + C_{stray} \\
+    &= 19.5\ \text{pF} + C_{stray}
+\end{aligned}
+$
 
-$C_{stray}$ represents the aggregate parasitic capacitance from PCB traces and IC pin capacitance. Consumer PCB oscillator layouts may be estimated in the range of 2–5 pF, implying an effective CL of approximately 21.5-24.5 pF. A 1993 KDS AT-49 datasheet specifies a maximum load capacitance of 16 pF for AT-49 crystals. This discrepancy would be expected to pull the crystal oscillation frequency slightly below its nominal value; The magnitude of this effect in practice remains uncharacterized; see [§3.5.2](#352-x1-oscillator-tolerance).
+$C_{stray}$ represents the aggregate parasitic capacitance contributed by PCB traces, IC input capacitance, and related layout parasitics. Consumer PCB oscillator layouts of this era may typically be estimated in the range of 2–5 pF, implying an effective $C_L$ of approximately 21.5–24.5 pF.  
+
+A 1993 KDS AT-49 datasheet specifies a maximum load capacitance of 16 pF for AT-49 crystals. This discrepancy would be expected to pull the crystal oscillation frequency slightly below its nominal value. The magnitude of this effect in practice remains uncharacterized; see [§3.5.2](#352-x1-oscillator-tolerance).
 
 ##### 3.5.1.2 X1 and X2 Stamp Codes by Revision (Abridged) 
 
@@ -306,16 +311,18 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 
 #### 3.5.2 X1 Oscillator Tolerance  
 
-AT-cut crystals are standard for consumer electronics applications in the X1 frequency range. Current production equivalents specify ±30 ppm as the base grade tolerance (lidnariq), yielding a range of ±0.0018 Hz around the target values in [§2](#2-n64-video-output-summary) (e.g. NTSC progressive: [59.8243, 59.8279] Hz). GBS-C telemetry from two available NTSC N64 units corroborates:  
+Tolerance at 25°C is given at ±30 ppm, yielding a range of ±0.0018 Hz around the target values in [§2](#2-n64-video-output-summary) (e.g. NTSC progressive: [59.8243, 59.8279] Hz). GBS-C telemetry from two available NTSC N64 units corroborates:  
 
 | Unit                             | Nickname     | Progressive (Hz)    | Interlaced (Hz)   | Offset (P)    | Offset (I)    |  
 | :---                             | :---         | :---                | :---              | :---          | :---          |  
 | Unit #1 (NUS-CPU-03, RGB-modded) | Daily driver | 59.82771            | 59.94166          | +26.8 ppm     | +26.7 ppm     |  
 | Unit #2 (NUS-CPU-04, RGB-modded) | Junk unit    | 59.82731            | 59.94126          | +20.1 ppm     | +20.0 ppm     |  
 
-Both fall within the predicted tolerance window. The ppm offset within each unit is essentially identical across progressive and interlaced modes, as expected: both rates derive from the same crystal. The differing offsets between units reflect normal unit-to-unit crystal variance. Aggregate second-order variance factors (temperature, aging, supply voltage) require a larger sample to characterize effectively.  
+Both fall within the predicted tolerance window. The ppm offset within each unit is essentially identical across progressive and interlaced modes, as expected: both rates derive from the same crystal. The differing offsets between units reflect normal unit-to-unit crystal variance. Aggregate second-order variance factors (temperature, aging, supply voltage) require a larger sample to characterize effectively.[^gbs-c]
 
-Values derived in [§5](#5-mathematical-derivations) are exact by construction, representing irreducible fractions traceable to hardware integers. The hardware itself operates within crystal tolerance. That the measurable values deviate is not a flaw in the derivation; it is the expected relationship between mathematical specification and physical implementation. GBS-C telemetry from Sony PlayStation (1994) and Sega Saturn (1994) hardware returns progressive values consistent with 2,250,000/37,609 Hz within crystal tolerance, indicating the over-determined nature of standards-compliant NTSC progressive timing: independent clock architectures converge on the same value.  
+The exact rational values derived in [§5](#5-mathematical-derivations) represent the nominal frequencies produced by standard N64 video timing configurations. Measured hardware frequencies instead reflect the tolerance bounds of the physical oscillator implementation, yielding the small but expected variance between units observed here.
+
+[^gbs-c]:GBS-C telemetry from Sony PlayStation (1994) and Sega Saturn (1994) hardware returns progressive values consistent with 2,250,000/37,609 Hz within crystal tolerance, indicating the over-determined nature of standards-compliant NTSC progressive timing: independent clock architectures converge on the same value.  
 
 #### 3.5.3 Initialization Transient Behavior  
 
@@ -357,17 +364,18 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 The following table defines the relationship between VI clock rate ($f_{VI}$) and the resulting display timing. See [§3.1](#31-fundamental-constants) for crystal frequencies and register values; fully reduced refresh rate fractions and line frequencies are in [§3.3](#33-derived-timing-values). Values are effective.  
 
-| Mode    | $f_{VI}$ (VI Clock)      | $L$ (Clocks / Line) | $S$ (Half-Lines) | $f_V$ (Refresh Rate) |  
-| :---    | :---                 | :---              | :---           | :---              |  
-| NTSC-P  | 48.6818181818 MHz    | 3094              | 526            | 59.8261054535 Hz  |  
-| NTSC-I  | 48.6818181818 MHz    | 3094              | 525            | 59.9400599401 Hz  |  
-| PAL-P   | 49.65653 MHz (exact) | 3178              | 626            | 49.9201277955 Hz  |  
-| PAL-I   | 49.65653 MHz (exact) | 3178              | 625            | 50 Hz (exact)     |  
-| PAL-M-P | 48.6283216783 MHz    | 3090</note1>      | 526            | 59.8370742270 Hz</note2>|  
-| PAL-M-I | 48.6283216783 MHz    | 3089              | 525            | 59.9702194092 Hz  |  
+Mode    | $f_{VI}$ (VI Clock)  | $L$ (Clocks / Line) | $S$ (Half-Lines) | $f_V$ (Refresh Rate)
+:-----: | :------------------: | :-----------------: | :--------------: | :----------------------:
+NTSC-P  | 48.6818181818 MHz    | 3094                | 526              | 59.8261054535 Hz
+NTSC-I  | 48.6818181818 MHz    | 3094                | 525              | 59.9400599401 Hz
+PAL-P   | 49.65653 MHz (exact) | 3178                | 626              | 49.9201277955 Hz
+PAL-I   | 49.65653 MHz (exact) | 3178                | 625              | 50 Hz (exact)
+PAL-M-P | 48.6283216783 MHz    | 3090[^note1]        | 526              | 59.8370742270 Hz[^note2]
+PAL-M-I | 48.6283216783 MHz    | 3089                | 525              | 59.9702194092 Hz
 
-</note1>: See [Note](#note).
-</note2>: See [Note](#note).
+
+[^note1]: See [Note](#note).
+[^note2]: See [Note](#note).
 
 > $f_{VI}$ for PAL-M is derived as exactly 6,953,850,000 ÷ 143 Hz. The slight deviation in NTSC-equivalent timing (≈ 0.0129407959%) is a hardware constraint caused by the requirement of an integer value for the Clocks ÷ Line ($L$) register.  
 
@@ -474,13 +482,14 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 
 All N64 video modes adhere to broadcast standard relationships between chrominance subcarrier frequency ($f_{SC}$) and horizontal scan frequency ($f_H$):  
 
-| Standard | $f_{SC}$ to $f_H$ Relationship |  
-| :---     | :---                  |  
-| PAL      | $f_{SC}$ = 283.7516 × $f_H$    |  
-| SECAM    | $f_{SC}$ = 282 × $f_H$         |  
-| PAL-N    | $f_{SC}$ = 229.2516 × $f_H$    |  
-| PAL-M    | $f_{SC}$ = 227.25 × $f_H$      |  
-| NTSC     | $f_{SC}$ = 227.5 × $f_H$       |  
+Standard | $f_{SC}$ : $f_H$ Relationship
+:------: | :----------------------------
+PAL      | $f_{SC}$ = 283.7516 × $f_H$
+SECAM    | $f_{SC}$ = 282 × $f_H$
+PAL-N    | $f_{SC}$ = 229.2516 × $f_H$
+PAL-M    | $f_{SC}$ = 227.25 × $f_H$
+NTSC     | $f_{SC}$ = 227.5 × $f_H$
+
 
 *Standard fS to $f_H$ ratios. Source: Wooding, M., The Amateur TV Compendium, p. 55*  
 
@@ -562,8 +571,8 @@ This section provides step-by-step derivations for all timing values. Calculatio
 Constants:
 
 ```
-Color burst frequency: f_colorburst (fS) = 315/88 MHz  (≈ 3.5795454545 MHz)
-Crystal frequency: f_xtal = 4 × f_colorburst = 315/22 MHz  (≈ 14.3181818182 MHz)
+Color burst frequency: FSC (f_SC) = 315/88 MHz  (≈ 3.5795454545 MHz)
+Crystal frequency: f_XTAL = 4 × FSC = 315/22 MHz  (≈ 14.3181818182 MHz)
 VI clock multiplier: M = 17 / 5
 VI clocks per scanline (base): L = 3,094
 Total half-lines (progressive): S_prog = 526
@@ -573,7 +582,7 @@ Total half-lines (interlaced): S_int = 525
 Video clock frequency:
 
 ```
-f_vi = f_xtal × M
+f_VI = f_XTAL × M
      = (315/22) × (17/5) MHz
      = (315 × 17) / (22 × 5)
      = 5,355 / 110
@@ -585,7 +594,7 @@ f_vi = f_xtal × M
 Horizontal scan frequency:
 
 ```
-fH = f_vi / L
+fH = f_VI / L
    = (5,355,000,000 / 110) / 3,094 Hz
    = 5,355,000,000 / (110 × 3,094)
    = 5,355,000,000 / 340,340
@@ -652,8 +661,8 @@ Pattern `0x00` (`0b00000`) selects the LEAP_A on every VSYNC. As LEAP_A = L_base
 Constants:
 
 ```
-Color burst frequency: f_colorburst (fS) = 17,734,475 / 4 Hz  (= 4.43361875 MHz)
-Crystal frequency: f_xtal = 4 × f_colorburst = 17,734,475 Hz  (= 17.734475 MHz)
+Color burst frequency: FSC (f_SC) = 17,734,475 / 4 Hz  (= 4.43361875 MHz)
+Crystal frequency: f_XTAL = 4 × FSC = 17,734,475 Hz  (= 17.734475 MHz)
 VI clock multiplier: M = 14 / 5
 VI clocks per scanline: L = 3,178
 Total half-lines (progressive): S_prog = 626
@@ -663,7 +672,7 @@ Total half-lines (interlaced): S_int = 625
 Video clock frequency:
 
 ```
-f_vi = f_xtal × M
+f_VI = f_XTAL × M
      = 17,734,475 × (14/5) Hz
      = (17,734,475 × 14) / 5
      = 248,282,650 / 5
@@ -676,7 +685,7 @@ Horizontal scan frequency:
 *Without leap compensation, the theoretical line frequency would be:*
 
 ```
-fH (theoretical) = f_vi / L
+fH (theoretical) = f_VI / L
                  = 49,656,530 / 3,178 Hz
                  = 24,828,265 / 1,589  (reduced)
                  ≈ 15,625.0881057269 Hz
@@ -714,7 +723,7 @@ fV_int = fH / (S_int / 2)
 The N64 VI maintains the exact 15,625 Hz line frequency ($f_H$) required for the PAL standard. The uncompensated line period (L = 3,178) produces a theoretical frequency of 49,656,530 / 3,178 ≈ 15,625.0881 Hz. To achieve the standard, the average number of VI clocks per line must be exactly:
 
 ```
-L_avg = f_vi / fH = 49,656,530 / 15,625 = 9,931,306 / 3,125
+L_avg = f_VI / fH = 49,656,530 / 15,625 = 9,931,306 / 3,125
 ```
 
 The hardware corrects for the 56/3,125 fractional error using the leap mechanism, which adds an average of 28/5 VI clocks per VSYNC. For PAL interlaced (S = 625), the average adjustment per line is therefore:
@@ -732,8 +741,8 @@ True L_avg = 3,178 + 56/3,125 = (9,931,250 + 56) / 3,125 = 9,931,306 / 3,125
 The leap mechanism is implemented via the `VI_H_TOTAL_LEAP` register (`0x04400020`). A repeating 5-VSYNC sequence alternates between two extended line lengths during the vertical blanking interval, yielding the required 28/5-clock average per VSYNC. See [§5.2.1.1](#5211-pal-leap-pattern-and-bit-mapping).
 
 ```
-fH = f_vi / (L + (28/5) / (S/2))
-   = f_vi / (L + 56/3,125)
+fH = f_VI / (L + (28/5) / (S/2))
+   = f_VI / (L + 56/3,125)
    = 49,656,530 / (9,931,306 / 3,125)
    = (49,656,530 / 9,931,306) × 3,125
    = 5 × 3,125
@@ -789,7 +798,7 @@ L_avg = 3,178 + 56/3,125
       = (9,931,250 + 56) / 3,125
       = 9,931,306 / 3,125
 
-fH = f_vi / L_avg
+fH = f_VI / L_avg
    = 49,656,530 / (9,931,306 / 3,125)
    = (49,656,530 × 3,125) / 9,931,306
    = 155,176,656,250 / 9,931,306
@@ -805,8 +814,8 @@ The timing result is unchanged regardless of pattern used; only the distribution
 Constants:
 
 ```
-Color burst frequency: f_colorburst (fS) = 511,312,500 / 143 Hz  (≈ 3,575,611.8881118881 Hz)
-Crystal frequency: f_xtal = 4 × f_colorburst = 2,045,250,000 / 143 Hz  (≈ 14,302,447.5524475524 Hz)
+Color burst frequency: FSC (f_SC) = 511,312,500 / 143 Hz  (≈ 3,575,611.8881118881 Hz)
+Crystal frequency: f_XTAL = 4 × FSC = 2,045,250,000 / 143 Hz  (≈ 14,302,447.5524475524 Hz)
 VI clock multiplier: M = 17 / 5
 Total lines (progressive): S_prog = 526
 Total lines (interlaced): S_int = 525
@@ -815,7 +824,7 @@ Total lines (interlaced): S_int = 525
 Video clock frequency:
 
 ```
-f_vi = f_xtal × M
+f_VI = f_XTAL × M
      = (2,045,250,000 / 143) × (17 / 5) Hz
      = (2,045,250,000 × 17) / (143 × 5)
      = 34,769,250,000 / 715
@@ -825,7 +834,7 @@ f_vi = f_xtal × M
      
 ```
 
-### 5.3.1 PAL-M Progressive Derivation</note3>
+### 5.3.1 PAL-M Progressive Derivation[^note3]
 
 ```
 VI clocks per line (base): L_base = 3,090
@@ -834,7 +843,7 @@ VI clocks per line (base): L_base = 3,090
 *Without leap compensation, the theoretical line frequency would be:*
 
 ```
-fH (theoretical) = f_vi / L_base
+fH (theoretical) = f_VI / L_base
                  = (6,953,850,000 / 143) / 3,090 Hz
                  = 6,953,850,000 / (143 × 3,090)
                  = 6,953,850,000 / 441,870
@@ -860,9 +869,9 @@ fV_prog = fH / (S_prog / 2)
         = 17,384,625,000 / 290,532,671  (canonical value)
         ≈ 59.8370742270 Hz
 ```
-</note3>: See [Note](#note).
+[^note3]: See [Note](#note).
 
-### 5.3.1.1 PAL-M Progressive Leap Adjustment</note4>
+### 5.3.1.1 PAL-M Progressive Leap Adjustment[^note4]
 
 The PAL-M progressive configuration programs HSYNC(`3089`, `4`) and LEAP(`3097`, `3098`). Terminal-counted:
 
@@ -896,7 +905,7 @@ L_avg = 3,090 + 44/1,315
       = (4,063,350 + 44) / 1,315
       = 4,063,394 / 1,315
 
-fH = f_vi / L_avg
+fH = f_VI / L_avg
    = (6,953,850,000 / 143) / (4,063,394 / 1,315)
    = (6,953,850,000 × 1,315) / (143 × 4,063,394)
    = 9,144,322,500,000 / 581,065,342
@@ -904,7 +913,7 @@ fH = f_vi / L_avg
    ≈ 15,737.1505217050 Hz
 ```
 
-</note4>: See [Note](#note).
+[^note4]: See [Note](#note).
 
 ---
 
@@ -917,7 +926,7 @@ VI clocks per line (base): L_base = 3,089
 *Without leap compensation, the theoretical line frequency would be:*
 
 ```
-fH (theoretical) = f_vi / L_base
+fH (theoretical) = f_VI / L_base
                  = (6,953,850,000 / 143) / 3,089 Hz
                  = 6,953,850,000 / (143 × 3,089)
                  = 6,953,850,000 / 441,727  (reduced)
@@ -969,7 +978,7 @@ L_avg = 3,089 + 8/175
       = (540,575 + 8) / 175
       = 540,583 / 175
 
-fH = f_vi / L_avg
+fH = f_VI / L_avg
    = (6,953,850,000 / 143) / (540,583 / 175)
    = (6,953,850,000 × 175) / (143 × 540,583)
    = 1,216,923,750,000 / 77,303,369
@@ -1048,8 +1057,8 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 | `Ⓜ` and `D` Markings | `fig24_X1_(M)D143G7_stamp_code.png` | *Both `Ⓜ` and `D` prefixes visible on a single PAL-M marking (Source: JASNet Soluções em Eletrônica, [Instalação do RGB Converter v2 no Nintendo 64](https://www.jasnetinfo.com/produtos/rgbconvv2/install/install_nintendo64.php))* |  
 | `Ⓜ` Marking | `fig23_X1_(M)143G0_stamp_code.png`  | *`Ⓜ` marking visible on some PAL-M X1 crystal resonators (Source: Mielke - MiSTer FPGA Discord, [imgur.com](https://imgur.com/a/SjqcjYj))* |  
 | Raster Scan | `fig29_raster_scan_progressive_ian_harvey.png` | *Progressive raster scan: electron beam traversal, horizontal retrace, and vertical retrace (Source: Ian Harvey, Wikimedia Commons, [CC0](https://commons.wikimedia.org/wiki/File:Raster-scan.svg))* |  
-| Month Chart | `fig49_kds_month_code.png` | Macronix Month Code Chart (Source: Datasheet Archive - KDS America - Quartz Crystals p.6 (1993) (mirror))
-| Macronix Date Code | `fig50_kds_date_code.png` | Datasheet Archive - KDS America - Quartz Crystals p.6 (1993) (mirror)
+| KDS Month Chart | `fig49_kds_month_code.png` | KDS Month Code Chart (Source: [datasheetarchive.com - KDS America - Quartz Crystals p.6 (1993)](https://www.datasheetarchive.com/datasheet/0a2c800efae9bfe2))
+| KDS Date Code | `fig50_kds_date_code.png` | KDS Date Code (Source: [datasheetarchive.com - KDS America - Quartz Crystals p.6 (1993)](https://www.datasheetarchive.com/datasheet/0a2c800efae9bfe2)
 | S-RGB A Video Circuit | `fig36_snes_video_path_v3.png` | *S-RGB A (U7) video circuit: RGB inputs from S-PPU2; discrete transistor drive stage; RGB, LUMA, C.VIDEO, and CHROMA outputs (Source: DarthCloud, SNS-CPU-RGB-02 Video Circuit, 2011, [assemblergames.org](https://assemblergames.org/viewtopic.php?t=43494))* |  
 
 ### 7.2 References
@@ -1063,6 +1072,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Mario Kart 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) - Transitional libultra-defined Video Interface configurations.  
 * [Goldeneye 007 Decompilation - vimodepallan1.c](https://github.com/n64decomp/007/blob/754a0a977efcbc99a46d079a73292e40780e3aab/src/libultrare/io/vimodepallan1.c) - Note regarding Rare's custom FPAL mode.
 * [Animal Forest Decompilation - vitbl.c (GitHub)](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) - Later libultra-defined Video Interface configurations.
+* [KDS America - Quartz Crystals p.6 (1993)](https://www.datasheetarchive.com/datasheet/0a2c800efae9bfe2) — Visual reference for KDS date code / month marking system used on quartz crystals and oscillators.
 * [Macronix MX8330MC Datasheet](/references/Macronix-MX8330MC-ocr.pdf) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4 color subcarrier output), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
 * [Macronix MX8350 Datasheet](/references/Macronix-MX8350-ocr.pdf) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
 * [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer. Audio/Video subsystems only.   
@@ -1377,10 +1387,10 @@ FPAL   | FPAL_HPF2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625  
 | NTSC   | Interlaced   | 525               | 3094, 0            | 3094, 3094 |
 | PAL    | Progressive  | 626               | 3178, 21           | 3183, 3184 |
 | PAL    | Interlaced   | 625               | 3178, 21           | 3183, 3184 |
-| PAL-M  | Progressive  | 526               | 3090, 4</note5>     | 3099, 3098 |
+| PAL-M  | Progressive  | 526               | 3090, 4[^note5]     | 3099, 3098 |
 | PAL-M  | Interlaced   | 525               | 3089, 0            | 3101, 3101 |
 
-</note5>: See [Note](#note).
+[^note5]: See [Note](#note).
 
 ### B.3.1 libdragon Display Initialization Behavior
 
@@ -1416,7 +1426,7 @@ A quick reference for terminology used in this document.
 
 * **$f_H$:** Symbol for horizontal scan frequency. *See Horizontal Scan Frequency.*  
 
-* **$f_{SC}$:** Symbol for colorburst or chroma subcarrier signal. f_colorburst disambiguates. *See Chrominance Subcarrier Frequency.*  
+* **$f_{SC}$:** Symbol for colorburst or chroma subcarrier signal. FSC disambiguates. *See Chrominance Subcarrier Frequency.*  
 
 * **$f_V$:** Symbol for vertical scan frequency (refresh rate). *See Vertical Scan Frequency.*
 
