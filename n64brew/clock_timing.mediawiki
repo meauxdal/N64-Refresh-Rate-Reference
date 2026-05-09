@@ -1,10 +1,10 @@
-N64 '''Clock Timing''' is driven by two quartz crystal resonators that provide reference clocks to phase-locked loop (PLL) clock synthesizers. These clocks are referred to in the Macronix MX8350 datasheet as X'tal1 (X1) and X'tal2 (X2). The PLL synthesizers generate the system clocks used throughout the console. X1 drives the [[Reality Coprocessor|Reality Coprocessor's]] [[Video Interface]] and [[Audio Interface]] as well as providing the chrominance subcarrier frequency<ref>Also known as color subcarrier or colorburst, the broadcast standard-specific frequency that carries color information in composite video signals.</ref> to the video encoder (See [[Video DAC]]). X2 provides a reference clock which is synthesized to drive [[RDRAM]], from which downstream clocks for all non-AV systems are derived.
+N64 '''Clock Timing''' originates from two quartz crystal resonators that supply reference clocks to [[wikipedia:Phase-locked loop|phase-locked loop]] (PLL) clock synthesizers, which generate the system clocks used throughout the console. These reference inputs are designated X'tal1 (X1) and X'tal2 (X2) in the Macronix MX8350 datasheet. X1 is the clock source for the [[Reality Coprocessor|Reality Coprocessor's]] [[Video Interface]], [[Audio Interface]], and [[Video DAC|video encoder]]. X2 provides a reference clock which is synthesized to drive [[RDRAM]], from which downstream clocks for all non-AV systems are derived.
 
 Video and audio subsystem clocks derive from X1; all other system clocks derive from X2. X1 varies by region to account for differing broadcast standards.
 
 == Crystal 1 (X1) ==
 
-A quartz crystal resonator on the N64 motherboard supplies the X1 reference clock to the clock synthesizer (U7 or U17)<ref>Early boards use the 8-pin Macronix MX8330MC at U7; later revisions substitute with equivalent MX9911MC. "Funtastic"-era and later models consolidate U7 and U15 into a single 14-pin MX8350 synthesizer at U17.</ref> in order to generate the VI clock frequency (VCLK).
+A quartz crystal resonator on the N64 motherboard supplies the X1 reference clock to the clock synthesizer (U7 or U17)<ref>Early boards use the 8-pin Macronix MX8330MC at U7; later revisions substitute with MX9911MC. "Funtastic"-era and later models consolidate U7 and U15 into a single 14-pin MX8350 synthesizer at U17.</ref> in order to generate the VI clock frequency (VCLK).
 
 The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (KDS)<ref>Corroborated by [https://gbhwdb.gekkio.fi/ Game Boy hardware database] explicitly identifying identical crystals as Daishinku Co., Ltd. (est. 1959 as Daiwa Shinku Kogyosho), [https://commons.wikimedia.org/wiki/File:Nintendo-Famicom-Motherboard-BL.jpg "KDS" markings on Famicom and NES resonators], and an [https://fcc.report/FCC-ID/BKEHAC013/3265207.pdf FCC report] indicating an ongoing supplier relationship between Nintendo and Daishinku. Crystals identical in appearance and marking convention to those positively identified as KDS crystals have been confirmed to appear on at least Game Boy, SNES, Virtual Boy, N64, and Game Boy Color hardware.</ref> with a baseline frequency tolerance of ±30 ppm<ref>X1 and X2 are visually identified as AT-49 hermetically sealed through-hole AT-cut crystal resonators from [https://commons.wikimedia.org/wiki/File:Nintendo-N64-Motherboard-Top.jpg N64 motherboard photography (Evan-Amos, Wikimedia Commons)], consistent with KDS AT-49 appearance and lot encoding ([https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 Datasheet]). Base grade frequency tolerance is given at ±30 ppm.</ref>; derived signals inherit this proportional error.
 
@@ -12,7 +12,7 @@ The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (KDS)<ref>Corr
 
 [[File:CCIR-1990-Rep.624-4-Table.png|thumb|alt=Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz|Chrominance sub-carrier frequencies. M/NTSC: 3,579,545 ± 10 Hz; M/PAL: 3,575,611.49 ± 10 Hz ; B/PAL: 4,433,618.75 ± 5 Hz. Image from: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990), Table II]]]
 
-Each regional broadcast standard defines a horizontal line frequency (<math>f_H</math>), from which the chrominance subcarrier frequency (<math>f_{SC}</math>)<ref>The carrier frequency on which color (hue and saturation) is modulated for analog video. Also referred to as colorburst, color subcarrier, or chrominance sub-carrier. Note that "burst" refers specifically to the sample of this subcarrier transmitted during the back porch to establish a phase and frequency reference. Standard NTSC (System M) specifies 9 ± 1 cycles of the carrier wave during burst; PAL (System B/G) specifies 10 ± 1 cycles. Source: [http://handle.itu.int/11.1004/020.1000/4.283 CCIR Report 624-4 (1990), Table I].</ref> is derived as a fixed rational multiple. The X1 resonant frequency is specified as 4 × <math>f_{SC}</math>.
+Each regional broadcast standard defines a horizontal line frequency (<math>f_H</math>), from which the chrominance subcarrier frequency (<math>f_{SC}</math>)<ref>The television broadcast standard-specific frequency that carries color information in composite video signals. Also referred to as color subcarrier or colorburst. Note that "burst" refers specifically to the sample of this subcarrier transmitted during the back porch to establish a phase and frequency reference.</ref> is derived as a fixed rational multiple. The X1 resonant frequency is specified as 4 × <math>f_{SC}</math>.
 
 All frequencies are given in hertz (Hz).
 
@@ -48,7 +48,7 @@ The PLL clock synthesizer (Macronix MX8330MC / MX9911MC / MX8350) derives the ne
 * '''FSC''': Chrominance subcarrier = X1 ÷ 4
 * '''VCLK''': Video clock = X1 × multiplier ÷ 5
 
-'''FSEL (NTSC/!PAL)''':<ref>This pin is marked FSEL on the MX8330MC and MX9911MC datasheets; the equivalent pin on the MX8350 is referred to as '''NTSC/!PAL'''.</ref> Input pin; tied high or low. Selects the VCLK multiplier:
+'''FSEL (NTSC/!PAL)''':<ref>This pin is marked FSEL on the MX8330MC and MX9911MC datasheets; the equivalent pin on the MX8350 is referred to as '''NTSC/!PAL''' (! = active low).</ref> Input pin; tied high or low. Selects the VCLK multiplier:
 
 {| class="wikitable" style="text-align: center;"
 ! Standard !! FSEL Pin State !! Multiplier
@@ -99,7 +99,7 @@ All values in MHz:
 |-
 | GND || 2 || || 7 || FSEL
 |-
-| N.C. || 3 || || 6 || OSCIN
+| N.C.<ref>Because the Rambus Signaling Logic FSO pin is internally not connected (N.C.) on MX9911MC, it can only be used at U7 for AV reference clocks. It exclusively outputs TTL and is incapable of RSL.</ref> || 3 || || 6 || OSCIN
 |-
 | VDD || 4 || || 5 || OSCOUT
 |}
@@ -127,7 +127,7 @@ All values in MHz:
 
 == Crystal 2 (X2) ==
 
-A second quartz crystal resonator (X2) produces another reference clock which is synthesized by the PLL clock generator and routed to RDRAM. X2 is multiplied by 17<ref>On early boards using MX8330MC/MX9911MC, this multiplier requires FSEL to be tied high on X2's paired discrete synthesizer. On boards with MX8350, this is a fixed 17× multiplier regardless of NTSC/!PAL pin state.</ref> to produce RCLK,<ref>RCLK is distributed via Rambus Signaling Logic (RSL), a low-voltage swing interface, via the synthesizer's '''FSO''' pin. This is distinct from the Transistor-Transistor Logic (TTL) '''FSO/5''' pin used for VCLK. FSC output is also TTL-compatible.</ref> from which all non-AV system clocks are derived, including the MasterClock (MClock).<ref>See [[SysAD_Interface]].</ref>
+A second quartz crystal resonator (X2) produces another reference clock which is synthesized by the PLL clock generator and routed to RDRAM. X2 is multiplied by 17<ref>On early boards using MX8330MC, this multiplier requires FSEL to be tied high on X2's paired discrete synthesizer. On boards with MX8350, this is a fixed 17× multiplier regardless of NTSC/!PAL pin state.</ref> to produce RCLK,<ref>RCLK is distributed via Rambus Signaling Logic (RSL), a low-voltage swing interface, via the synthesizer's '''FSO''' (MX8330MC) or '''RCLK''' (MX8350) pin. This is distinct from the Transistor-Transistor Logic (TTL) '''FSO/5''' (MX8330MC) or '''VCLK''' (MX8350) pin.</ref> from which all non-AV system clocks are derived, including the MasterClock (MClock).<ref>See [[SysAD_Interface]].</ref>
 
 All values in MHz:
 

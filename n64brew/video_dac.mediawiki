@@ -11,7 +11,7 @@ The Video DAC operates at four times the pixel clock frequency. Four consecutive
 
 [[File:N64videosys.png|thumb|Video DAC bus and waveform diagram. Image from: [https://web.archive.org/web/20090103080549/http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html Tim Worthington - RGB Video DAC for Nintendo 64]]]
 
-The 4-cycle sequence carries both pixel data and control signals and restarts whenever !DSYNC is low.
+The 4-cycle sequence carries both pixel data and control signals and restarts whenever !DSYNC<ref>! = active low.</ref> is low.
 
 The Video Interface transmits control signals every clock during blanking by holding !DSYNC low across multiple VI clock cycles.
 
@@ -28,7 +28,7 @@ The Video Interface transmits control signals every clock during blanking by hol
 | !Hsync || Red 1 || Green 1 || Blue 1
 |-
 ! D2
-| !Clamp<ref>The !Clamp signal (! = active low) is asserted during the horizontal back porch to restore the DC component of an AC-coupled signal. This "clamping" process re-establishes the black level reference (0 IRE) in this window to stabilize signal brightness. Because the color burst is transmitted concurrently, some sources refer to this period as "clamp/burst."</ref> || Red 2 || Green 2 || Blue 2
+| !Clamp<ref>The !Clamp signal is asserted during the horizontal back porch to restore the DC component of an AC-coupled signal. This "clamping" process re-establishes the black level reference (0 IRE) in this window to stabilize signal brightness. Because the color burst is transmitted concurrently, some sources refer to this period as "clamp/burst."</ref> || Red 2 || Green 2 || Blue 2
 |-
 ! D3
 | !Vsync || Red 3 || Green 3 || Blue 3
@@ -55,7 +55,7 @@ The video clock frequency is calculated as:
 
 <math>VCLK = \frac{X1 \times \text{Multiplier}}{5}</math>
 
-The multiplier is selected by the FSEL (NTSC/!PAL) pin: High → 17×, Low → 14×.
+The multiplier is selected by the FSEL (NTSC/!PAL)<ref>This pin is named FSEL on MX8330MC/MX9911MC and NTSC/!PAL on MX8350.</ref> pin: High → 17×, Low → 14×.
 
 There are three video clock configurations corresponding to NTSC, PAL, and MPAL (a.k.a. [https://en.wikipedia.org/wiki/PAL-M PAL-M]):
 
