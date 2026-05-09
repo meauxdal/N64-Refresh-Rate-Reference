@@ -1,0 +1,61 @@
+== Derived video timing ==
+
+As of the time of writing (May 6, 2026), there is a known discrepancy between the [https://github.com/DragonMinded/libdragon/tree/preview preview branch of Libdragon] and prior definitions for PAL-M progressive signals. Currently, the Libdragon prevew branch uses a single previously MPAL interlaced-exclusive VI register configuration for both progressive and interlaced modes. Thus, the following tables do not apply to software using MPAL progressive in conjunction with the Libdragon preview branch.
+
+From VCLK, the [[Video Interface]] counts VI clocks per line (L) and half-lines per frame (S) in conjunction with the leap configuration to produce the horizontal and vertical scan frequencies.<ref>Full derivations shown in the [https://github.com/meauxdal/N64-Refresh-Rate-Reference N64 Refresh Rate Reference].</ref>
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! Scan !! <math>f_H</math> (Hz) !! <math>f_V</math> (Hz)
+|-
+| '''NTSC''' || Progressive || <math>\frac{2{,}250{,}000}{143}</math> || <math>\frac{2{,}250{,}000}{37{,}609}</math>
+|-
+| '''NTSC''' || Interlaced || <math>\frac{2{,}250{,}000}{143}</math> || <math>\frac{60{,}000}{1{,}001}</math>
+|-
+| '''PAL''' || Progressive || <math>15{,}625</math> || <math>\frac{15{,}625}{313}</math>
+|-
+| '''PAL''' || Interlaced || <math>15{,}625</math> || <math>50</math>
+|-
+| '''MPAL''' || Progressive || <math>\frac{4{,}572{,}156{,}375{,}000}{290{,}532{,}671}</math> || <math>\frac{17{,}384{,}625{,}000}{290{,}532{,}671}</math>
+|-
+| '''MPAL''' || Interlaced || <math>\frac{71{,}583{,}750{,}000}{4{,}547{,}257}</math> || <math>\frac{272{,}700{,}000}{4{,}547{,}257}</math>
+|}
+
+Converted to decimal (Hz):
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! Scan !! <math>f_H</math> !! <math>f_V</math>
+|-
+| '''NTSC''' || Progressive || 15,734.2657 || 59.8261054535
+|-
+| '''NTSC''' || Interlaced || 15,734.2657 || 59.9400599401
+|-
+| '''PAL''' || Progressive || 15,625 || 49.9201277955
+|-
+| '''PAL''' || Interlaced || 15,625 || 50
+|-
+| '''MPAL''' || Progressive || 15,737.1505217050 || 59.8370742270
+|-
+| '''MPAL''' || Interlaced || 15,742.1825949138 || 59.9702194092
+|}
+
+== Default output modes ==
+
+Libultra and Libdragon software using SDK-provided default VI modes output signals corresponding with these profiles. Refresh rates are derived from the X1 crystal frequency and VI register values.<ref>Full <math>f_V</math> derivations are shown in [https://github.com/meauxdal/N64-Refresh-Rate-Reference N64 Refresh Rate Reference.]</ref>
+
+{| class="wikitable" style="text-align: center;"
+! Standard !! Scan type !! Resolution !! Refresh rate (Hz)
+|-
+| '''NTSC''' || Progressive || 640×240p || 59.8261054535
+|-
+| '''NTSC''' || Interlaced || 640×480i || 59.9400599401
+|-
+| '''PAL''' || Progressive || 640×288p || 49.9201277955
+|-
+| '''PAL''' || Interlaced || 640×576i || 50
+|-
+| '''MPAL''' || Progressive || 640×240p || 59.8370742270
+|-
+| '''MPAL''' || Interlaced || 640×480i || 59.9702194092
+|}
+
+Libdragon additionally defines PAL60 configurations combining NTSC resolutions and refresh rates with the PAL color subcarrier.
