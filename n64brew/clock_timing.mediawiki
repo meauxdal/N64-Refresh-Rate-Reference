@@ -74,22 +74,39 @@ All values in MHz:
 | '''MPAL''' || 3.57561189 || 14.30244755 || High || 17 || 5 || 48.62832167
 |}
 
-==== MX8330MC and MX9911MC pinout ====
-{| class="wikitable"
+==== MX8330MC pinout ====
+
+{| class="wikitable" style="text-align: center;"
 |+
 ! Name !! Pin !! !! Pin !! Name
 |-
 | FSO/5 || 1 || || 8 || FSC
 |-
-| GND || 2 || || 7 || OSCIN
+| GND || 2 || || 7 || FSEL
 |-
-| FSEL || 3 || || 6 || VDD
+| FSO || 3 || || 6 || OSCIN
 |-
-| FSO || 4 || || 5 || OSCOUT
+| VDD || 4 || || 5 || OSCOUT
+|}
+
+==== MX9911MC pinout ====
+
+{| class="wikitable" style="text-align: center;"
+|+
+! Name !! Pin !! !! Pin !! Name
+|-
+| FSO/5 || 1 || || 8 || FSC
+|-
+| GND || 2 || || 7 || FSEL
+|-
+| N.C. || 3 || || 6 || OSCIN
+|-
+| VDD || 4 || || 5 || OSCOUT
 |}
 
 ==== MX8350 pinout ====
-{| class="wikitable"
+
+{| class="wikitable" style="text-align: center;"
 |+
 ! Name !! Pin !! !! Pin !! Name
 |-
@@ -157,8 +174,8 @@ The [https://n64brew.dev/wiki/File:VR4300-Users-Manual.pdf VR4300 manual] also n
 == References ==
 
 * [http://handle.itu.int/11.1004/020.1000/4.283 ITU Digital Collection - CCIR Report 624-4 (1990)]
-* [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Tech Wiki - RDC - NUS-CPU-03/04 Schematic]
-* [https://www.datasheetarchive.com/datasheet/MX8330/Macronix-International?term=MX8330 Datasheet Archive - Macronix - MX8330MC datasheet (mirror)]
+* [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Tech Wiki - RDC - NUS-CPU-03/04 Schematic (mirror)]
+* [https://www.datasheetarchive.com/datasheet/MX8330/Macronix-International?term=MX8330 Datasheet Archive - Macronix MX8330MC datasheet (mirror)]
 * [https://www.datasheetarchive.com/datasheet/MX9911/Macronix-International?term=mx9911 Datasheet Archive - Macronix MX9911MC datasheet (mirror)]
 * [https://www.datasheetarchive.com/datasheet/MX8350/Macronix-International?term=MX8350 Datasheet Archive - Macronix MX8350 datasheet (mirror)]
 * [https://www.datasheetarchive.com/datasheet/0a2c800efae9bfe2 Datasheet Archive - KDS America - Quartz Crystals - AT-49, AT-38, UM-5, UM-1, UM-2, HC-49/U, p.6 (1993) (mirror)]

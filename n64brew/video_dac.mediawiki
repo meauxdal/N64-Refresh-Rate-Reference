@@ -91,15 +91,15 @@ Crystal frequency tolerance is ±30 ppm at 25°C.<ref>See [https://www.kds.info/
 
 == References ==
 
-* [https://web.archive.org/web/20090103080549/http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html N64 RGB Mod (Tim Worthington)] (archived from [http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html the original])
-* [https://github.com/DragonMinded/libdragon/commit/0290a16bf28b896bf85cac30ca101b8330702cea/src/vi.c Libdragon - vi.c]
-* [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS AT-38/AT-49 datasheet]
+* [https://web.archive.org/web/20090103080549/http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html Tim Worthington - N64 RGB Mod ] (archived from [http://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html the original])
 * [https://wiki.console5.com/wiki/File:N64_NUS-CPU-03-04.pdf Console5 Tech Wiki - RDC - NUS-CPU-03/04 Schematic]
-* [https://datasheet.datasheetarchive.com/originals/library/Datasheet-011/DSA00196634.pdf Datasheet Archive - Rohm BA7242F Datasheet]
+* [https://www.datasheetarchive.com/datasheet/BA7242F/ROHM?term=BA7242F Datasheet Archive - Rohm BA7242F (ENC-NUS) datasheet (mirror)]
+* [https://www.kds.info/wp-content/uploads/2015/11/2011-2012_032_en.pdf KDS - AT-38/AT-49 Miniature Crystal Resonators datasheet (2011)]
 * [https://patents.google.com/patent/US6956621B2/ Google Patents - US6956621B2, ''High impedance digital full line video clamp'']
+* [https://web.archive.org/web/20151105192150/http://forums.modretro.com/viewtopic.php?f=33&t=1417 modretro.com - Link83 et al - Nintendo 64 Motherboard Revisions/Serials Info Request] (archived from [http://forums.modretro.com/viewtopic.php?f=33&t=1417 the original])
 * [https://consoles4you.ch/guides/n64svideorestore.html consoles4you.ch - N64 S-Video Restore Install Guide]
-* [https://web.archive.org/web/20170107153330/http://nfggames.com/forum2/index.php?topic=5251.0 nfggames.com - Fix S-Video for PAL N64 NUS-CPU(P)-03-1] (archived from [https://nfggames.com/forum2/index.php?topic=5251.0 the original])
-* [https://web.archive.org/web/20140729192310/http://nfggames.com/forum2/index.php?topic=3083.0 nfggames.com - N64 RGB "Mod" on NUS-001(FRA)] (archived from [https://nfggames.com/forum2/index.php?topic=3083.40 the original])
+* [https://web.archive.org/web/20170107153330/http://nfggames.com/forum2/index.php?topic=5251.0 nfggames.com - Shadow_Zero et al - Fix S-Video for PAL N64 NUS-CPU(P)-03-1] (archived from [https://nfggames.com/forum2/index.php?topic=5251.0 the original])
+* [https://web.archive.org/web/20140729192310/http://nfggames.com/forum2/index.php?topic=3083.0 nfggames.com - kwyjibo, Link83 et al - N64 RGB "Mod" on NUS-001(FRA)] (archived from [https://nfggames.com/forum2/index.php?topic=3083.40 the original])
 
 == Footnotes ==
 <references />
