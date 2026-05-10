@@ -77,9 +77,9 @@ All video timing derives from a quartz crystal piezoelectric resonator (designat
 $
 \begin{aligned}
 f_{VI} &= f_{XTAL} \times M \\
-f_H    &= \frac{f_{VI}}{L} \\
-f_V    &= \frac{2f_H}{S}
-       = \frac{2(f_{XTAL} \times M)}{L \times S}
+f_H    &= \dfrac{f_{VI}}{L} \\
+f_V    &= \dfrac{2f_H}{S}
+       = \dfrac{2(f_{XTAL} \times M)}{L \times S}
 \end{aligned}
 $
 
@@ -127,14 +127,15 @@ All registers are terminal-counted; add 1 to the register value to derive the ef
 
 The table lists refresh rates ($f_V$) for all video modes. The fully reduced fractions shown below serve as reference values for the remainder of this text.  
 
-| Mode  | Scan Type   | $f_V$ (Hz, fraction)                                           | $f_V$ (Hz, decimal) |
-| :---: | :---------: | :------------------------------------------------------------: | :-----------------: |
-| NTSC  | Progressive | $\frac{2,\!250,\!000}{37,\!609}$                               | 59.8261054535       |
-| NTSC  | Interlaced  | $\frac{60,\!000}{1,\!001}$                                     | 59.9400599401       |
-| PAL   | Progressive | $\frac{15,\!625}{313}$                                         | 49.9201277955       |
-| PAL   | Interlaced  | $50$                                                 | 50 (exact)          |
-| PAL-M | Progressive | $\frac{17,\!384,\!625,\!000}{290,\!532,\!671}$[^note0]         | 59.8370742270[^note6] |
-| PAL-M | Interlaced  | $\frac{272,\!700,\!000}{4,\!547,\!257}$                        | 59.9702194092       |
+Standard |  Scan Type  |                $f_V$ (Hz, fraction)                |  $f_V$ (Hz, decimal)
+:------: | :---------: | :------------------------------------------------: | :-------------------:
+  NTSC   | Progressive |           $\dfrac{2,!250,!000}{37,!609}$           |     59.8261054535
+  NTSC   | Interlaced  |             $\dfrac{60,!000}{1,!001}$              |     59.9400599401
+  PAL    | Progressive |               $\dfrac{15,!625}{313}$               |     49.9201277955
+  PAL    | Interlaced  |                        $50$                        |      50 (exact)
+ PAL-M   | Progressive | $\dfrac{17,!384,!625,!000}{290,!532,!671}$[^note0] | 59.8370742270[^note6]
+ PAL-M   | Interlaced  |        $\dfrac{272,!700,!000}{4,!547,!257}$        |     59.9702194092
+
 
 > These values correspond to the derivations in [§5](#5-mathematical-derivations).  
 
@@ -145,14 +146,14 @@ The table lists refresh rates ($f_V$) for all video modes. The fully reduced fra
 
 In the context of contemporary retail software, the N64 outputs four distinct raster formats:  
 
-| Signal | Scan Type   | Resolution |  
-| :---:  | :---:       | :---:      |  
-| NTSC   | Progressive | 640x240p   |  
-| NTSC   | Interlaced  | 640x480i   |  
-| PAL    | Progressive | 640x288p   |   
-| PAL    | Interlaced  | 640x576i   |  
+  Standard   |  Scan Type  | Resolution
+:----------: | :---------: | :--------:
+NTSC / PAL-M | Progressive |  640x240p
+NTSC / PAL-M | Interlaced  |  640x480i
+    PAL      | Progressive |  640x288p
+    PAL      | Interlaced  |  640x576i
 
-Note that these are effective output resolutions, after all scaling operations. PAL-M signals share corresponding NTSC resolutions. See [Appendix B](#appendix-b-vi-modes) for full VI mode tables. 
+Note that these are effective output resolutions, after all scaling operations. See [Appendix B](#appendix-b-vi-modes) for full VI mode tables. 
 
 ---  
 
@@ -164,14 +165,15 @@ Hardware constants and register mapping.
 
 Hardware constants derived from $f_{XTAL}$ and the Video Interface (VI) registers. $L$ and $S$ below are effective values. 
 
-| Mode              | Crystal Frequency ($f_{XTAL}$) | Multiplier ($M$) | VI Clocks / Line ($L$) | Half-Lines ($S$) | `VI_V_TOTAL` |  
-| :--:              | :--:                       | :--:           | :--:                 | :--:           | :--:         |  
-| NTSC Progressive  | 14.3181818182 MHz          | $\frac{17}{5}$ | 3094                 | 526            | `0x20D`      |  
-| NTSC Interlaced   | 14.3181818182 MHz          | $\frac{17}{5}$ | 3094                 | 525            | `0x20C`      |  
-| PAL Progressive   | 17.734475 MHz (exact)      | $\frac{14}{5}$ | 3178                 | 626            | `0x271`      |  
-| PAL Interlaced    | 17.734475 MHz (exact)      | $\frac{14}{5}$ | 3178                 | 625            | `0x270`      |  
-| PAL-M Progressive | 14.3024475524 MHz          | $\frac{17}{5}$ | 3090                 | 526            | `0x20D`      |  
-| PAL-M Interlaced  | 14.3024475524 MHz          | $\frac{17}{5}$ | 3089                 | 525            | `0x20C`      |  
+    Standard      | Crystal Frequency ($f_{XTAL}$) | Multiplier ($M$) | VI Clocks / Line ($L$) | Half-Lines ($S$) | `VI_V_TOTAL`
+:---------------: | :----------------------------: | :--------------: | :--------------------: | :--------------: | :----------:
+NTSC Progressive  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       526        |   `0x20D`
+ NTSC Interlaced  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       525        |   `0x20C`
+ PAL Progressive  |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       626        |   `0x271`
+ PAL Interlaced   |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       625        |   `0x270`
+PAL-M Progressive |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3090          |       526        |   `0x20D`
+PAL-M Interlaced  |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3089          |       525        |   `0x20C`
+
 
 * NTSC $f_{XTAL}$ target: 315/22 MHz (exact) (≈ 14.3181818182 MHz)  
 * PAL $f_{XTAL}$ target: 17,734,475 Hz (exact) = 17.734475 MHz  
@@ -219,14 +221,15 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 
 Timing values in this section are calculated from the fundamental constants in [§3.1](#31-fundamental-constants). $f_H$ is line frequency; $f_V$ is vertical scan frequency (refresh rate). Values are derived from $f_H$ and half-line count $S$. Progressive modes use the full half-line count, interlaced modes offset vertical sync by 0.5 lines per field.  
 
- Mode   | $f_H$ (Hz, decimal) |             $f_H$ (Hz, fraction)              |                $f_V$ (Hz)
-:-----: | :-----------------: | :-------------------------------------------: | :---------------------------------------:
-NTSC-P  |  15,734.2657342657  |             $\frac{2250000}{143}$             |          $\frac{2250000}{37609}$
-NTSC-I  |  15,734.2657342657  |             $\frac{2250000}{143}$             |           $\frac{60000}{1001}$
- PAL-P  |    15625 (exact)    |                    $15625$                    |            $\frac{15625}{313}$
- PAL-I  |    15625 (exact)    |                    $15625$                    |                   $50$
-PAL-M-P |  15,737.1505217050  | $\frac{4,!572,!156,!375,!000}{290,!532,!671}$ | $\frac{17,!384,!625,!000}{290,!532,!671}$
-PAL-M-I |  15,742.1825949138  |    $\frac{71,!583,!750,!000}{4,!547,!257}$    |    $\frac{272,!700,!000}{4,!547,!257}$
+ Mode   | $f_H$ (Hz, decimal) |              $f_H$ (Hz, fraction)              |                 $f_V$ (Hz)
+:-----: | :-----------------: | :--------------------------------------------: | :----------------------------------------:
+NTSC-P  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |          $\dfrac{2250000}{37609}$
+NTSC-I  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |           $\dfrac{60000}{1001}$
+ PAL-P  |    15625 (exact)    |                    $15625$                     |            $\dfrac{15625}{313}$
+ PAL-I  |    15625 (exact)    |                    $15625$                     |                    $50$
+PAL-M-P |  15,737.1505217050  | $\dfrac{4,!572,!156,!375,!000}{290,!532,!671}$ | $\dfrac{17,!384,!625,!000}{290,!532,!671}$
+PAL-M-I |  15,742.1825949138  |    $\dfrac{71,!583,!750,!000}{4,!547,!257}$    |    $\dfrac{272,!700,!000}{4,!547,!257}$
+
 
 Libdragon values for the [current preview branch](https://github.com/DragonMinded/libdragon/blob/preview/include/vi.h) do not match the table. PAL-M Progressive profile is not present; PAL-M Interlaced profile is used for both modes.
 
@@ -270,7 +273,7 @@ The NUS-CPU-03 oscillator circuit presents a load capacitance ($C_L$) of 19.5 pF
 
 $
 \begin{aligned}
-C_L &= \frac{39 \times 39}{39 + 39} + C_{stray} \\
+C_L &= \dfrac{39 \times 39}{39 + 39} + C_{stray} \\
     &= 19.5\ \text{pF} + C_{stray}
 \end{aligned}
 $
@@ -352,7 +355,7 @@ Nintendo diagnostic procedures (D.C.N. NUS-06-0014-001A) specify the following o
 | Master Clock[^masterclock]  | U10       | 16   | 62.51 MHz          | -                  |  
 | Rambus Clock (RCLK)         | U1        | 5    | 250.2 MHz          | -                  |  
 
-[^masterclock]: The Master Clock (62.51 MHz) is the operating clock for RCP-to-CPU communication. It is derived from X2 / RCLK and is distinct from the crystal oscillator frequency ($f_{XTAL}$) used for video timing derivations in this document.  
+[^masterclock]: The MasterClock is the operating clock for RCP-to-CPU communication. It is derived from X2 / RCLK and is distinct from the crystal oscillator frequency ($f_{XTAL}$) used for video timing derivations in this document.  
 
 ---
 
@@ -386,7 +389,7 @@ The figure below is a visualization created by lidnariq after analysis of N64 vi
 ![N64 VI Timing Diagram (NTSC-P)](/figures/fig3_n64_default_libdragon_240p_timing.png)  
 *N64 VI Timing Diagram (NTSC Progressive). Source: lidnariq (ares emulator Discord), hardware probe*  
 
-* Vertical Axis (263 units): Represents a single progressive vertical refresh. 263 sequential lines are drawn before VSYNC instructs the display's scanning mechanism to return to the top-left of the raster. Lines are contiguous, with no interleaving.  
+* Vertical Axis (263 units): Represents a single progressive vertical refresh. 263 sequential lines are scanned before VSYNC instructs the scanning mechanism to return to the top-left of the raster.  
 
 * Horizontal Axis (774 units): Represents the number of VI pixels per scanline. As established in [§3.4](#34-hardware-signal-path), this quotient effectively represents VI clocks per line ($L$) divided by four (773.5).  
 
@@ -1012,12 +1015,12 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 
 From \ To | NTSC-P                    | NTSC-I                    | PAL-P                         | PAL-I                         | PAL-M-P                       | PAL-M-I
 :-------: | :-----------------------: | :-----------------------: | :---------------------------: | :---------------------------: | :---------------------------: | :-------------------------:
-NTSC-P    | $\frac{1}{1}$             | $\frac{525}{526}$         | $\frac{45072}{37609}$         | $\frac{45000}{37609}$         | $\frac{4063394}{4064139}$     | $\frac{158995}{159378}$
-NTSC-I    | $\frac{526}{525}$         | $\frac{1}{1}$             | $\frac{30048}{25025}$         | $\frac{1200}{1001}$           | $\frac{8126788}{8112825}$     | $\frac{31799}{31815}$
-PAL-P     | $\frac{37609}{45072}$     | $\frac{25025}{30048}$     | $\frac{1}{1}$                 | $\frac{625}{626}$             | $\frac{290532671}{348248808}$ | $\frac{22736285}{27313632}$
-PAL-I     | $\frac{37609}{45000}$     | $\frac{1001}{1200}$       | $\frac{626}{625}$             | $\frac{1}{1}$                 | $\frac{290532671}{347692500}$ | $\frac{4547257}{5454000}$
-PAL-M-P   | $\frac{4064139}{4063394}$ | $\frac{8112825}{8126788}$ | $\frac{348248808}{290532671}$ | $\frac{347692500}{290532671}$ | $\frac{1}{1}$                 | $\frac{8108745}{8126788}$
-PAL-M-I   | $\frac{159378}{158995}$   | $\frac{31815}{31799}$     | $\frac{27313632}{22736285}$   | $\frac{5454000}{4547257}$     | $\frac{8126788}{8108745}$     | $\frac{1}{1}$
+NTSC-P    | $\dfrac{1}{1}$             | $\dfrac{525}{526}$         | $\dfrac{45072}{37609}$         | $\dfrac{45000}{37609}$         | $\dfrac{4063394}{4064139}$     | $\dfrac{158995}{159378}$
+NTSC-I    | $\dfrac{526}{525}$         | $\dfrac{1}{1}$             | $\dfrac{30048}{25025}$         | $\dfrac{1200}{1001}$           | $\dfrac{8126788}{8112825}$     | $\dfrac{31799}{31815}$
+PAL-P     | $\dfrac{37609}{45072}$     | $\dfrac{25025}{30048}$     | $\dfrac{1}{1}$                 | $\dfrac{625}{626}$             | $\dfrac{290532671}{348248808}$ | $\dfrac{22736285}{27313632}$
+PAL-I     | $\dfrac{37609}{45000}$     | $\dfrac{1001}{1200}$       | $\dfrac{626}{625}$             | $\dfrac{1}{1}$                 | $\dfrac{290532671}{347692500}$ | $\dfrac{4547257}{5454000}$
+PAL-M-P   | $\dfrac{4064139}{4063394}$ | $\dfrac{8112825}{8126788}$ | $\dfrac{348248808}{290532671}$ | $\dfrac{347692500}{290532671}$ | $\dfrac{1}{1}$                 | $\dfrac{8108745}{8126788}$
+PAL-M-I   | $\dfrac{159378}{158995}$   | $\dfrac{31815}{31799}$     | $\dfrac{27313632}{22736285}$   | $\dfrac{5454000}{4547257}$     | $\dfrac{8126788}{8108745}$     | $\dfrac{1}{1}$
 
 
 ---
@@ -1321,22 +1324,23 @@ PAL    | PAL_HPF2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625  
 
 ### B.2.5 FPAL[^fpal] (1997)
 
-Region | Code         | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
-:----- | :----------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
-FPAL   | FPAL_LAN1    | 320   | 288    | Progressive | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_LAN2    | 320   | 288    | Progressive | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_LPN1    | 320   | 288    | Progressive | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_LPN2    | 320   | 288    | Progressive | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_LAF1    | 320   | 288    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_LAF2    | 320   | 288    | Interlaced  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_LPF1    | 320   | 288    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_LPF2    | 320   | 288    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_HAN1    | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_HAF1    | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_HPN1    | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_HPN2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_HPF1    | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
-FPAL   | FPAL_HPF2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+Region | Code      | Width | Height | Scan Type   | AA/Point | Depth  | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
+:----- | :-------- | :---- | :----- | :---------- | :------- | :----- | :-------- | :----------------- | :---------
+FPAL   | FPAL_LAN1 | 320   | 288    | Progressive | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LAN2 | 320   | 288    | Progressive | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPN1 | 320   | 288    | Progressive | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPN2 | 320   | 288    | Progressive | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LAF1 | 320   | 288    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LAF2 | 320   | 288    | Interlaced  | AA       | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPF1 | 320   | 288    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_LPF2 | 320   | 288    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HAN1 | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HAF1 | 640   | 576    | Interlaced  | AA       | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPN1 | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPN2 | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPF1 | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
+FPAL   | FPAL_HPF2 | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
+
 
 
 [^fpal]: FPAL expands to full-screen PAL (or full-height PAL). Standard PAL modes in libultra share NTSC/PAL-M internal line count limitations despite the PAL standard's additional lines. FPAL allows drawing to 48 more of those lines (288 - 240 = 48). This mode was apparently developed by Rare Ltd. and subsequently integrated into libultra, per a [Goldeneye 007 decompilation source code comment](https://github.com/n64decomp/007/blob/754a0a977efcbc99a46d079a73292e40780e3aab/src/libultrare/io/vimodepallan1.c). It inherits the revised PAL leap pattern.
@@ -1345,14 +1349,15 @@ FPAL   | FPAL_HPF2    | 640   | 576    | Interlaced  | Point    | 32-bit | 625  
 
 > libdragon uses timing presets and computes other registers dynamically. Resolution, bit depth, and AA mode are applied separately. Values are effective.
 
-| Region | Scan Type    | VSYNC (S)         | HSYNC(TOTAL, LEAP) | LEAP(A, B) |
-| :---   | :---         | :---              | :---               | :---       |
-| NTSC   | Progressive  | 526               | 3094, 0            | 3094, 3094 |
-| NTSC   | Interlaced   | 525               | 3094, 0            | 3094, 3094 |
-| PAL    | Progressive  | 626               | 3178, 21           | 3183, 3184 |
-| PAL    | Interlaced   | 625               | 3178, 21           | 3183, 3184 |
-| PAL-M  | Progressive  | 526               | 3090, 4[^note5]     | 3099, 3098 |
-| PAL-M  | Interlaced   | 525               | 3089, 0            | 3101, 3101 |
+Region | Scan Type   | VSYNC (S) | HSYNC(TOTAL, LEAP) | LEAP(A, B)
+:----- | :---------- | :-------- | :----------------- | :---------
+NTSC   | Progressive | 526       | 3094, 0            | 3094, 3094
+NTSC   | Interlaced  | 525       | 3094, 0            | 3094, 3094
+PAL    | Progressive | 626       | 3178, 21           | 3183, 3184
+PAL    | Interlaced  | 625       | 3178, 21           | 3183, 3184
+PAL-M  | Progressive | 526       | 3090, 4[^note5]    | 3099, 3098
+PAL-M  | Interlaced  | 525       | 3089, 0            | 3101, 3101
+
 
 [^note5]: See [Note](#note).
 
