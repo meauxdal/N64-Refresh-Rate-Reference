@@ -1,7 +1,3 @@
-# Note
-
-As of the time of writing (May 6, 2026), there is a discrepancy between the [preview branch of Libdragon](https://github.com/DragonMinded/libdragon/commit/0290a16bf28b896bf85cac30ca101b8330702cea/src/vi.c) and prior definitions for PAL-M progressive signals. Currently, the Libdragon preview branch uses the PAL-M interlaced VI register configuration indicated in this document for both progressive and interlaced modes, rather than the differing profiles for progressive and interlaced of Libultra and Libdragon's trunk branch. This configuration produces a different refresh rate for PAL-M progressive that is not currently derived in this document. Thus, PAL-M progressive values given in this document do not correspond to software compiled with the Libdragon preview branch.
-
 # N64 Refresh Rate Reference  
 
 Reference for Nintendo 64 video refresh rates and timing specifications across all supported video modes. 
@@ -129,13 +125,12 @@ The table lists refresh rates ($f_V$) for all video modes. The fully reduced fra
 
 | Standard |  Scan Type  |                $f_V$ (Hz, fraction)                |  $f_V$ (Hz, decimal)
 | :------: | :---------: | :------------------------------------------------: | :-------------------:
-|   NTSC   | Progressive |           $\dfrac{2,!250,!000}{37,!609}$           |     59.8261054535
-|   NTSC   | Interlaced  |             $\dfrac{60,!000}{1,!001}$              |     59.9400599401
-|   PAL    | Progressive |               $\dfrac{15,!625}{313}$               |     49.9201277955
+|   NTSC   | Progressive |           $\dfrac{2,250,000}{37,609}$           |     59.8261054535
+|   NTSC   | Interlaced  |             $\dfrac{60,000}{1,001}$              |     59.9400599401
+|   PAL    | Progressive |               $\dfrac{15,625}{313}$               |     49.9201277955
 |   PAL    | Interlaced  |                        $50$                        |      50 (exact)
-|  PAL-M   | Progressive | $\dfrac{17,!384,!625,!000}{290,!532,!671}$[^note0] | 59.8370742270[^note6]
-|  PAL-M   | Interlaced  |        $\dfrac{272,!700,!000}{4,!547,!257}$        |     59.9702194092
-
+|  PAL-M   | Progressive | $\dfrac{17,384,625,000}{290,532,671}$[^note0] | 59.8370742270[^note6]
+|  PAL-M   | Interlaced  |        $\dfrac{272,700,000}{4,547,257}$        |     59.9702194092
 
 > These values correspond to the derivations in [§5](#5-mathematical-derivations).  
 
@@ -227,11 +222,8 @@ Timing values in this section are calculated from the fundamental constants in [
 | NTSC-I  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |           $\dfrac{60000}{1001}$
 |  PAL-P  |    15625 (exact)    |                    $15625$                     |            $\dfrac{15625}{313}$
 |  PAL-I  |    15625 (exact)    |                    $15625$                     |                    $50$
-| PAL-M-P |  15,737.1505217050  | $\dfrac{4,!572,!156,!375,!000}{290,!532,!671}$ | $\dfrac{17,!384,!625,!000}{290,!532,!671}$
-| PAL-M-I |  15,742.1825949138  |    $\dfrac{71,!583,!750,!000}{4,!547,!257}$    |    $\dfrac{272,!700,!000}{4,!547,!257}$
-
-
-Libdragon values for the [current preview branch](https://github.com/DragonMinded/libdragon/blob/preview/include/vi.h) do not match the table. PAL-M Progressive profile is not present; PAL-M Interlaced profile is used for both modes.
+| PAL-M-P |  15,737.1505217050  | $\dfrac{4,572,156,375,000}{290,532,671}$ | $\dfrac{17,384,625,000}{290,532,671}$
+| PAL-M-I |  15,742.1825949138  |    $\dfrac{71,583,750,000}{4,547,257}$    |    $\dfrac{272,700,000}{4,547,257}$
 
 ### 3.4 Hardware Signal Path
 
@@ -1460,3 +1452,7 @@ A quick reference for terminology used in this document.
 * `VI_V_VIDEO` (`0x04400028`): Defines the vertical start and end of the active video window in half-lines.
 
 * **VSYNC (Vertical Synchronization):** A timing pulse in the video signal marking the end of a vertical scan cycle. The rate of VSYNC pulses defines $f_V$. *See also: $f_V$, CSYNC.*
+
+# Note
+
+As of the time of writing (May 6, 2026), Libdragon values for the [current preview branch](https://github.com/DragonMinded/libdragon/blob/preview/include/vi.h) do not match values given in this document. PAL-M Progressive profile is not present; PAL-M Interlaced profile is used for both modes. 
