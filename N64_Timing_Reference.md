@@ -263,12 +263,12 @@ The N64 utilizes AT-cut crystals sourced from Daishinku Co., Ltd. (a.k.a KDS Dai
 
 The NUS-CPU-03 oscillator circuit presents a load capacitance ($C_L$) of 19.5 pF + $C_{stray}$ to X1, derived from C39 = C40 = 39 pF in a series configuration (See [§3.1](#31-fundamental-constants)):  
 
-$
+$$
 \begin{aligned}
 C_L &= \dfrac{39 \times 39}{39 + 39} + C_{stray} \\
     &= 19.5\ \text{pF} + C_{stray}
 \end{aligned}
-$
+$$
 
 $C_{stray}$ represents the aggregate parasitic capacitance contributed by PCB traces, IC input capacitance, and related layout parasitics. Consumer PCB oscillator layouts of this era may typically be estimated in the range of 2–5 pF, implying an effective $C_L$ of approximately 21.5–24.5 pF.  
 
