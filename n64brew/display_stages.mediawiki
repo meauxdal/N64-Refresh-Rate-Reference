@@ -1,0 +1,33 @@
+== Display Stages ==
+
+{| class="wikitable"
+! Stage
+! Description
+|-
+| Asset Transfer
+| PI DMA transfers graphics and texture data from the ROM cartridge into RDRAM.
+|-
+| Command Queuing
+| The CPU appends rendering commands to the RSP command queue in RDRAM.
+|-
+| RSP Processing
+| The RSP reads commands from the queue, applies fixups, and writes RDP commands to a separate buffer in RDRAM.
+|-
+| RDP Signaling
+| The RSP advances the RDP's end pointer (DP_END), directing it to execute the buffered commands.
+|-
+| Pixel Processing
+| The RDP reads commands from RDRAM and performs rasterization, texture mapping, blending, and fill operations.
+|-
+| Framebuffer Write
+| The RDP writes the rendered pixel data into the RDRAM framebuffer.
+|-
+| Framebuffer Commit
+| The CPU writes the framebuffer address to VI_ORIGIN, directing the VI to read from it at the next vblank.
+|-
+| Scanout
+| The VI reads the framebuffer and generates a digital video signal. Scaling, filtering, and color processing are applied according to VI register configuration.
+|-
+| Analog Output
+| The Video DAC converts the digital video signal to analog output.
+|}

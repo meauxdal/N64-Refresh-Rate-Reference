@@ -1,0 +1,11 @@
+
+- References cleanup and honing pass
+- [^leap_os20h]: add attribution to the quote: N64 SDK Docs - Libultra OS2.0H release notes via Thar0 via N64brew.dev Discord
+- [^mpal_mark]: add board photo source
+- fig1, fig2, fig9 captions - Cy/OpeN64 or RDC
+- 3.4 body: remove Weick attribution
+- 3.5.1.1: re-attribute 39 pF to Cy/OpeN64
+- RWeick 7.1 entry removal
+- Claim-to-source links
+- Document overhaul / restructure
+- Deprecated sources backup file

@@ -197,8 +197,8 @@ The RCP (Reality Co-Processor) processes video timings through the following mem
 *VDC pin assignments - 7-bit digital output. Source: Richard Weick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
 The VDC bus carries:  
-* VDC_D0 through VDC_D6: 7-bit digital video data  
-* VDC_DSYNC (a.k.a DSYNC or !DSYNC): Continuous timing signal; while low, sync information is encoded on the accompanying VDC data lines. Data is valid on the falling edge of this signal.
+* D0 through D6: 7-bit digital video data  
+* !DSYNC (a.k.a DSYNC or VDC_DSYNC): Continuous timing signal; while low, sync information is encoded on the accompanying VDC data lines. Data is valid on the falling edge of this signal.
 
 These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digital-to-analog conversion and generates CSYNC (Composite Sync) and BFP (Burst Flag Pulse) for the downstream ENC-NUS encoder (U5). This two-stage signal path (VDC-NUS + ENC-NUS) applies to NUS-CPU-01 through NUS-CPU-04, as well as early PAL-M revisions. Other revisions consolidate both functions into a single chip; e.g. DENC-NUS, AVDC-NUS, & MAV-NUS. The substitution of these components is not known to affect timing values derived in this document.  
 
@@ -227,22 +227,22 @@ Timing values in this section are calculated from the fundamental constants in [
 
 ### 3.4 Hardware Signal Path
 
-Video signal timing follows a deterministic path from crystal oscillation through digital counting to analog output. The following applies to NUS-CPU-01 through NUS-CPU-04, as documented in Richard Weick's NUS-CPU-03 schematics.
+Video signal timing follows a deterministic path from crystal oscillation through digital counting to analog output. The following applies to NUS-CPU-01 through NUS-CPU-04.
 
 1. Source: Crystal X1 oscillates at $f_{XTAL}$; the clock generator (U7)[^mx8350] multiplies this by $M$ to produce $f_{VI}$. $f_{XTAL}$ is the hardware primitive for N64 video timing. 
 2. Logic: The RCP (Reality Co-Processor, U9) receives $f_{VI}$ to drive the internal VI logic.
 3. Counting: The VI counts clock cycles according to `VI_H_TOTAL` (line length) and `VI_V_TOTAL` (vertical extent) to define the signal's timing boundaries.  
-4. Encoding: The VI transmits pixel data to the VDC-NUS over the VDC bus: a 7-bit[^vdc_7bit] data bus (VDC_D0 through VDC_D6), VDC_DSYNC (a.k.a. !DSYNC), and a shared clock. Data is multiplexed across 4 VI clock cycles per pixel: cycle 0 carries sync data with VDC_DSYNC held low; cycles 1 through 3 carry Red, Green, and Blue, respectively. Each 4-cycle group may be conceptualized as one rendered "VI pixel."  
+4. Encoding: The VI transmits pixel data to the VDC-NUS over the VDC bus: a 7-bit data bus (D0 through D6), sync control signals (!Csync, !Hsync, !Clamp[^clamp], !Vsync), and a shared clock. Data is multiplexed across 4 VI clock cycles per pixel: cycle 0 carries sync data with !DSYNC held low; cycles 1 through 3 carry Red, Green, and Blue, respectively. Each 4-cycle group may be conceptualized as one rendered "VI pixel."  
 5. Output: The VDC-NUS (U4) performs digital-to-analog conversion, clocked by U7.FSO/5 (Frequency Synthesizer Output ÷ 5). It generates analog RGB, CSYNC (pin 14), and BFP (pin 13), passing these to the ENC-NUS (U5). The ENC-NUS receives the colorburst reference from U7.FSC ($f_{XTAL}$ ÷ 4) at its SCIN pin via the R13/R12 resistor divider and C21. The schematic path shows the VDC-NUS output feeding ENC-NUS (U5) on NUS-CPU-01 through 04 revisions, whereas other revisions use DENC-NUS, AVDC-NUS, or MAV-NUS to natively generate S-Video and composite[^srgb-a]. Each implementation performs the same DAC/encoding function.  
 
-[^mx8350]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. $f_{XTAL}$ derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case.  
+[^mx8350]: Later revisions consolidate clock generators at U7 and U15 into a single dual-channel MX8350 at U17. $f_{XTAL}$ derivations are equivalent across intraregional variants; X1's frequency varies by region. The derivations in [§5](#5-mathematical-derivations) are rooted in the respective regional X1 value in each case. 
 
-[^vdc_7bit]: [N64brew.dev Video DAC page](https://n64brew.dev/wiki/Video_DAC): "Since there are three unused bits in the multiplex sequence, it is unclear why the DAC has only 7 bits of precision instead of 8, and no documentation already found explains this."  
+[^clamp]: !Clamp refers to the period during horizontal blanking when voltage level is sampled to establish black level. As colorburst is transmitted concurrently, this period is sometimes referred to as clamp/burst.
 
 [^srgb-a]: A notable variant uses the S-RGB A encoder, found on PAL systems marked NUS-CPU(R)-01 and sold in France. This chip is an RGB DAC, but RGB output is not functional in retail units: the RGB output circuit is unpopulated. It does not generate S-Video; consequently, NUS-001(FRA) consoles are limited to composite video output without modification. See figure *S-RGB A video circuit* (DarthCloud, 2011). This chip was used in some SNES revisions before appearing in NUS-CPU(R)-01.  
 
 ![N64 Video System](/figures/fig13_n64videosys.png)  
-*N64 Video System - VDC bus multiplexing, VDC_DSYNC waveform. Source: Tim Worthington, [N64RGB documentation](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)*  
+*N64 Video System - VDC bus multiplexing, !DSYNC waveform. Source: Tim Worthington, [N64RGB documentation](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html)*  
 
 ![NUS-CPU-03 video output circuit](/figures/fig28_n64-nus-03_video_output_circuit_worthington.png)  
 *NUS-CPU-03 video output circuit: VDC-NUS (U4) to ENC-NUS (U5); LUMINANCE (pin 7), COMPOSITE VIDEO (pin 9), CHROMINANCE (pin 8) outputs. Source: Tim Worthington, [GameSX Wiki, N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc)*  
@@ -306,7 +306,7 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 
 #### 3.5.2 X1 Oscillator Tolerance  
 
-Tolerance at 25°C is given at ±30 ppm, yielding a range of ±0.0018 Hz around the target values in [§2](#2-n64-video-output-summary) (e.g. NTSC progressive: [59.8243, 59.8279] Hz). GBS-C telemetry from two available NTSC N64 units corroborates:  
+Tolerance at 25°C is given at ±30 ppm, yielding a range of ±0.0018 Hz around the target values in [§2](#2-n64-video-output-summary) (e.g. NTSC progressive: [59.8243, 59.8279] Hz). Author-measured GBS-C telemetry from two available NTSC N64 units corroborates:  
 
 | Unit                             | Nickname     | Progressive (Hz)    | Interlaced (Hz)   | Offset (P)    | Offset (I)    |  
 | :---                             | :---         | :---                | :---              | :---          | :---          |  
@@ -317,7 +317,7 @@ Both fall within the predicted tolerance window. The ppm offset within each unit
 
 The exact rational values derived in [§5](#5-mathematical-derivations) represent the nominal frequencies produced by standard N64 video timing configurations. Measured hardware frequencies instead reflect the tolerance bounds of the physical oscillator implementation, yielding the small but expected variance between units observed here.
 
-[^gbs-c]:GBS-C telemetry from Sony PlayStation (1994) and Sega Saturn (1994) hardware returns progressive values consistent with 2,250,000/37,609 Hz within crystal tolerance, indicating the over-determined nature of standards-compliant NTSC progressive timing: independent clock architectures converge on the same value.  
+[^gbs-c]:Additional GBS-C telemetry from Sony PlayStation (1994) and Sega Saturn (1994) hardware (gathered by the author) returns progressive values consistent with 2,250,000/37,609 Hz within crystal tolerance, indicating the over-determined nature of standards-compliant NTSC progressive timing: independent clock architectures converge on the same value.  
 
 #### 3.5.3 Initialization Transient Behavior  
 
@@ -1055,7 +1055,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Link83 et al - ModRetro Forums - N64 Motherboard Revisions](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history; component changes; video encoder chip progression across revisions; board scans; corroboration of AVDC-NUS/MAV-NUS pin-compatibility per examples of both observed on NUS-CPU-05.  
 * [kwyjibo, Link83 et al - NFGGames Forum - NUS-CPU(R)-01 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community documentation of the French PAL console, NUS-CPU(R)-01 board, and S-RGB A encoder.  
 * [Link83 et al - NFGGames Forum - Datasheet Links Thread](https://nfggames.com/forum2/index.php?topic=3525.0) - Community identification of BA7242F as ENC-NUS match; source of datasheet link.  
-* [RDC, aflyingcougar et al - ModRetro Forums - Schematic NUS-CPU-04, NTSC (1996,1997)](https://forums.modretro.com/threads/schematic-nus-cpu-04-ntsc-1996-1997.11227/) - Origin and discussion of RDC NUS-CPU-03/04 schematics and board photos (RDC); identification of Mitsumi PST9128 at U3 (aflyingcougar).
+* [RDC, aflyingcougar et al - ModRetro Forums - Schematic NUS-CPU-04, NTSC (1996,1997)](https://forums.modretro.com/threads/schematic-nus-cpu-04-ntsc-1996-1997.11227/) - NUS-CPU-03/04 schematics and board photos (RDC); identification of Mitsumi PST9128 at U3 (aflyingcougar).
 * [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identification of NUS-CPU(R)-01 motherboard; S-RGB A pinout documentation.  
 * [N64brew.dev](https://n64brew.dev/) - VI register descriptions and behavior; timing examples; leap explanation; OS interface functions for VI and hardware access.  
 * [Libdragon](https://libdragon.dev/) - Modernized open-source SDK; numerous implementation details.  
@@ -1099,7 +1099,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 ### 7.3 Acknowledgements
 
 * [A post by awe444 on videogameperfection.com](https://videogameperfection.com/forums/topic/nintendo-64-de-blur/page/2/#post-12502) for the initial spark of curiosity.  
-* lidnariq for PAL-M colorburst correction (§5.3), VDC_DSYNC behavior analysis (§3.2, §3.4), ±30 ppm crystal tolerance figure (§3.5.2), month decode suggestion (§3.5.1.2), VI timing map (Figure 3), several corrections, and extensive audits.  
+* lidnariq for PAL-M colorburst correction (§5.3), !DSYNC behavior analysis (§3.2, §3.4), ±30 ppm crystal tolerance figure (§3.5.2), month decode suggestion (§3.5.1.2), VI timing map (Figure 3), several corrections, and extensive audits.  
 * devwizard for sharing experimental observations of dynamic chroma modulation and left-pixel blanking failure under `VI_BURST` / H_START overlap (§4.1.1).  
 * Robert Peip (FPGAzumSpass) for auditing and corroboration of `VI_V_CURRENT` behaviour.  
 * Rasky for cross-referencing register naming against N64brew convention.  
@@ -1311,8 +1311,7 @@ PAL    | PAL_HPN2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625  
 PAL    | PAL_HPF1     | 640   | 576    | Interlaced  | Point    | 16-bit | 625       | 3178, 23           | 3182, 3184
 PAL    | PAL_HPF2     | 640   | 576    | Interlaced  | Point    | 32-bit | 625       | 3178, 23           | 3182, 3184
 
-
-[^leap_os20h]: OS2.0H (February 24, 1997) introduced a new PAL leap pattern with the revision note: "The PAL table values have been corrected."
+[^leap_os20h]: Libultra OS2.0H (February 24, 1997) introduced a new PAL leap pattern with the revision note in the documentation reading: "The PAL table values have been corrected."
 
 ### B.2.5 FPAL[^fpal] (1997)
 
@@ -1383,6 +1382,8 @@ A quick reference for terminology used in this document.
 
 * **CSYNC (Composite Sync):** A signal generated by the VDC-NUS (U4) that combines horizontal sync (HSYNC) and vertical sync (VSYNC) into a single waveform. CSYNC is passed to the ENC-NUS encoder (U5) and embedded in the final composite video output, allowing a display to lock to the signal's horizontal and vertical timing simultaneously. *On NUS-CPU-04, the buffer components routing CSYNC to the Multi-Out port are unpopulated; CSYNC is generated and used internally but not available externally. See also: VSYNC, BFP.*
 
+* **DSYNC:** *(a.k.a. !DSYNC)* Control qualifier on the VDC bus from the RCP (U9) to VDC-NUS (U4). When low, VDC_D0-VDC_D6 carry synchronization/control bits (cycle 0 of the four-cycle group); when high, the bus carries pixel color data (cycles 1-3). During active video it asserts low once every four VI clocks. During blanking, !DSYNC is held low continuously, allowing the VI to transmit control signals on every VI clock. *See also: VDC Bus.*  
+
 * **$f_{XTAL}$:** Symbol for crystal oscillator frequency. *See Crystal Oscillator Frequency.*  
 
 * **$f_H$:** Symbol for horizontal scan frequency. *See Horizontal Scan Frequency.*  
@@ -1393,7 +1394,7 @@ A quick reference for terminology used in this document.
 
 * **Half-Line ($S$):** The atomic unit of vertical timing used by the N64's Video Interface (VI). Two half-lines constitute one full horizontal scanline. The total half-line count per vertical scan cycle is programmed via `VI_V_TOTAL`; the effective value is `VI_V_TOTAL` + 1. *See also: Terminal Count.*
 
-* **Horizontal Scan Frequency ($f_H$):** The number of horizontal lines transmitted per second, expressed in Hz. Derived as $f_{VI}$ ÷ L. Also referred to as line frequency. *See also: $L$, $f_V$.*
+* **Horizontal Scan Frequency ($f_H$):** The number of horizontal lines transmitted per second, expressed in Hz. Derived as $f_{VI}$ ÷ $L$. Also referred to as line frequency. *See also: $L$, $f_V$.*
 
 * **Interlaced (I):** A scan method in which lines are interleaved across two successive vertical scans in alternating stripes of even-odd (262.5 lines per vertical scan in NTSC and PAL-M interlaced modes). The VI offsets vertical sync by one half-line on every other scan, each constituting a field in broadcast terminology. $f_V$ represents the rate of each individual vertical scan. *See also: Progressive, Half-line, $f_V$.*
 
@@ -1436,9 +1437,7 @@ A quick reference for terminology used in this document.
 
 * **Vertical Scan Frequency ($f_V$):** The rate of vertical scans per second, measured from one VSYNC pulse to the next, expressed in Hz. Also referred to as refresh rate. In progressive modes, $f_V$ refers to frame rate; in interlaced modes $f_V$ is the rate of each individual field. *See also: VSYNC, Horizontal Scan Frequency.*
 
-* **VDC Bus:** The digital video bus between the RCP (U9) and VDC-NUS (U4). It carries seven bits of pixel data (VDC_D0-VDC_D6), VDC_DSYNC, and a shared clock. Data is transmitted in 4-cycle groups: cycle 0 carries synchronization/control data with VDC_DSYNC low; during active video output, cycles 1-3 carry the Red, Green, and Blue components of one rendered pixel. *See also: VDC_DSYNC, VDC-NUS.*  
-
-* **VDC_DSYNC** *(a.k.a. !DSYNC):* Control qualifier on the VDC bus from the RCP (U9) to VDC-NUS (U4). When low, VDC_D0-VDC_D6 carry synchronization/control bits (cycle 0 of the four-cycle group); when high, the bus carries pixel color data (cycles 1-3). During active video it asserts low once every four VI clocks. During blanking, VDC_DSYNC is held low continuously, allowing the VI to transmit control signals (VSync, HSync, colorburst clamp, CSync) on every VI clock. *See also: VDC Bus.*  
+* **VDC Bus:** The digital video bus between the RCP (U9) and VDC-NUS (U4). It carries seven bits of pixel data (VDC_D0-VDC_D6), !DSYNC, and a shared clock. Data is transmitted in 4-cycle groups: cycle 0 carries synchronization/control data with !DSYNC low; during active video output, cycles 1-3 carry the Red, Green, and Blue components of one rendered pixel. *See also: !DSYNC, VDC-NUS.*  
 
 * **VDC-NUS / ENC-NUS / DENC-NUS / S-RGB A / AVDC-NUS / MAV-NUS:** The N64 video output chip family, converting the RCP's digital stream to analog. NUS-CPU-01 through NUS-CPU-04 use a two-chip path: VDC-NUS (VDC bus D0-D6, DSYNC, CLK in) performs DAC and generates CSYNC/BFP, outputting RGB, CSYNC, and BFP to ENC-NUS (U5), which handles composite/S-Video encoding and receives the chroma subcarrier at SCIN. Later revisions consolidate this into a single chip. Timing is unchanged. *Both AVDC-NUS and MAV-NUS are observed on unrevised NUS-CPU-05 boards, confirming that they share the same package and compatible pinout (Link83, 2009; David/EEVblog, 2013). MAV-NUS pins 14-16 carry the audio interface (I2S) (lidnariq).*  
 
