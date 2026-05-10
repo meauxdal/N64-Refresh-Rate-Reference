@@ -179,7 +179,7 @@ Hardware constants derived from $f_{XTAL}$ and the Video Interface (VI) register
 ![Clock Generation Circuits](/figures/fig1_clock_gen_schematic.png)  
 *N64 Clock Generation Circuits - U7 & U15 (Macronix MX8330MC). Source: Richard Weick, [NUS-CPU-03-Nintendo-64-Motherboard](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard)*  
 
-Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce $f_{VI}$. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. Later revisions substitute the pin-compatible MX9911MC at one or both synthesizer positions before consolidating both clocks into a single MX8350 dual-channel chip at U17 from NUS-CPU-08 onward. These substitutions do not affect derived timing values. See [§3.5.1.1](#3511-x1-identification) for visual identification.
+Early revisions use a single-channel clock synthesizer at U7, driven by crystal X1, to produce $f_{VI}$. FSEL multiplier logic is high (17/5) for NTSC and PAL-M; low (14/5) for PAL. Later revisions substitute MX9911MC at U7 before consolidating both clocks into a single MX8350 dual-channel chip at U17 from NUS-CPU-08 onward. These substitutions do not affect derived timing values. See [§3.5.1.1](#3511-x1-identification) for visual identification.
  
 ![MX8350 table](/figures/fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL[^mx8350_mpal]. Source: [MX8350 datasheet](/references/Macronix-MX8350-ocr.pdf)*  
@@ -222,8 +222,8 @@ Timing values in this section are calculated from the fundamental constants in [
 | NTSC-I  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |           $\dfrac{60000}{1001}$
 |  PAL-P  |    15625 (exact)    |                    $15625$                     |            $\dfrac{15625}{313}$
 |  PAL-I  |    15625 (exact)    |                    $15625$                     |                    $50$
-| PAL-M-P |  15,737.1505217050  | $\dfrac{4,572,156,375,000}{290,532,671}$ | $\dfrac{17,384,625,000}{290,532,671}$
-| PAL-M-I |  15,742.1825949138  |    $\dfrac{71,583,750,000}{4,547,257}$    |    $\dfrac{272,700,000}{4,547,257}$
+| PAL-M-P |  15,737.1505217050  | $\dfrac{4,572,156,375,000}{290,532,671}$       | $\dfrac{17,384,625,000}{290,532,671}$
+| PAL-M-I |  15,742.1825949138  |    $\dfrac{71,583,750,000}{4,547,257}$         |    $\dfrac{272,700,000}{4,547,257}$
 
 ### 3.4 Hardware Signal Path
 
