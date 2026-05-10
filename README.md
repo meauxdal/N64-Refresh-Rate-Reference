@@ -119,5 +119,5 @@ See [Note](/N64_Timing_Reference.md#note).
 ## External Links
 
 * [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite of the Video DAC article for the N64brew.dev wiki
-* [N64brew.dev Clock Timing DAC page](https://n64brew.dev/wiki/Video_DAC) - New article on N64 Clock Timing for the N64brew.dev wiki
+* [N64brew.dev Clock Timing DAC page](https://n64brew.dev/wiki/Clock_Timing) - New article on N64 Clock Timing for the N64brew.dev wiki
 * [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes

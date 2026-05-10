@@ -549,11 +549,9 @@ VI timings are inferred identical to NTSC on both revisions.
 
 The iQue Player is a localized hardware revision for the Chinese market that consolidates the CPU, RCP, and other logic into a single custom NEC ASIC, replacing the discrete multi-chip N64 motherboard. Video output circuitry is integrated into the ASIC; no external discrete encoder IC is present.
 
-Clock generation is handled by an ICS420BG clock synthesizer driven by a single 315/22 MHz crystal resonator[^ique-pll] (one example is marked `TXC 14.3k88F`[^txc]). Hardware measurements confirm a VI pixel clock of approximately 48.68 MHz (marshallh), consistent with NTSC VI timing. There is no published datasheet for ICS420BG, but the presence of an NTSC-nominal crystal as well as NTSC-consistent VI clock measurements strongly suggest iQue Player video timings are identical to N64 NTSC.
+Clock generation is handled by an ICS420BG clock synthesizer driven by a single 315/22 MHz crystal resonator[^ique-pll] (`TXC 14.3k88F`) manufactured by TXC Corporation (est. 1983). Hardware measurements confirm a VI pixel clock of approximately 48.68 MHz (marshallh), consistent with NTSC VI timing. ICS420BG datasheet is unavailable and may not be public, but the presence of an NTSC-nominal crystal as well as NTSC-consistent VI clock measurements strongly suggest iQue Player video timings are identical to N64 NTSC.
 
 [^ique-pll]: Per marshallh reverse-engineering, a PLL path of 57/17 from the reference crystal produces 17955/374 MHz (≈ 48.00802 MHz). Higher-frequency domains, including 96 MHz and 192 MHz (DDR memory), are derived from this clock.  
-
-[^txc]: [TXC Corporation](https://www.txccrystal.com/) appears to be the manufacturer based on the marking.
 
 ---
 
@@ -1028,15 +1026,16 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Nintendo 64 System Service Manual (D.C.N. NUS-06-0014-001 REV A)](https://drive.google.com/drive/folders/1kGlB2TyX7CsmPnSyzpxGcSKpJ1F-ywal) - Block diagrams; boot sequence; oscilloscope timing verification.  
 * [Super Mario 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/sm64/blob/9921382a68bb0c865e5e45eb594d9c64db59b1af/lib/src/osViTable.c) - Early libultra-defined Video Interface configurations.
 * [Mario Kart 64 Decompilation - osVITable.c (GitHub)](https://github.com/n64decomp/mk64/blob/3b794dcce90543c2203ca2006eb77a41af49c05e/src/os/osViTable.c) - Transitional libultra-defined Video Interface configurations.  
-* [Goldeneye 007 Decompilation - vimodepallan1.c](https://github.com/n64decomp/007/blob/754a0a977efcbc99a46d079a73292e40780e3aab/src/libultrare/io/vimodepallan1.c) - Note regarding Rare's custom FPAL mode.
+* [Goldeneye 007 Decompilation - vimodepallan1.c (GitHub)](https://github.com/n64decomp/007/blob/754a0a977efcbc99a46d079a73292e40780e3aab/src/libultrare/io/vimodepallan1.c) - Note regarding Rare's custom FPAL mode.
 * [Animal Forest Decompilation - vitbl.c (GitHub)](https://github.com/Kelebek1/af/blob/770d3c2dca047172c7b947c83f136468cb0dc7e0/lib/ultralib/src/io/vitbl.c) - Later libultra-defined Video Interface configurations.
 * [KDS America - Quartz Crystals p.6 (1993)](https://www.datasheetarchive.com/datasheet/0a2c800efae9bfe2) — Visual reference for KDS date code / month marking system used on quartz crystals and oscillators.
-* [Macronix MX8330MC Datasheet](/references/Macronix-MX8330MC-ocr.pdf) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4 color subcarrier output), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
-* [Macronix MX8350 Datasheet](/references/Macronix-MX8350-ocr.pdf) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
-* [Macronix MX9911MC Datasheet](/references/Macronix-MX9911MC-datasheet-ocr.pdf) - Single-channel clock synthesizer. Audio/Video subsystems only.   
+* [Macronix MX8330MC Datasheet](https://www.datasheetarchive.com/datasheet/MX8330/Macronix-International?term=MX8330) - Single-channel clock synthesizer; FSEL, FSC (crystal ÷ 4 color subcarrier output), and FSO (Rambus clock output) pin functions; Rev. E startup transient.  
+* [Macronix MX8350 Datasheet](https://www.datasheetarchive.com/datasheet/MX8350/Macronix-International?term=MX8350) - Dual-channel clock synthesizer; NTSC/PAL/MPAL output frequencies. 
+* [Macronix MX9911MC Datasheet](https://www.datasheetarchive.com/datasheet/MX9911/Macronix-International?term=mx9911) - Single-channel clock synthesizer. Audio/Video subsystems only.   
 * [Rohm BA7242F Datasheet](/references/Rohm-BA7242F-(ENC-NUS)-datasheet-ocr.pdf) - ENC-NUS (U5) video encoder IC; YOUT (pin 13) luminance, VOUT (pin 12) composite video, COUT (pin 10) chrominance outputs; SCIN input level 0.45-0.60 Vpp corroborating the R13/R12 attenuation network; NT/PAL pin logic (HIGH = NTSC, LOW = PAL).  
+* [TXC - 9B Series Quartz Crystal Datasheet (Datasheet Archive)](https://www.datasheetarchive.com/datasheet/f780800b043fbfe9) - Crystal specifications; supplier for iQue Player crystals.
 * [NUS-CPU-07 Annotated Circuit Board (ChipWorks, Rev 1.0, Nov 2000)](/references/NUS-CPU-07-Annotated-PCB-ChipWorks-ocr.pdf) - Professional teardown; board-level IC identification, manufacturer attribution, and component revision corroboration.  
-* [CCIR Rep. 624-4 (XVIth Plenary Assembly, Düsseldorf, 1990)](https://search.itu.int/history/HistoryDigitalCollectionDocLibrary/4.283.43.en.1030.pdf)- Final CCIR publication of M/PAL chrominance subcarrier data; item 2.11a carries 3,575,611.49 Hz, consistent with the 909/4 × $f_H$ relationship.  
+* [CCIR Rep. 624-4 (XVIth Plenary Assembly, Düsseldorf, 1990)](http://handle.itu.int/11.1004/020.1000/4.283)- Final CCIR publication of M/PAL chrominance subcarrier data; item 2.11a carries 3,575,611.49 Hz, consistent with the 909/4 × $f_H$ relationship.  
 * [ITU-R Recommendation BT.470-6 (1998)](https://www.itu.int/rec/R-REC-BT.470-6-199811-S/en) - NTSC/PAL lines per frame, fields/sec, color subcarrier frequencies; item 2.11a value 3,579,611.49 Hz is a digit transposition introduced in BT.470-3 (1993) and propagated unchanged.*  
 * [ITU-R Recommendation BT.1700 (2005)](https://www.itu.int/rec/R-REC-BT.1700-0-200502-I/en) - Composite video signal characteristics for NTSC, PAL, and SECAM; signal levels, sync timing, chrominance subcarrier frequencies and modulation.  
 * [ITU-R Recommendation BT.1701 (2005)](https://www.itu.int/rec/R-REC-BT.1701-1-200508-I/en) - Horizontal/vertical timing for composite video.  
@@ -1046,7 +1045,9 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [US6556197B1 - Programmable Video Timing Registers (2003)](https://patents.google.com/patent/US6556197B1/en) - Horizontal/vertical sync generation; color burst gate timing.  
 * [F. R. Lack, G. W. Willard, I. E. Fair - Some Improvements in Quartz Crystal Circuit Elements (1934)](https://ieeexplore.ieee.org/document/6772950) - Original AT cut paper; Bell System Technical Journal; establishes zero temperature coefficient orientation and names the AT cut.  
 * [Ian Poole - Electronics Notes - Quartz Crystal Cuts: AT, BT, SC, CT](https://www.electronics-notes.com/articles/electronic_components/quartz-crystal-xtal/crystal-resonator-cuts-at-bt-sc-ct.php) - AT cut crystal properties; temperature coefficient; frequency range; thickness shear mode of vibration.  
-* [Richard Weick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - Complete NUS-CPU-03 KiCAD schematic; component values; signal paths.  
+* [cy-888 - OpeN64 (GitHub)](https://github.com/cy-888/OpeN64) - Reverse-engineered NUS-CPU-03 motherboard; KiCAD schematic; component values; signal paths.
+* [RDC - NUS-CPU-03/04 Schematic (acidmods.com)](https://www.acidmods.com/RDC/NINTENDO/N64/N64_NUS_CPU_03_04.pdf) - NUS-CPU-03/04 schematic; component values; signal paths.
+* [Richard Weick - NUS-CPU-03-Nintendo-64-Motherboard (GitHub)](https://github.com/RWeick/NUS-CPU-03-Nintendo-64-Motherboard) - NUS-CPU-03 KiCAD schematic; component values; signal paths.  
 * [Tim Worthington - GamesX Wiki - N64 RGB NTSC](https://gamesx.com/wiki/doku.php?id=av:n64rgb-ntsc) - NUS-CPU-03 video output circuit schematic by Tim Worthington; corroborates YOUT/VOUT/COUT routing to Multi-AV connector.  
 * [Tim Worthington - N64RGB Page](https://web.archive.org/web/20240430210859/https://members.optusnet.com.au/eviltim/n64rgb/n64rgb.html) - 4-cycle VDC bus protocol diagram and DAC pinouts.  
 * [Rodrigo Copetti - Nintendo 64 Architecture - A Practical Analysis](https://www.copetti.org/writings/consoles/nintendo-64/) - High-level hardware overview; encoder revision corroboration.  
@@ -1054,7 +1055,7 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Link83 et al - ModRetro Forums - N64 Motherboard Revisions](https://forums.modretro.com/threads/nintendo-64-motherboard-revisions-serials-info-request.1417/) - Motherboard revision history; component changes; video encoder chip progression across revisions; board scans; corroboration of AVDC-NUS/MAV-NUS pin-compatibility per examples of both observed on NUS-CPU-05.  
 * [kwyjibo, Link83 et al - NFGGames Forum - NUS-CPU(R)-01 Discussion](https://nfggames.com/forum2/index.php?topic=3083.0) - Community documentation of the French PAL console, NUS-CPU(R)-01 board, and S-RGB A encoder.  
 * [Link83 et al - NFGGames Forum - Datasheet Links Thread](https://nfggames.com/forum2/index.php?topic=3525.0) - Community identification of BA7242F as ENC-NUS match; source of datasheet link.  
-* [RDC, aflyingcougar et al - ModRetro Forums - Schematic NUS-CPU-04, NTSC (1996, 1997)](https://forums.modretro.com/threads/schematic-nus-cpu-04-ntsc-1996-1997.11227/) - NUS-CPU-03/04 schematics and board photos (RDC); identification of Mitsumi PST9128 at U3 (aflyingcougar).
+* [RDC, aflyingcougar et al - ModRetro Forums - Schematic NUS-CPU-04, NTSC (1996,1997)](https://forums.modretro.com/threads/schematic-nus-cpu-04-ntsc-1996-1997.11227/) - Origin and discussion of RDC NUS-CPU-03/04 schematics and board photos (RDC); identification of Mitsumi PST9128 at U3 (aflyingcougar).
 * [QUAKEMASTER - N64 RGB Mod Guide (German)](https://web.archive.org/web/20130130062716/http://free-for-all.ath.cx:80/daten/n64rgbmod.html) - Identification of NUS-CPU(R)-01 motherboard; S-RGB A pinout documentation.  
 * [N64brew.dev](https://n64brew.dev/) - VI register descriptions and behavior; timing examples; leap explanation; OS interface functions for VI and hardware access.  
 * [Libdragon](https://libdragon.dev/) - Modernized open-source SDK; numerous implementation details.  
@@ -1086,7 +1087,6 @@ For mathematically precise conversions. Fractions are fully reduced and traceabl
 * [Arcade-Projects - SETA Aleck64 JAMMA Board Thread](https://www.arcade-projects.com/threads/seta-aleck-jamma-board-to-nintendo-64.16130/post-259421) - Additional E90/E92 board images; cross-verification of component variation and crystal markings across revisions.  
 * [Console Mods - SNES Model Differences](https://consolemods.org/wiki/SNES:SNES_Model_Differences) - Confirmation of S-RGB A usage in some SNES models via board photos.  
 * [Gekkio - Game Boy Hardware Database - DMG G01008206](https://gbhwdb.gekkio.fi/consoles/dmg/G01008206.html) - Unit-level DMG hardware documentation; explicitly attributes `D`-prefix stamp codes to Daishinku; corroborates manufacturer identification of N64 crystals.  
-* [TXC - Technical FAQ](https://web.archive.org/web/20121118132013/http://www.txccrystal.com/faq.html) / [TXC - Technical Terminology](https://web.archive.org/web/20121102025253/http://www.txccrystal.com/term.html) / [TXC - Manufacturing Process](https://web.archive.org/web/20121105204534/http://www.txccrystal.com/manufacture.html) - Information on crystal manufacture; supplier for iQue Player crystals.
 
 ![S-RGB A SNES](/figures/fig33_S-RGB_A-SNS.png)  
 *Rohm BA6596F (S-RGB A) at U7 on SNS-CPU-RGB-01 (Source: SNES Model Differences, [consolemods.org](https://consolemods.org/wiki/SNES:SNES_Model_Differences))*
