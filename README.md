@@ -1,7 +1,3 @@
-# Note
-
-As of the time of writing (May 6, 2026), there is a discrepancy between the [preview branch of Libdragon](https://github.com/DragonMinded/libdragon/commit/0290a16bf28b896bf85cac30ca101b8330702cea/src/vi.c) and listed PAL-M progressive signals. Currently, the Libdragon prevew branch uses the PAL-M interlaced VI register configuration indicated in this document for both progressive and interlaced modes. See expanded note at the top of [`N64_Timing_Reference.md`](N64_Timing_Reference.md).
-
 # N64 Video Timing Reference
 
 Quick reference for N64 clock rates and video timing. Derivations, signal analysis, VI modes, and crystal corpus: [`N64_Timing_Reference.md`](N64_Timing_Reference.md).
@@ -20,16 +16,16 @@ PAL-M  | $\frac{2{,}045{,}250{,}000}{143} \text{ Hz}$ |      14.3024475524      
 
 ### X2 
 
-Clock           |             Derivation             |  Fraction (MHz)   |   Decimal (MHz)
-:-------------: | :--------------------------------: | :---------------: | :-------------:
-X2              |                 --                 | $\frac{250}{17}$  |  14.7058823529
-RCLK            |       $\text{X2} \times 17$        |       $250$       |       250
-MClock          |        $\text{RCLK} \div 4$        |  $\frac{125}{2}$  |      62.5
-CPU             | $\text{MClock} \times \frac{3}{2}$ |  $\frac{375}{4}$  | 93.75[^divmode]
-SI              |       $\text{MClock} \div 4$       | $\frac{125}{8}$  |     15.625
-Cartridge / PIF |         $\text{SI} \div 8$         | $\frac{125}{64}$ |    1.953125
+Clock            |             Derivation             |  Fraction (MHz)   |   Decimal (MHz)
+:-------------:  | :--------------------------------: | :---------------: | :-------------:
+X2               |                 --                 | $\frac{250}{17}$  |  14.7058823529
+RCLK             |       $\text{X2} \times 17$        |       $250$       |       250
+MClock           |        $\text{RCLK} \div 4$        |  $\frac{125}{2}$  |      62.5
+CPU              | $\text{MClock} \times \frac{3}{2}$ |  $\frac{375}{4}$  | 93.75[^divmode]
+Serial Interface |       $\text{MClock} \div 4$       | $\frac{125}{8}$  |     15.625
+Cartridge / PIF  |         $\text{SI} \div 8$         | $\frac{125}{64}$ |    1.953125
 
-[^divmode]: CPU clock is software-configurable via DivMode registers. 93.75 MHz is the nominal operating frequency.
+[^divmode]: CPU clock ratio is configurable via DivMode pins. 93.75 MHz is the nominal operating frequency.
 
 ---
 
@@ -99,14 +95,14 @@ Note: See [Note](/N64_Timing_Reference.md#note).
 
 ### Fraction
 
-From \ To | NTSC-P          | NTSC-I          | PAL-P               | PAL-I               | PAL-M-P             | PAL-M-I
---------- | --------------- | --------------- | ------------------- | ------------------- | ------------------- | -----------------
-NTSC-P    | 1/1             | 525/526         | 45072/37609         | 45000/37609         | 4063394/4064139     | 158995/159378
-NTSC-I    | 526/525         | 1/1             | 30048/25025         | 1200/1001           | 8126788/8112825     | 31799/31815
-PAL-P     | 37609/45072     | 25025/30048     | 1/1                 | 625/626             | 290532671/348248808 | 22736285/27313632
-PAL-I     | 37609/45000     | 1001/1200       | 626/625             | 1/1                 | 290532671/347692500 | 4547257/5454000
-PAL-M-P   | 4064139/4063394 | 8112825/8126788 | 348248808/290532671 | 347692500/290532671 | 1/1                 | 8108745/8126788
-PAL-M-I   | 159378/158995   | 31815/31799     | 27313632/22736285   | 5454000/4547257     | 8126788/8108745     | 1/1
+From \ To | NTSC-P                    | NTSC-I                    | PAL-P                         | PAL-I                         | PAL-M-P                       | PAL-M-I
+:-------: | :-----------------------: | :-----------------------: | :---------------------------: | :---------------------------: | :---------------------------: | :-------------------------:
+NTSC-P    | $\frac{1}{1}$             | $\frac{525}{526}$         | $\frac{45072}{37609}$         | $\frac{45000}{37609}$         | $\frac{4063394}{4064139}$     | $\frac{158995}{159378}$
+NTSC-I    | $\frac{526}{525}$         | $\frac{1}{1}$             | $\frac{30048}{25025}$         | $\frac{1200}{1001}$           | $\frac{8126788}{8112825}$     | $\frac{31799}{31815}$
+PAL-P     | $\frac{37609}{45072}$     | $\frac{25025}{30048}$     | $\frac{1}{1}$                 | $\frac{625}{626}$             | $\frac{290532671}{348248808}$ | $\frac{22736285}{27313632}$
+PAL-I     | $\frac{37609}{45000}$     | $\frac{1001}{1200}$       | $\frac{626}{625}$             | $\frac{1}{1}$                 | $\frac{290532671}{347692500}$ | $\frac{4547257}{5454000}$
+PAL-M-P   | $\frac{4064139}{4063394}$ | $\frac{8112825}{8126788}$ | $\frac{348248808}{290532671}$ | $\frac{347692500}{290532671}$ | $\frac{1}{1}$                 | $\frac{8108745}{8126788}$
+PAL-M-I   | $\frac{159378}{158995}$   | $\frac{31815}{31799}$     | $\frac{27313632}{22736285}$   | $\frac{5454000}{4547257}$     | $\frac{8126788}{8108745}$     | $\frac{1}{1}$
 
 Note: See [Note](/N64_Timing_Reference.md#note).
 
@@ -119,6 +115,6 @@ Note: See [Note](/N64_Timing_Reference.md#note).
 
 ## External Links
 
-* [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite of the Video DAC article for the N64brew.dev wiki.
-* [N64brew.dev Clock Timing DAC page](https://n64brew.dev/wiki/Video_DAC) - New article on N64 Clock Timing for the N64brew.dev wiki.
-* [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes.
+* [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite of the Video DAC article for the N64brew.dev wiki
+* [N64brew.dev Clock Timing DAC page](https://n64brew.dev/wiki/Video_DAC) - New article on N64 Clock Timing for the N64brew.dev wiki
+* [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes
