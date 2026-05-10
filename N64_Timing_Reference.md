@@ -127,14 +127,14 @@ All registers are terminal-counted; add 1 to the register value to derive the ef
 
 The table lists refresh rates ($f_V$) for all video modes. The fully reduced fractions shown below serve as reference values for the remainder of this text.  
 
-Standard |  Scan Type  |                $f_V$ (Hz, fraction)                |  $f_V$ (Hz, decimal)
-:------: | :---------: | :------------------------------------------------: | :-------------------:
-  NTSC   | Progressive |           $\dfrac{2,!250,!000}{37,!609}$           |     59.8261054535
-  NTSC   | Interlaced  |             $\dfrac{60,!000}{1,!001}$              |     59.9400599401
-  PAL    | Progressive |               $\dfrac{15,!625}{313}$               |     49.9201277955
-  PAL    | Interlaced  |                        $50$                        |      50 (exact)
- PAL-M   | Progressive | $\dfrac{17,!384,!625,!000}{290,!532,!671}$[^note0] | 59.8370742270[^note6]
- PAL-M   | Interlaced  |        $\dfrac{272,!700,!000}{4,!547,!257}$        |     59.9702194092
+| Standard |  Scan Type  |                $f_V$ (Hz, fraction)                |  $f_V$ (Hz, decimal)
+| :------: | :---------: | :------------------------------------------------: | :-------------------:
+|   NTSC   | Progressive |           $\dfrac{2,!250,!000}{37,!609}$           |     59.8261054535
+|   NTSC   | Interlaced  |             $\dfrac{60,!000}{1,!001}$              |     59.9400599401
+|   PAL    | Progressive |               $\dfrac{15,!625}{313}$               |     49.9201277955
+|   PAL    | Interlaced  |                        $50$                        |      50 (exact)
+|  PAL-M   | Progressive | $\dfrac{17,!384,!625,!000}{290,!532,!671}$[^note0] | 59.8370742270[^note6]
+|  PAL-M   | Interlaced  |        $\dfrac{272,!700,!000}{4,!547,!257}$        |     59.9702194092
 
 
 > These values correspond to the derivations in [§5](#5-mathematical-derivations).  
@@ -146,12 +146,12 @@ Standard |  Scan Type  |                $f_V$ (Hz, fraction)                |  $
 
 In the context of contemporary retail software, the N64 outputs four distinct raster formats:  
 
-  Standard   |  Scan Type  | Resolution
-:----------: | :---------: | :--------:
-NTSC / PAL-M | Progressive |  640x240p
-NTSC / PAL-M | Interlaced  |  640x480i
-    PAL      | Progressive |  640x288p
-    PAL      | Interlaced  |  640x576i
+|   Standard   |  Scan Type  | Resolution
+| :----------: | :---------: | :--------:
+| NTSC / PAL-M | Progressive |  640x240p
+| NTSC / PAL-M | Interlaced  |  640x480i
+|     PAL      | Progressive |  640x288p
+|     PAL      | Interlaced  |  640x576i
 
 Note that these are effective output resolutions, after all scaling operations. See [Appendix B](#appendix-b-vi-modes) for full VI mode tables. 
 
@@ -165,14 +165,14 @@ Hardware constants and register mapping.
 
 Hardware constants derived from $f_{XTAL}$ and the Video Interface (VI) registers. $L$ and $S$ below are effective values. 
 
-    Standard      | Crystal Frequency ($f_{XTAL}$) | Multiplier ($M$) | VI Clocks / Line ($L$) | Half-Lines ($S$) | `VI_V_TOTAL`
-:---------------: | :----------------------------: | :--------------: | :--------------------: | :--------------: | :----------:
-NTSC Progressive  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       526        |   `0x20D`
- NTSC Interlaced  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       525        |   `0x20C`
- PAL Progressive  |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       626        |   `0x271`
- PAL Interlaced   |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       625        |   `0x270`
-PAL-M Progressive |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3090          |       526        |   `0x20D`
-PAL-M Interlaced  |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3089          |       525        |   `0x20C`
+|     Standard      | Crystal Frequency ($f_{XTAL}$) | Multiplier ($M$) | VI Clocks / Line ($L$) | Half-Lines ($S$) | `VI_V_TOTAL`
+| :---------------: | :----------------------------: | :--------------: | :--------------------: | :--------------: | :----------:
+| NTSC Progressive  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       526        |   `0x20D`
+|  NTSC Interlaced  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       525        |   `0x20C`
+|  PAL Progressive  |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       626        |   `0x271`
+|  PAL Interlaced   |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       625        |   `0x270`
+| PAL-M Progressive |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3090          |       526        |   `0x20D`
+| PAL-M Interlaced  |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3089          |       525        |   `0x20C`
 
 
 * NTSC $f_{XTAL}$ target: 315/22 MHz (exact) (≈ 14.3181818182 MHz)  
@@ -221,14 +221,14 @@ These signals are transmitted to the VDC-NUS (BU9801F, U4), which performs digit
 
 Timing values in this section are calculated from the fundamental constants in [§3.1](#31-fundamental-constants). $f_H$ is line frequency; $f_V$ is vertical scan frequency (refresh rate). Values are derived from $f_H$ and half-line count $S$. Progressive modes use the full half-line count, interlaced modes offset vertical sync by 0.5 lines per field.  
 
- Mode   | $f_H$ (Hz, decimal) |              $f_H$ (Hz, fraction)              |                 $f_V$ (Hz)
-:-----: | :-----------------: | :--------------------------------------------: | :----------------------------------------:
-NTSC-P  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |          $\dfrac{2250000}{37609}$
-NTSC-I  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |           $\dfrac{60000}{1001}$
- PAL-P  |    15625 (exact)    |                    $15625$                     |            $\dfrac{15625}{313}$
- PAL-I  |    15625 (exact)    |                    $15625$                     |                    $50$
-PAL-M-P |  15,737.1505217050  | $\dfrac{4,!572,!156,!375,!000}{290,!532,!671}$ | $\dfrac{17,!384,!625,!000}{290,!532,!671}$
-PAL-M-I |  15,742.1825949138  |    $\dfrac{71,!583,!750,!000}{4,!547,!257}$    |    $\dfrac{272,!700,!000}{4,!547,!257}$
+|  Mode   | $f_H$ (Hz, decimal) |              $f_H$ (Hz, fraction)              |                 $f_V$ (Hz)
+| :-----: | :-----------------: | :--------------------------------------------: | :----------------------------------------:
+| NTSC-P  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |          $\dfrac{2250000}{37609}$
+| NTSC-I  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |           $\dfrac{60000}{1001}$
+|  PAL-P  |    15625 (exact)    |                    $15625$                     |            $\dfrac{15625}{313}$
+|  PAL-I  |    15625 (exact)    |                    $15625$                     |                    $50$
+| PAL-M-P |  15,737.1505217050  | $\dfrac{4,!572,!156,!375,!000}{290,!532,!671}$ | $\dfrac{17,!384,!625,!000}{290,!532,!671}$
+| PAL-M-I |  15,742.1825949138  |    $\dfrac{71,!583,!750,!000}{4,!547,!257}$    |    $\dfrac{272,!700,!000}{4,!547,!257}$
 
 
 Libdragon values for the [current preview branch](https://github.com/DragonMinded/libdragon/blob/preview/include/vi.h) do not match the table. PAL-M Progressive profile is not present; PAL-M Interlaced profile is used for both modes.
@@ -367,14 +367,14 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 The following table defines the relationship between VI clock rate ($f_{VI}$) and the resulting display timing. See [§3.1](#31-fundamental-constants) for crystal frequencies and register values; fully reduced refresh rate fractions and line frequencies are in [§3.3](#33-derived-timing-values). Values are effective.  
 
-Mode    | $f_{VI}$ (VI Clock)  | $L$ (Clocks / Line) | $S$ (Half-Lines) | $f_V$ (Refresh Rate)
-:-----: | :------------------: | :-----------------: | :--------------: | :----------------------:
-NTSC-P  | 48.6818181818 MHz    | 3094                | 526              | 59.8261054535 Hz
-NTSC-I  | 48.6818181818 MHz    | 3094                | 525              | 59.9400599401 Hz
-PAL-P   | 49.65653 MHz (exact) | 3178                | 626              | 49.9201277955 Hz
-PAL-I   | 49.65653 MHz (exact) | 3178                | 625              | 50 Hz (exact)
-PAL-M-P | 48.6283216783 MHz    | 3090[^note1]        | 526              | 59.8370742270 Hz[^note2]
-PAL-M-I | 48.6283216783 MHz    | 3089                | 525              | 59.9702194092 Hz
+| Mode    | $f_{VI}$ (VI Clock)  | $L$ (Clocks / Line) | $S$ (Half-Lines) | $f_V$ (Refresh Rate)
+| :-----: | :------------------: | :-----------------: | :--------------: | :----------------------:
+| NTSC-P  | 48.6818181818 MHz    | 3094                | 526              | 59.8261054535 Hz
+| NTSC-I  | 48.6818181818 MHz    | 3094                | 525              | 59.9400599401 Hz
+| PAL-P   | 49.65653 MHz (exact) | 3178                | 626              | 49.9201277955 Hz
+| PAL-I   | 49.65653 MHz (exact) | 3178                | 625              | 50 Hz (exact)
+| PAL-M-P | 48.6283216783 MHz    | 3090[^note1]        | 526              | 59.8370742270 Hz[^note2]
+| PAL-M-I | 48.6283216783 MHz    | 3089                | 525              | 59.9702194092 Hz
 
 
 [^note1]: See [Note](#note).
@@ -485,13 +485,13 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 
 All N64 video modes adhere to broadcast standard relationships between chrominance subcarrier frequency ($f_{SC}$) and horizontal scan frequency ($f_H$):  
 
-Standard | $f_{SC}$ : $f_H$ Relationship
-:------: | :----------------------------
-PAL      | $f_{SC}$ = 283.7516 × $f_H$
-SECAM    | $f_{SC}$ = 282 × $f_H$
-PAL-N    | $f_{SC}$ = 229.2516 × $f_H$
-PAL-M    | $f_{SC}$ = 227.25 × $f_H$
-NTSC     | $f_{SC}$ = 227.5 × $f_H$
+| Standard | $f_{SC}$ : $f_H$ Relationship
+| :------: | :----------------------------
+| PAL      | $f_{SC}$ = 283.7516 × $f_H$
+| SECAM    | $f_{SC}$ = 282 × $f_H$
+| PAL-N    | $f_{SC}$ = 229.2516 × $f_H$
+| PAL-M    | $f_{SC}$ = 227.25 × $f_H$
+| NTSC     | $f_{SC}$ = 227.5 × $f_H$
 
 
 *Standard fS to $f_H$ ratios. Source: Wooding, M., The Amateur TV Compendium, p. 55*  
@@ -1013,14 +1013,14 @@ For general conversions.
 
 For mathematically precise conversions. Fractions are fully reduced and traceable to the canonical values in [§2](#2-n64-video-output-summary).  
 
-From \ To | NTSC-P                    | NTSC-I                    | PAL-P                         | PAL-I                         | PAL-M-P                       | PAL-M-I
-:-------: | :-----------------------: | :-----------------------: | :---------------------------: | :---------------------------: | :---------------------------: | :-------------------------:
-NTSC-P    | $\dfrac{1}{1}$             | $\dfrac{525}{526}$         | $\dfrac{45072}{37609}$         | $\dfrac{45000}{37609}$         | $\dfrac{4063394}{4064139}$     | $\dfrac{158995}{159378}$
-NTSC-I    | $\dfrac{526}{525}$         | $\dfrac{1}{1}$             | $\dfrac{30048}{25025}$         | $\dfrac{1200}{1001}$           | $\dfrac{8126788}{8112825}$     | $\dfrac{31799}{31815}$
-PAL-P     | $\dfrac{37609}{45072}$     | $\dfrac{25025}{30048}$     | $\dfrac{1}{1}$                 | $\dfrac{625}{626}$             | $\dfrac{290532671}{348248808}$ | $\dfrac{22736285}{27313632}$
-PAL-I     | $\dfrac{37609}{45000}$     | $\dfrac{1001}{1200}$       | $\dfrac{626}{625}$             | $\dfrac{1}{1}$                 | $\dfrac{290532671}{347692500}$ | $\dfrac{4547257}{5454000}$
-PAL-M-P   | $\dfrac{4064139}{4063394}$ | $\dfrac{8112825}{8126788}$ | $\dfrac{348248808}{290532671}$ | $\dfrac{347692500}{290532671}$ | $\dfrac{1}{1}$                 | $\dfrac{8108745}{8126788}$
-PAL-M-I   | $\dfrac{159378}{158995}$   | $\dfrac{31815}{31799}$     | $\dfrac{27313632}{22736285}$   | $\dfrac{5454000}{4547257}$     | $\dfrac{8126788}{8108745}$     | $\dfrac{1}{1}$
+| From \ To | NTSC-P                    | NTSC-I                    | PAL-P                         | PAL-I                         | PAL-M-P                       | PAL-M-I
+| :-------: | :-----------------------: | :-----------------------: | :---------------------------: | :---------------------------: | :---------------------------: | :-------------------------:
+| NTSC-P    | $\dfrac{1}{1}$             | $\dfrac{525}{526}$         | $\dfrac{45072}{37609}$         | $\dfrac{45000}{37609}$         | $\dfrac{4063394}{4064139}$     | $\dfrac{158995}{159378}$
+| NTSC-I    | $\dfrac{526}{525}$         | $\dfrac{1}{1}$             | $\dfrac{30048}{25025}$         | $\dfrac{1200}{1001}$           | $\dfrac{8126788}{8112825}$     | $\dfrac{31799}{31815}$
+| PAL-P     | $\dfrac{37609}{45072}$     | $\dfrac{25025}{30048}$     | $\dfrac{1}{1}$                 | $\dfrac{625}{626}$             | $\dfrac{290532671}{348248808}$ | $\dfrac{22736285}{27313632}$
+| PAL-I     | $\dfrac{37609}{45000}$     | $\dfrac{1001}{1200}$       | $\dfrac{626}{625}$             | $\dfrac{1}{1}$                 | $\dfrac{290532671}{347692500}$ | $\dfrac{4547257}{5454000}$
+| PAL-M-P   | $\dfrac{4064139}{4063394}$ | $\dfrac{8112825}{8126788}$ | $\dfrac{348248808}{290532671}$ | $\dfrac{347692500}{290532671}$ | $\dfrac{1}{1}$                 | $\dfrac{8108745}{8126788}$
+| PAL-M-I   | $\dfrac{159378}{158995}$   | $\dfrac{31815}{31799}$     | $\dfrac{27313632}{22736285}$   | $\dfrac{5454000}{4547257}$     | $\dfrac{8126788}{8108745}$     | $\dfrac{1}{1}$
 
 
 ---
