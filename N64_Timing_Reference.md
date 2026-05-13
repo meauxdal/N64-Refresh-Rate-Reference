@@ -184,7 +184,7 @@ Early revisions use a single-channel clock synthesizer at U7, driven by crystal 
 ![MX8350 table](/figures/fig6_mx8350_table.png)  
 *MX8350 (later revisions) output frequencies for NTSC/PAL/MPAL[^mx8350_mpal]. Source: [MX8350 datasheet](/references/Macronix-MX8350-ocr.pdf)*  
 
-[^mx8350_mpal]: While the MX8350 datasheet lists the PAL-M crystal as 14.302446 MHz, the correct rate (derived from the broadcast standard PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz); the origin of this discrepancy is not understood. Derivations in this document use the latter standard frequency. See [§5.3](#53-pal-m-derivation).  
+[^mx8350_mpal]: While the MX8350 datasheet lists the PAL-M crystal as 14.302446 MHz, the correct rate (derived from the broadcast standard PAL-M colorburst frequency) is 2,045,250,000 / 143 Hz (≈ 14.3024475524 MHz). Derivations in this document use the latter standard frequency. See [§5.3](#53-pal-m-derivation).  
 
 ### 3.2 Video Interface (VI) Register Mapping  
 
@@ -673,8 +673,6 @@ f_VI = f_XTAL × M
      = 49.65653 MHz  (exact)
 ```
 
-Horizontal scan frequency:
-
 *Without leap compensation, the theoretical line frequency would be:*
 
 ```
@@ -684,7 +682,16 @@ fH (theoretical) = f_VI / L
                  ≈ 15,625.0881057269 Hz
 ```
 
-*Under the LEAP register mapping described in §5.2.1.1, the hardware compensates for this error by adding fractional VI clocks during VSYNC, yielding an exact line frequency of 15,625 Hz.*
+*Under the LEAP register mapping described in §5.2.1.1, the hardware compensates for this error by adding fractional VI clocks during VSYNC.*
+
+Horizontal scan frequncy (progressive):
+
+```
+fH = 5,550,890,675 / 355,257 Hz  (canonical value)
+   ≈ 15,625.0001407432 Hz
+```
+
+Horizontal scan frequency (interlaced):
 
 ```
 fH = 15,625 / 1 Hz  (canonical value)
@@ -695,9 +702,9 @@ Vertical scan frequency (progressive):
 
 ```
 fV_prog = fH / (S_prog / 2)
-        = 15,625 / (626 / 2) Hz
-        = 15,625 / 313  (canonical value)
-        ≈ 49.9201277955 Hz
+        = (5,550,890,675 / 355,257) / 313 Hz
+        = 17,734,475 / 355,257  (canonical value)
+        ≈ 49.9201282452 Hz
 ```
 
 Vertical scan frequency (interlaced):
@@ -711,7 +718,7 @@ fV_int = fH / (S_int / 2)
        = 50 Hz  (exact)
 ```
 
-### 5.2.1 PAL Leap Adjustment
+### 5.2.1 PAL Interlaced Leap Adjustment
 
 The N64 VI maintains the exact 15,625 Hz line frequency ($f_H$) required for the PAL standard. The uncompensated line period (L = 3,178) produces a theoretical frequency of 49,656,530 / 3,178 ≈ 15,625.0881 Hz. To achieve the standard, the average number of VI clocks per line must be exactly:
 
@@ -741,6 +748,7 @@ fH = f_VI / (L + (28/5) / (S/2))
    = 5 × 3,125
    = 15,625 Hz  (exact)
 ```
+Due to the additional half-line in PAL progressive, the $f_H$ is marginally higher than 15,625 Hz
 
 ### 5.2.1.1 PAL Leap Pattern and Bit Mapping
 
@@ -798,7 +806,7 @@ fH = f_VI / L_avg
    = 15,625 Hz  (exact)
 ```
 
-The timing result is unchanged regardless of pattern used; only the distribution of additions within the 5-VSYNC cycle differs. It is not currently understood why the pattern was updated in later revisions of the SDK. 
+The timing result is unchanged regardless of pattern used; only the distribution of additions within the 5-VSYNC cycle differs.
 
 ---
 

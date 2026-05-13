@@ -21,20 +21,24 @@
         }
     },
     "PAL": {
-        "line_frequency": {
-            "numerator": 15625,
-            "denominator": 1
-        },
         "vi_clock_divider": 3178,
         "progressive": {
             "half_lines": 626,
+            "line_frequency": {
+                "numerator": 5550890675,
+                "denominator": 355257
+            },
             "refresh_rate": {
-                "numerator": 15625,
-                "denominator": 313
+                "numerator": 17734475,
+                "denominator": 355257
             }
         },
         "interlaced": {
             "half_lines": 625,
+            "line_frequency": {
+                "numerator": 15625,
+                "denominator": 1
+            },
             "refresh_rate": {
                 "numerator": 50,
                 "denominator": 1
@@ -68,4 +72,3 @@
         }
     }
 }
-
