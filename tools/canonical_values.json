@@ -1,74 +1,80 @@
 {
-    "NTSC": {
-        "line_frequency": {
-            "numerator": 2250000,
-            "denominator": 143
-        },
-        "vi_clock_divider": 3094,
-        "progressive": {
-            "half_lines": 526,
-            "refresh_rate": {
-                "numerator": 2250000,
-                "denominator": 37609
-            }
-        },
-        "interlaced": {
-            "half_lines": 525,
-            "refresh_rate": {
-                "numerator": 60000,
-                "denominator": 1001
-            }
-        }
+  "NTSC": {
+    "progressive": {
+      "half_lines": 526,
+      "line_frequency": {
+        "numerator": 2250000,
+        "denominator": 143
+      },
+      "refresh_rate": {
+        "numerator": 2250000,
+        "denominator": 37609
+      },
+      "vi_clock_divider": 3094
     },
-    "PAL": {
-        "vi_clock_divider": 3178,
-        "progressive": {
-            "half_lines": 626,
-            "line_frequency": {
-                "numerator": 5550890675,
-                "denominator": 355257
-            },
-            "refresh_rate": {
-                "numerator": 17734475,
-                "denominator": 355257
-            }
-        },
-        "interlaced": {
-            "half_lines": 625,
-            "line_frequency": {
-                "numerator": 15625,
-                "denominator": 1
-            },
-            "refresh_rate": {
-                "numerator": 50,
-                "denominator": 1
-            }
-        }
-    },
-    "PAL-M": {
-        "progressive": {
-            "vi_clock_divider": 3090,
-            "half_lines": 526,
-            "line_frequency": {
-                "numerator": 4572156375000,
-                "denominator": 290532671
-            },
-            "refresh_rate": {
-                "numerator": 17384625000,
-                "denominator": 290532671
-            }
-        },
-        "interlaced": {
-            "vi_clock_divider": 3089,
-            "half_lines": 525,
-            "line_frequency": {
-                "numerator": 71583750000,
-                "denominator": 4547257
-            },
-            "refresh_rate": {
-                "numerator": 272700000,
-                "denominator": 4547257
-            }
-        }
+    "interlaced": {
+      "half_lines": 525,
+      "line_frequency": {
+        "numerator": 2250000,
+        "denominator": 143
+      },
+      "refresh_rate": {
+        "numerator": 60000,
+        "denominator": 1001
+      },
+      "vi_clock_divider": 3094
     }
+  },
+  "PAL": {
+    "progressive": {
+      "half_lines": 626,
+      "line_frequency": {
+        "numerator": 5550890675,
+        "denominator": 355257
+      },
+      "refresh_rate": {
+        "numerator": 17734475,
+        "denominator": 355257
+      },
+      "vi_clock_divider": 3178
+    },
+    "interlaced": {
+      "half_lines": 625,
+      "line_frequency": {
+        "numerator": 15625,
+        "denominator": 1
+      },
+      "refresh_rate": {
+        "numerator": 50,
+        "denominator": 1
+      },
+      "vi_clock_divider": 3178
+    }
+  },
+  "PAL-M": {
+    "progressive": {
+      "half_lines": 526,
+      "line_frequency": {
+        "numerator": 4572156375000,
+        "denominator": 290532671
+      },
+      "refresh_rate": {
+        "numerator": 17384625000,
+        "denominator": 290532671
+      },
+      "vi_clock_divider": 3090
+    },
+    "interlaced": {
+      "half_lines": 525,
+      "line_frequency": {
+        "numerator": 71583750000,
+        "denominator": 4547257
+      },
+      "refresh_rate": {
+        "numerator": 272700000,
+        "denominator": 4547257
+      },
+      "vi_clock_divider": 3089
+    }
+  }
 }
