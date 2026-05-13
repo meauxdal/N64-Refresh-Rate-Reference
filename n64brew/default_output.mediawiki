@@ -11,7 +11,7 @@ From VCLK, the [[Video Interface]] counts VI clocks per line (L) and half-lines 
 |-
 | '''NTSC''' || Interlaced || <math>\frac{2{,}250{,}000}{143}</math> || <math>\frac{60{,}000}{1{,}001}</math>
 |-
-| '''PAL''' || Progressive || <math>15{,}625</math> || <math>\frac{15{,}625}{313}</math>
+| '''PAL''' || Progressive || <math>\frac{5{,}550{,}890{,}675}{355{,}257}$ ||   <math>\frac{17{,}734{,}475}{355{,}257}</math>
 |-
 | '''PAL''' || Interlaced || <math>15{,}625</math> || <math>50</math>
 |-
@@ -25,17 +25,17 @@ Converted to decimal (Hz):
 {| class="wikitable" style="text-align: center;"
 ! Standard !! Scan !! <math>f_H</math> !! <math>f_V</math>
 |-
-| '''NTSC''' || Progressive || 15,734.2657 || 59.8261054535
+| '''NTSC''' || Progressive || 15,734.2657342657 || 59.8261054535
 |-
-| '''NTSC''' || Interlaced || 15,734.2657 || 59.9400599401
+| '''NTSC''' || Interlaced  || 15,734.2657342657 || 59.9400599401
 |-
-| '''PAL''' || Progressive || 15,625 || 49.9201277955
+| '''PAL''' || Progressive  || 15,625.0001407431 || 49.9201282452
 |-
-| '''PAL''' || Interlaced || 15,625 || 50
+| '''PAL''' || Interlaced   || 15,625            || 50
 |-
 | '''MPAL''' || Progressive || 15,737.1505217050 || 59.8370742270
 |-
-| '''MPAL''' || Interlaced || 15,742.1825949138 || 59.9702194092
+| '''MPAL''' || Interlaced  || 15,742.1825949138 || 59.9702194092
 |}
 
 == Default output modes ==
@@ -49,7 +49,7 @@ Libultra and Libdragon software using SDK-provided default VI modes output signa
 |-
 | '''NTSC''' || Interlaced || 640×480i || 59.9400599401
 |-
-| '''PAL''' || Progressive || 640×288p || 49.9201277955
+| '''PAL''' || Progressive || 640×288p || 49.9201282452
 |-
 | '''PAL''' || Interlaced || 640×576i || 50
 |-

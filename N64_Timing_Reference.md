@@ -127,7 +127,7 @@ The table lists refresh rates ($f_V$) for all video modes. The fully reduced fra
 | :------: | :---------: | :------------------------------------------------: | :-------------------:
 |   NTSC   | Progressive |           $\dfrac{2,250,000}{37,609}$           |     59.8261054535
 |   NTSC   | Interlaced  |             $\dfrac{60,000}{1,001}$              |     59.9400599401
-|   PAL    | Progressive |               $\dfrac{15,625}{313}$               |     49.9201277955
+|   PAL    | Progressive |          $\dfrac{17,734,475}{355,257}$          |     49.9201282452
 |   PAL    | Interlaced  |                        $50$                        |      50 (exact)
 |  PAL-M   | Progressive | $\dfrac{17,384,625,000}{290,532,671}$[^note0] | 59.8370742270[^note6]
 |  PAL-M   | Interlaced  |        $\dfrac{272,700,000}{4,547,257}$        |     59.9702194092
@@ -220,7 +220,7 @@ Timing values in this section are calculated from the fundamental constants in [
 | :-----: | :-----------------: | :--------------------------------------------: | :----------------------------------------:
 | NTSC-P  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |          $\dfrac{2250000}{37609}$
 | NTSC-I  |  15,734.2657342657  |             $\dfrac{2250000}{143}$             |           $\dfrac{60000}{1001}$
-|  PAL-P  |    15625 (exact)    |                    $15625$                     |            $\dfrac{15625}{313}$
+|  PAL-P  |  15,625.0001407431  | $\dfrac{5{,}550{,}890{,}675}{355{,}257}$       |   $\dfrac{17{,}734{,}475}{355{,}257}$
 |  PAL-I  |    15625 (exact)    |                    $15625$                     |                    $50$
 | PAL-M-P |  15,737.1505217050  | $\dfrac{4,572,156,375,000}{290,532,671}$       | $\dfrac{17,384,625,000}{290,532,671}$
 | PAL-M-I |  15,742.1825949138  |    $\dfrac{71,583,750,000}{4,547,257}$         |    $\dfrac{272,700,000}{4,547,257}$
@@ -363,7 +363,7 @@ The following table defines the relationship between VI clock rate ($f_{VI}$) an
 | :-----: | :------------------: | :-----------------: | :--------------: | :----------------------:
 | NTSC-P  | 48.6818181818 MHz    | 3094                | 526              | 59.8261054535 Hz
 | NTSC-I  | 48.6818181818 MHz    | 3094                | 525              | 59.9400599401 Hz
-| PAL-P   | 49.65653 MHz (exact) | 3178                | 626              | 49.9201277955 Hz
+| PAL-P   | 49.65653 MHz (exact) | 3178                | 626              | 49.9201282452 Hz
 | PAL-I   | 49.65653 MHz (exact) | 3178                | 625              | 50 Hz (exact)
 | PAL-M-P | 48.6283216783 MHz    | 3090[^note1]        | 526              | 59.8370742270 Hz[^note2]
 | PAL-M-I | 48.6283216783 MHz    | 3089                | 525              | 59.9702194092 Hz
@@ -412,7 +412,7 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 #### NTSC (Progressive and Interlaced)
 
 * Crystal frequency: 14.3181818182 MHz (315/22 MHz)
-* VI clock frequency: 48.6818181818 MHz (5355/110 MHz)
+* VI clock frequency: 48.6818181818 MHz (1071/22 MHz)
 * Color subcarrier: 3.5795454545 MHz (315/88 MHz)
 * VI clock multiplier: 17/5 (3.4)
 * Leap compensation:
@@ -718,9 +718,9 @@ fV_int = fH / (S_int / 2)
        = 50 Hz  (exact)
 ```
 
-### 5.2.1 PAL Interlaced Leap Adjustment
+### 5.2.1 PAL Leap Adjustment
 
-The N64 VI maintains the exact 15,625 Hz line frequency ($f_H$) required for the PAL standard. The uncompensated line period (L = 3,178) produces a theoretical frequency of 49,656,530 / 3,178 ≈ 15,625.0881 Hz. To achieve the standard, the average number of VI clocks per line must be exactly:
+When using standard PAL interlaced VI modes, the PAL broadcast standard's nominal 15,625 Hz line frequency ($f_H$) is maintained through leap compensation. The uncompensated line period (L = 3,178) produces a theoretical frequency of 49,656,530 / 3,178 ≈ 15,625.0881 Hz. To achieve the standard, the average number of VI clocks per line must be exactly:
 
 ```
 L_avg = f_VI / fH = 49,656,530 / 15,625 = 9,931,306 / 3,125
@@ -748,7 +748,18 @@ fH = f_VI / (L + (28/5) / (S/2))
    = 5 × 3,125
    = 15,625 Hz  (exact)
 ```
-Due to the additional half-line in PAL progressive, the $f_H$ is marginally higher than 15,625 Hz
+
+Notably, this only applies to PAL interlaced. Due to the additional half-line in PAL progressive in conjunction with the use of leap adjustment, the $f_H$ is marginally higher than 15,625 Hz:
+
+```
+fH = f_VI / (L + (28/5) / (S/2))
+   = f_VI / (L + 56/3,130)
+   = 49,656,530 / (9,947,196 / 3,130)
+   = (49,656,530 × 3,130) / 9,947,196
+   = 155,424,938,900 / 9,947,196
+   = 5,550,890,675 / 355,257  (canonical value)
+   ≈ 15,625.0001407431 Hz
+```
 
 ### 5.2.1.1 PAL Leap Pattern and Bit Mapping
 
