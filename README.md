@@ -1,6 +1,6 @@
 # N64 Video Timing Reference
 
-Quick reference for N64 clock rates and video timing. Derivations, signal analysis, VI modes, and crystal corpus: [`N64_Timing_Reference.md`](N64_Timing_Reference.md).
+This document ([README.md]) serves as quick reference for N64 clock rates and video timing. Derivations, signal analysis, VI modes, etc. are in the primary document: [N64_Timing_Reference.md](N64_Timing_Reference.md).
 
 ---
 
@@ -117,3 +117,4 @@ See [Note](/N64_Timing_Reference.md#note).
 * [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite of the Video DAC article for the N64brew.dev wiki
 * [N64brew.dev Clock Timing DAC page](https://n64brew.dev/wiki/Clock_Timing) - New article on N64 Clock Timing for the N64brew.dev wiki
 * [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes
+* [N64 VI Timing Calculator](https://meauxdal.neocities.org/n64-vi-calculator) - Calculate horizontal and vertical scan frequencies, given clock constants and register configuration. 
