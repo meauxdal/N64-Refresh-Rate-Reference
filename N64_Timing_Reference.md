@@ -269,7 +269,7 @@ $$
 
 $C_{stray}$ represents the aggregate parasitic capacitance contributed by PCB traces, IC input capacitance, and related layout parasitics. Consumer PCB oscillator layouts of this era may typically be estimated in the range of 2–5 pF, implying an effective $C_L$ of approximately 21.5–24.5 pF.  
 
-A 1993 KDS AT-49 datasheet specifies a maximum load capacitance of 16 pF for AT-49 crystals. This discrepancy would be expected to pull the crystal oscillation frequency slightly below its nominal value. The magnitude of this effect in practice remains uncharacterized; see [§3.5.2](#352-x1-oscillator-tolerance).
+A 1993 KDS AT-49 catalog specifies available load capacitance of 12 pF, 16 pF, and 32 pF for AT-49 crystals; the estimated circuit load capacitance does not correspond to any Daishinku AT-49 fundamental offering listed in this catalog (1995/1996-era catalog not available at time of writing). This is consistent with either a non-standard specified $C_L$ or an underestimate of $C_{stray}$. The rated $C_L$ of the actual parts remains unknown without direct measurement or supplier documentation.
 
 ##### 3.5.1.2 X1 and X2 Stamp Codes by Revision (Abridged) 
 
