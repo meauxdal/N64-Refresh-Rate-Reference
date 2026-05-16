@@ -49,20 +49,20 @@ Reference for Nintendo 64 video refresh rates and timing specifications across a
 ## 1. Introduction  
 
 ![NUS-CPU-01 motherboard](/figures/fig35_NUS-CPU-01_Prominos.jpg)  
-*Nintendo 64 motherboard (NUS-CPU-01) showing the Nintendo Reality Coprocessor (RCP-NUS, U9) and NEC VR4300 (CPU-NUS, U10). The Video Interface (VI), part of the RCP, generates composite video timing for NTSC, PAL, and PAL-M output modes. Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET).*  
+*Nintendo 64 motherboard (NUS-CPU-01). Source: Prominos, photographed hardware board image, [imgur.com](https://imgur.com/a/YpyuRET).*  
 
-The Nintendo 64 **Video Interface (VI)** supports three television standards (**NTSC**, **PAL**, and **PAL-M**), each with both **progressive** and **interlaced** scan modes. This document provides timing values derived from hardware specifications, with presented results expressed in irreducible fractions and high-precision decimals.  
+The Nintendo 64 **Video Interface (VI)** supports three television standards (**NTSC**, **PAL**, and **PAL-M**), each with both **progressive** and **interlaced** scan modes.
 
 Video Modes:  
 
-* **NTSC**: North America, Japan, South Korea, parts of Central America and the Caribbean  
-* **PAL**: Europe, Australia, New Zealand, parts of Africa and Asia  
-* **PAL-M**: Brazil (also referred to as **MPAL** or **PAL/M** in documentation and source code)  
+* **NTSC**: Japan, North America, and others 
+* **PAL**: Europe, Australia, and others  
+* **PAL-M**: Brazil (frequently **MPAL**)  
 
 Scan Types:  
 
 * **Progressive (P)**: Lines drawn sequentially each vertical scan  
-* **Interlaced (I)**: Lines drawn in alternating fields across two successive vertical scans  
+* **Interlaced (I)**: Lines drawn in two spatially offset fields, interleaved across successive vertical scans  
 
 ### 1.1 Terminology  
 
@@ -79,7 +79,7 @@ f_V    &= \dfrac{2f_H}{S}
 \end{aligned}
 $$
 
-All VI timing frequencies are rational derivatives of $f_\text{XTAL}$.  
+All VI timing frequencies are rational derivatives of $f_\text{XTAL}$. The ±30 ppm tolerance of this crystal therefore propagates to all derived values. The long-precision decimals and irreducible fractions presented throughout this document are exact in the mathematical sense, reflecting the derivation chain rather than a claim about any physical hardware unit.
 
 ### 1.2 Annotations  
 
@@ -94,21 +94,21 @@ Parenthetical annotations clarify numerical representations:
 
 #### 1.3.1 Counting Units
 
-**Half-line ($S$)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document favors half-line modeling to align with hardware counting. See [§5.1.1](#511-ntsc-leap-adjustment).  
+**Half-line ($S$)** is the atomic unit for VI vertical timing. One scanline equals 2 half-lines. This document models vertical timing in half-lines to match hardware counting. See [§5.1.1](#511-ntsc-leap-adjustment).  
 
 #### 1.3.2 Registers
 
-This document favors modern N64brew register naming convention. Official (Libultra) equivalents are noted.
+This document uses N64brew register naming convention. Retail (Libultra) equivalents are noted.
 
-| N64brew Name | Libultra Name | Address | Description |
-|:---|:---|:---|:---|
-| `VI_V_TOTAL` | `VI_V_SYNC_REG` | `0x04400018` | Terminal half-line count; effective half-lines = REG + 1 |
-| `VI_H_TOTAL` | `VI_H_SYNC_REG` | `0x0440001C` | Terminal VI clock count per scanline; effective clocks = REG + 1 |
-| `VI_H_TOTAL_LEAP` | `VI_H_SYNC_LEAP_REG` | `0x04400020` | LEAP_A [bits 27:16] and LEAP_B [bits 11:0] alternate scanline lengths for PAL compensation |
-| `VI_V_CURRENT` | `VI_V_CURRENT_LINE_REG` | `0x04400010` | Current half-line; increments by 2 per scanline |
-| `VI_BURST` | `VI_BURST_REG` | `0x04400014` | Color burst gate timing |
-| `VI_H_VIDEO` | `VI_H_VIDEO_REG` | `0x04400024` | Active video horizontal start/end |
-| `VI_V_VIDEO` | `VI_V_VIDEO_REG` | `0x04400028` | Active video vertical start/end |
+| N64brew Name      | Libultra Name           | Address      | Description                                                                      
+|:------------------|:------------------------|:-------------|:---------------------------------------------------------------------------------
+| `VI_V_TOTAL`      | `VI_V_SYNC_REG`         | `0x04400018` | Terminal half-line count; effective half-lines = REG + 1                         
+| `VI_H_TOTAL`      | `VI_H_SYNC_REG`         | `0x0440001C` | Terminal VI clock count per scanline; effective clocks = REG + 1                 
+| `VI_H_TOTAL_LEAP` | `VI_H_SYNC_LEAP_REG`    | `0x04400020` | LEAP_A [bits 27:16] and LEAP_B [bits 11:0] specify alternate `VI_H_TOTAL` values 
+| `VI_V_CURRENT`    | `VI_V_CURRENT_LINE_REG` | `0x04400010` | Current half-line; increments by 2 per scanline                                  
+| `VI_BURST`        | `VI_BURST_REG`          | `0x04400014` | Color burst gate timing                                                          
+| `VI_H_VIDEO`      | `VI_H_VIDEO_REG`        | `0x04400024` | Active video horizontal start/end                                                
+| `VI_V_VIDEO`      | `VI_V_VIDEO_REG`        | `0x04400028` | Active video vertical start/end                                                  
 
 All registers are terminal-counted; add 1 to the register value to derive the effective count. Interlaced VSYNC is automatically offset by 0.5 lines per field. See [§5.2.1](#521-pal-leap-adjustment) for details regarding the leap adjustment mechanism.  
 
@@ -121,21 +121,18 @@ All registers are terminal-counted; add 1 to the register value to derive the ef
 
 ### 2.1 Refresh Rate  
 
-The table lists refresh rates ($f_V$) for all video modes. The fully reduced fractions shown below serve as reference values for the remainder of this text.  
+The table lists refresh rates ($f_V$) for retail video modes. 
 
-| Standard |  Scan Type  |                $f_V$ (Hz, fraction)                |  $f_V$ (Hz, decimal)
-| :------: | :---------: | :------------------------------------------------: | :-------------------:
-|   NTSC   | Progressive |           $\dfrac{2,250,000}{37,609}$           |     59.8261054535
-|   NTSC   | Interlaced  |             $\dfrac{60,000}{1,001}$              |     59.9400599401
-|   PAL    | Progressive |          $\dfrac{17,734,475}{355,257}$          |     49.9201282452
-|   PAL    | Interlaced  |                        $50$                        |      50 (exact)
-|  PAL-M   | Progressive | $\dfrac{17,384,625,000}{290,532,671}$[^note0] | 59.8370742270[^note6]
-|  PAL-M   | Interlaced  |        $\dfrac{272,700,000}{4,547,257}$        |     59.9702194092
+| Standard |  Scan Type  |         $f_V$ (Hz, fraction)          | $f_V$ (Hz, decimal) 
+|:--------:|:-----------:|:-------------------------------------:|:-------------------:
+|   NTSC   | Progressive |      $\dfrac{2,250,000}{37,609}$      |    59.8261054535    
+|   NTSC   | Interlaced  |        $\dfrac{60,000}{1,001}$        |    59.9400599401    
+|   PAL    | Progressive |     $\dfrac{17,734,475}{355,257}$     |    49.9201282452    
+|   PAL    | Interlaced  |                 $50$                  |         50          
+|  PAL-M   | Progressive | $\dfrac{17,384,625,000}{290,532,671}$ |    59.8370742270    
+|  PAL-M   | Interlaced  |   $\dfrac{272,700,000}{4,547,257}$    |    59.9702194092    
 
 > These values correspond to the derivations in [§5](#5-mathematical-derivations).  
-
-[^note0]: See [Note](#note).
-[^note6]: See [Note](#note).
 
 ### 2.2 Resolution  
 
@@ -148,7 +145,7 @@ In the context of contemporary retail software, the N64 outputs four distinct ra
 |     PAL      | Progressive |  640x288p
 |     PAL      | Interlaced  |  640x576i
 
-Note that these are effective output resolutions, after all scaling operations. See [Appendix B](#appendix-b-vi-modes) for full VI mode tables. 
+These are effective output resolutions, after all scaling operations. See [Appendix B](#appendix-b-vi-modes) for full VI mode tables.  
 
 ---  
 
@@ -160,19 +157,19 @@ Hardware constants and register mapping.
 
 Hardware constants derived from $f_\text{XTAL}$ and the Video Interface (VI) registers. $L$ and $S$ below are effective values. 
 
-|     Standard      | Crystal Frequency ($f_\text{XTAL}$) | Multiplier ($M$) | VI Clocks / Line ($L$) | Half-Lines ($S$) | `VI_V_TOTAL`
-| :---------------: | :----------------------------: | :--------------: | :--------------------: | :--------------: | :----------:
-| NTSC Progressive  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       526        |   `0x20D`
-|  NTSC Interlaced  |       14.3181818182 MHz        | $\dfrac{17}{5}$  |          3094          |       525        |   `0x20C`
-|  PAL Progressive  |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       626        |   `0x271`
-|  PAL Interlaced   |     17.734475 MHz (exact)      | $\dfrac{14}{5}$  |          3178          |       625        |   `0x270`
-| PAL-M Progressive |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3090          |       526        |   `0x20D`
-| PAL-M Interlaced  |       14.3024475524 MHz        | $\dfrac{17}{5}$  |          3089          |       525        |   `0x20C`
+|     Standard      | Crystal Frequency ($f_\text{XTAL}$) | Multiplier ($M$) | VI Clocks / Line ($L$) | Half-Lines ($S$) | `VI_V_TOTAL` 
+|:-----------------:|:-----------------------------------:|:----------------:|:----------------------:|:----------------:|:------------:
+| NTSC Progressive  |          14.3181818182 MHz          | $\dfrac{17}{5}$  |          3094          |       526        |   `0x20D`    
+|  NTSC Interlaced  |          14.3181818182 MHz          | $\dfrac{17}{5}$  |          3094          |       525        |   `0x20C`    
+|  PAL Progressive  |            17.734475 MHz            | $\dfrac{14}{5}$  |          3178          |       626        |   `0x271`    
+|  PAL Interlaced   |            17.734475 MHz            | $\dfrac{14}{5}$  |          3178          |       625        |   `0x270`    
+| PAL-M Progressive |          14.3024475524 MHz          | $\dfrac{17}{5}$  |          3090          |       526        |   `0x20D`    
+| PAL-M Interlaced  |          14.3024475524 MHz          | $\dfrac{17}{5}$  |          3089          |       525        |   `0x20C`    
 
 
-* NTSC $f_\text{XTAL}$ target: 315/22 MHz (exact) (≈ 14.3181818182 MHz)  
-* PAL $f_\text{XTAL}$ target: 17,734,475 Hz (exact) = 17.734475 MHz  
-* PAL-M $f_\text{XTAL}$ target: 2,045,250,000 ÷ 143 Hz (exact) (≈ 14.3024475524 MHz)  
+* NTSC $f_\text{XTAL}$ target: $\dfrac{157{,}500{,}000}{11}$ Hz = $\dfrac{315}{22}$ MHz (≈ 14.3181818182 MHz)  
+* PAL $f_\text{XTAL}$ target: $17{,}734{,}475$ Hz = 17.734475 MHz  
+* PAL-M $f_\text{XTAL}$ target: $\dfrac{2{,}045{,}250{,}000}{143}$ Hz (≈ 14.3024475524 MHz)  
 
 #### 3.1.1 Clock Generator Hardware Revisions  
 
@@ -278,31 +275,31 @@ A 1993 KDS AT-49 datasheet specifies a maximum load capacitance of 16 pF for AT-
 
 The following table lists confirmed and provisional X1 and X2 stamp codes organised by board revision. X2 (250/17 MHz in all regions, or approximately 14.7058823529 MHz) in circuit drives RDRAM and other system clocks, but does not affect video timing. See [Appendix A](#appendix-a-x1-and-x2-stamp-code-table) for the unabridged table. See [§7.2.1](#721-personal-resources) for a link to the annotated image collection.
 
-| Revision | X1 | X2 | X1 Date | X2 Date | Notes |  
-| :--- | :--- | :--- | :--- | :--- | :--- |  
-| NUS-CPU-01 | `D143A6` | `D147B6` | Jan 1996 | Feb 1996 | ID: Prominos_01 |  
-| NUS-CPU-02 | `D143B6` | `D147C6` | Feb 1996 | Mar 1996 | ID: Prominos_02 |  
-| NUS-CPU-03 | `D143L6` | `D147L6` | Nov 1996 | Nov 1996 | ID: Prominos_03 |  
-| NUS-CPU-04 | `D143J7` | `D147J7` | Sep 1997 | Sep 1997 | ID: Prominos_04 |  
-| NUS-CPU-05 | `D143L8` | `D147L8` | Nov 1998 | Nov 1998 | ID: Prominos_05 |  
-| NUS-CPU-05-1 | `D143C9` | `D147C9` | Mar 1999 | Mar 1999 | ID: Prominos_05-1 |  
-| NUS-CPU-06 | `D143H8` | `D147M7I` | Aug 1998 | Dec 1997 | ID: DragonsHoard_01 |  
-| NUS-CPU-07 | `D143B9` | `D147A9` | Feb 1999 | Jan 1999 | ID: RetroRepairZone_01 |  
-| NUS-CPU-08 | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08 |  
-| NUS-CPU-08-1 | `D143K9` | `D147J9` | Oct 1999 | Sep 1999 | ID: Prominos_08-1 |  
-| NUS-CPU-09 | `D143J0` | `D147H0` | Sep 2000 | Aug 2000 | ID: Prominos_09 |  
-| NUS-CPU-09-1 | `D143H0I` | `D147H0` | Aug 2000 | Aug 2000 | ID: Aringon_01 |  
-| NUS-CPU(R)-01 | `D177G7` | `D147E7` | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01 |  
-| NUS-CPU(P)-01 | `D177J7` | `D147J7` | Sep 1997 | Sep 1997 | PAL; ID: modretro_13 |  
-| NUS-CPU(P)-02 | `D177J9` | `D147J9I` | Sep 1999 | Sep 1999 | PAL; ID: modretro_14 |  
-| NUS-CPU(P)-03 | `D177K9` | `D147H0` | Oct 1999 | Aug 2000 | PAL; ID: VajskiD_01 |  
-| NUS-CPU(P)-03-1 | `D177J9` | `D177J0` | Sep 1999 | Sep 2000 | PAL; ID: VajskiD_02 |  
-| NUS-CPU(M)-01 | `D143G6` | `D147G6` | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01 |  
-| NUS-CPU(M)-02 | `ⓂD143G7` | `D147E7` | Jul 1997 | May 1997 | PAL-M; ID: JASNetInfo_01; revision inferred; `Ⓜ` marking on X1 |  
-| NUS-CPU(M)-03 | `ⓂD143M8` | `D147K9I` | Dec 1998 | Nov 1999 | PAL-M; ID: Lima112_01; `Ⓜ` marking on X1 |  
-| NUS-CPU(M)-04 | - | - | - | - | PAL-M; no board image available |  
-| NUS-CPU(M)-05 | - | - | - | - | PAL-M; no board image available |  
-| NUS-CPU(M)-05-1 | `Ⓜ143G0` | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1 |  
+| Revision        | X1        | X2        | X1 Date  | X2 Date  | Notes                                                          
+|:----------------|:----------|:----------|:---------|:---------|:---------------------------------------------------------------
+| NUS-CPU-01      | `D143A6`  | `D147B6`  | Jan 1996 | Feb 1996 | ID: Prominos_01                                                
+| NUS-CPU-02      | `D143B6`  | `D147C6`  | Feb 1996 | Mar 1996 | ID: Prominos_02                                                
+| NUS-CPU-03      | `D143L6`  | `D147L6`  | Nov 1996 | Nov 1996 | ID: Prominos_03                                                
+| NUS-CPU-04      | `D143J7`  | `D147J7`  | Sep 1997 | Sep 1997 | ID: Prominos_04                                                
+| NUS-CPU-05      | `D143L8`  | `D147L8`  | Nov 1998 | Nov 1998 | ID: Prominos_05                                                
+| NUS-CPU-05-1    | `D143C9`  | `D147C9`  | Mar 1999 | Mar 1999 | ID: Prominos_05-1                                              
+| NUS-CPU-06      | `D143H8`  | `D147M7I` | Aug 1998 | Dec 1997 | ID: DragonsHoard_01                                            
+| NUS-CPU-07      | `D143B9`  | `D147A9`  | Feb 1999 | Jan 1999 | ID: RetroRepairZone_01                                         
+| NUS-CPU-08      | `D143H9I` | `D147H9I` | Aug 1999 | Aug 1999 | ID: Prominos_08                                                
+| NUS-CPU-08-1    | `D143K9`  | `D147J9`  | Oct 1999 | Sep 1999 | ID: Prominos_08-1                                              
+| NUS-CPU-09      | `D143J0`  | `D147H0`  | Sep 2000 | Aug 2000 | ID: Prominos_09                                                
+| NUS-CPU-09-1    | `D143H0I` | `D147H0`  | Aug 2000 | Aug 2000 | ID: Aringon_01                                                 
+| NUS-CPU(R)-01   | `D177G7`  | `D147E7`  | Jul 1997 | May 1997 | PAL, NUS-001(FRA); ID: Prominos_R01                            
+| NUS-CPU(P)-01   | `D177J7`  | `D147J7`  | Sep 1997 | Sep 1997 | PAL; ID: modretro_13                                           
+| NUS-CPU(P)-02   | `D177J9`  | `D147J9I` | Sep 1999 | Sep 1999 | PAL; ID: modretro_14                                           
+| NUS-CPU(P)-03   | `D177K9`  | `D147H0`  | Oct 1999 | Aug 2000 | PAL; ID: VajskiD_01                                            
+| NUS-CPU(P)-03-1 | `D177J9`  | `D177J0`  | Sep 1999 | Sep 2000 | PAL; ID: VajskiD_02                                            
+| NUS-CPU(M)-01   | `D143G6`  | `D147G6`  | Jul 1996 | Jul 1996 | PAL-M; ID: grav_01                                             
+| NUS-CPU(M)-02   | `ⓂD143G7` | `D147E7`  | Jul 1997 | May 1997 | PAL-M; ID: JASNetInfo_01; revision inferred; `Ⓜ` marking on X1
+| NUS-CPU(M)-03   | `ⓂD143M8` | `D147K9I` | Dec 1998 | Nov 1999 | PAL-M; ID: Lima112_01; `Ⓜ` marking on X1                       
+| NUS-CPU(M)-04   | -         | -         | -        | -        | PAL-M; no board image available                                
+| NUS-CPU(M)-05   | -         | -         | -        | -        | PAL-M; no board image available                                
+| NUS-CPU(M)-05-1 | `Ⓜ143G0`  | `D147F0I` | Jul 2000 | Jun 2000 | PAL-M; ID: Mielke_01; `Ⓜ` marking on X1                        
 
 #### 3.5.2 X1 Oscillator Tolerance  
 
@@ -357,22 +354,16 @@ Detailed per-mode timing specifications and hardware implementation notes.
 
 ### 4.1 Signal Parameters by Mode  
 
-The following table defines the relationship between VI clock rate ($f_\text{VI}$) and the resulting display timing. See [§3.1](#31-fundamental-constants) for crystal frequencies and register values; fully reduced refresh rate fractions and line frequencies are in [§3.3](#33-derived-timing-values). Values are effective.  
+The following table defines the relationship between VI clock rate ($f_\text{VI}$) and the resulting display timing. Values are effective.  
 
 | Mode    | $f_\text{VI}$ (VI Clock)  | $L$ (Clocks / Line) | $S$ (Half-Lines) | $f_V$ (Refresh Rate)
 | :-----: | :------------------: | :-----------------: | :--------------: | :----------------------:
 | NTSC-P  | 48.6818181818 MHz    | 3094                | 526              | 59.8261054535 Hz
 | NTSC-I  | 48.6818181818 MHz    | 3094                | 525              | 59.9400599401 Hz
-| PAL-P   | 49.65653 MHz (exact) | 3178                | 626              | 49.9201282452 Hz
-| PAL-I   | 49.65653 MHz (exact) | 3178                | 625              | 50 Hz (exact)
-| PAL-M-P | 48.6283216783 MHz    | 3090[^note1]        | 526              | 59.8370742270 Hz[^note2]
+| PAL-P   | 49.65653 MHz         | 3178                | 626              | 49.9201282452 Hz
+| PAL-I   | 49.65653 MHz         | 3178                | 625              | 50 Hz
+| PAL-M-P | 48.6283216783 MHz    | 3090                | 526              | 59.8370742270 Hz
 | PAL-M-I | 48.6283216783 MHz    | 3089                | 525              | 59.9702194092 Hz
-
-
-[^note1]: See [Note](#note).
-[^note2]: See [Note](#note).
-
-> $f_\text{VI}$ for PAL-M is derived as exactly 6,953,850,000 ÷ 143 Hz. The slight deviation in NTSC-equivalent timing (≈ 0.0129407959%) is a hardware constraint caused by the requirement of an integer value for the Clocks ÷ Line ($L$) register.  
 
 #### 4.1.1 Timing Map  
 
@@ -477,18 +468,13 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 
 All N64 video modes adhere to broadcast standard relationships between chrominance subcarrier frequency ($f_{SC}$) and horizontal scan frequency ($f_H$):  
 
-| Standard | $f_{SC}$ : $f_H$ Relationship
-| :------: | :----------------------------
-| PAL      | $f_{SC}$ = 283.7516 × $f_H$
-| SECAM    | $f_{SC}$ = 282 × $f_H$
-| PAL-N    | $f_{SC}$ = 229.2516 × $f_H$
-| PAL-M    | $f_{SC}$ = 227.25 × $f_H$
-| NTSC     | $f_{SC}$ = 227.5 × $f_H$
+| Standard | $f_{SC}$ : $f_H$ | Exact ratio 
+| :------: | :--------------- | :----------: 
+| NTSC | $f_{SC} = 227.5 \times f_H$ | $\dfrac{455}{2}$ 
+| PAL | $f_{SC} = 283.7516 \times f_H$ | $\dfrac{709{,}379}{2{,}500}$ 
+| PAL-M | $f_{SC} = 227.25 \times f_H$ | $\dfrac{909}{4}$ 
 
-
-*Standard fS to $f_H$ ratios. Source: Wooding, M., The Amateur TV Compendium, p. 55*  
-
-PAL-M nominally defines $f_{SC}$ = 227.25 × $f_H$, but this relationship does not resolve to an integer number of VI clocks per line. The exact colorburst frequency is 3,575,611 + 127/143 Hz. The fractional component propagates through the timing derivation chain. The hardware resolves this by rounding to 3090 (progressive) or 3089 (interlaced) VI clocks per line, producing an $f_H$ of approximately 15,737.15 Hz (progressive) or 15,742.18 Hz (interlaced). These differ slightly from the NTSC standard horizontal frequency of 15,734.27 Hz. The $f_V$ values in this document are derived from the fractional colorburst frequency carried through each step; see [§5.3](#53-pal-m-derivation) for full derivation.  
+PAL-M nominally defines $f_{SC} = \frac{909}{4} f_H$, but this relationship does not yield an integer number of VI clocks per line. The exact colorburst frequency, $\frac{511{,}312{,}500}{143}$ Hz, carries a fractional remainder that propagates through the derivation chain. The SDK-defined VI modes use $L$ values of 3090 (progressive) and 3089 (interlaced); the basis for this selection is uncharacterized. The $f_V$ values in this document are derived from the exact colorburst frequency carried through each step; see [§5.3](#53-pal-m-derivation) for the full derivation.
 
 > The subcarrier reference signal is delivered to the ENC-NUS encoder (U5) via the SCIN pin (pin 8), which receives the U7.FSC output through a 4.3 kΩ ÷ 820 Ω resistor divider and coupling capacitor C21. This is the hardware path by which the crystal-derived $f_{SC}$ enters the analog encode stage. See [§3.4](#34-hardware-signal-path), figure *ENC-NUS in circuit*.  
 
@@ -846,7 +832,7 @@ f_VI = f_XTAL × M
      
 ```
 
-### 5.3.1 PAL-M Progressive Derivation[^note3]
+### 5.3.1 PAL-M Progressive Derivation
 
 ```
 VI clocks per line (base): L_base = 3,090
@@ -881,9 +867,8 @@ fV_prog = fH / (S_prog / 2)
         = 17,384,625,000 / 290,532,671  (canonical value)
         ≈ 59.8370742270 Hz
 ```
-[^note3]: See [Note](#note).
 
-### 5.3.1.1 PAL-M Progressive Leap Adjustment[^note4]
+### 5.3.1.1 PAL-M Progressive Leap Adjustment
 
 The PAL-M progressive configuration programs HSYNC(`3089`, `4`) and LEAP(`3097`, `3098`). Terminal-counted:
 
@@ -924,8 +909,6 @@ fH = f_VI / L_avg
    = 4,572,156,375,000 / 290,532,671  (canonical value)
    ≈ 15,737.1505217050 Hz
 ```
-
-[^note4]: See [Note](#note).
 
 ---
 
@@ -1022,14 +1005,14 @@ For general conversions.
 
 For mathematically precise conversions. Fractions are fully reduced and traceable to the canonical values in [§2](#2-n64-video-output-summary).  
 
-| From \ To | NTSC-P                     | NTSC-I                     | PAL-P                          | PAL-I                          | PAL-M-P                        | PAL-M-I
-| :-------: | :-----------------------:  | :-----------------------:  | :---------------------------:  | :---------------------------:  | :---------------------------:  | :-------------------------:
-| NTSC-P    | $1$                        | $\dfrac{525}{526}$         | $\dfrac{31973130000}{26679034811}$ | $\dfrac{45000}{37609}$         | $\dfrac{4063394}{4064139}$     | $\dfrac{158995}{159378}$
-| NTSC-I    | $\dfrac{526}{525}$         | $1$                        | $\dfrac{121802400}{101441197}$ | $\dfrac{1200}{1001}$           | $\dfrac{8126788}{8112825}$     | $\dfrac{31799}{31815}$
-| PAL-P     | $\dfrac{26679034811}{31973130000}$ | $\dfrac{101441197}{121802400}$ | $1$                            | $\dfrac{709379}{710514}$        | $\dfrac{206097775621309}{247040388945000}$ | $\dfrac{3225728623403}{3875143356000}$
-| PAL-I     | $\dfrac{37609}{45000}$     | $\dfrac{1001}{1200}$       | $\dfrac{710514}{709379}$       | $1$                            | $\dfrac{290532671}{347692500}$ | $\dfrac{4547257}{5454000}$
-| PAL-M-P   | $\dfrac{4064139}{4063394}$ | $\dfrac{8112825}{8126788}$ | $\dfrac{247040388945000}{206097775621309}$ | $\dfrac{347692500}{290532671}$ | $1$                            | $\dfrac{8108745}{8126788}$
-| PAL-M-I   | $\dfrac{159378}{158995}$   | $\dfrac{31815}{31799}$     | $\dfrac{3875143356000}{3225728623403}$ | $\dfrac{5454000}{4547257}$     | $\dfrac{8126788}{8108745}$     | $1$
+| From \ To |               NTSC-P               |             NTSC-I             |                   PAL-P                    |             PAL-I              |                  PAL-M-P                   |                PAL-M-I                 
+|:---------:|:----------------------------------:|:------------------------------:|:------------------------------------------:|:------------------------------:|:------------------------------------------:|:--------------------------------------:
+|  NTSC-P   |                $1$                 |       $\dfrac{525}{526}$       |     $\dfrac{31973130000}{26679034811}$     |     $\dfrac{45000}{37609}$     |         $\dfrac{4063394}{4064139}$         |        $\dfrac{158995}{159378}$        
+|  NTSC-I   |         $\dfrac{526}{525}$         |              $1$               |       $\dfrac{121802400}{101441197}$       |      $\dfrac{1200}{1001}$      |         $\dfrac{8126788}{8112825}$         |         $\dfrac{31799}{31815}$         
+|   PAL-P   | $\dfrac{26679034811}{31973130000}$ | $\dfrac{101441197}{121802400}$ |                    $1$                     |    $\dfrac{709379}{710514}$    | $\dfrac{206097775621309}{247040388945000}$ | $\dfrac{3225728623403}{3875143356000}$ 
+|   PAL-I   |       $\dfrac{37609}{45000}$       |      $\dfrac{1001}{1200}$      |          $\dfrac{710514}{709379}$          |              $1$               |       $\dfrac{290532671}{347692500}$       |       $\dfrac{4547257}{5454000}$       
+|  PAL-M-P  |     $\dfrac{4064139}{4063394}$     |   $\dfrac{8112825}{8126788}$   | $\dfrac{247040388945000}{206097775621309}$ | $\dfrac{347692500}{290532671}$ |                    $1$                     |       $\dfrac{8108745}{8126788}$       
+|  PAL-M-I  |      $\dfrac{159378}{158995}$      |     $\dfrac{31815}{31799}$     |   $\dfrac{3875143356000}{3225728623403}$   |   $\dfrac{5454000}{4547257}$   |         $\dfrac{8126788}{8108745}$         |                  $1$                   
 
 ---
 
@@ -1365,11 +1348,9 @@ NTSC   | Progressive | 526       | 3094, 0            | 3094, 3094
 NTSC   | Interlaced  | 525       | 3094, 0            | 3094, 3094
 PAL    | Progressive | 626       | 3178, 21           | 3183, 3184
 PAL    | Interlaced  | 625       | 3178, 21           | 3183, 3184
-PAL-M  | Progressive | 526       | 3090, 4[^note5]    | 3099, 3098
+PAL-M  | Progressive | 526       | 3090, 4            | 3099, 3098
 PAL-M  | Interlaced  | 525       | 3089, 0            | 3101, 3101
 
-
-[^note5]: See [Note](#note).
 
 ### B.3.1 libdragon Display Initialization Behavior
 

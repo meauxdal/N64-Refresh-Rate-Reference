@@ -1,6 +1,6 @@
 # N64 Video Timing Reference
 
-This document ([README.md]) serves as quick reference for N64 clock rates and video timing. Derivations, signal analysis, VI modes, etc. are in the primary document: [N64_Timing_Reference.md](N64_Timing_Reference.md).
+This document serves as quick reference for N64 clock rates and video timing. Derivations, signal analysis, VI modes, etc. are in the primary document: [N64_Timing_Reference.md](N64_Timing_Reference.md).
 
 ---
 
@@ -8,11 +8,11 @@ This document ([README.md]) serves as quick reference for N64 clock rates and vi
 
 ### X1 
 
-| Region |         $f_{\text{XTAL}}$                     | $f_{\text{XTAL}}$ (MHz) |    $M$          |          $f_{\text{VI}}$                      | $f_{\text{VI}}$ (MHz)
-| :----: | :-------------------------------------------: | :---------------------: | :-------------: | :-------------------------------------------: | :-------------------:
-|  NTSC  |         $\dfrac{315}{22} \text{ MHz}$         |      14.3181818182      | $\dfrac{17}{5}$ |      $\dfrac{1{,}071}{22} \text{ MHz}$       |     48.6818181818
-|  PAL   |          $17{,}734{,}475 \text{ Hz}$          |        17.734475        | $\dfrac{14}{5}$ |          $49{,}656{,}530 \text{ Hz}$          |       49.65653
-| PAL-M  | $\dfrac{2{,}045{,}250{,}000}{143} \text{ Hz}$ |      14.3024475524      | $\dfrac{17}{5}$ | $\dfrac{6{,}953{,}850{,}000}{143} \text{ Hz}$ |     48.6283216783
+| Standard |         $f_{\text{XTAL}}$                     | $f_{\text{XTAL}}$ (MHz) |    $M$          |          $f_{\text{VI}}$                      | $f_{\text{VI}}$ (MHz)
+| :----:   | :-------------------------------------------: | :---------------------: | :-------------: | :-------------------------------------------: | :-------------------:
+|  NTSC    |         $\dfrac{315}{22} \text{ MHz}$         |      14.3181818182      | $\dfrac{17}{5}$ |      $\dfrac{1{,}071}{22} \text{ MHz}$       |     48.6818181818
+|  PAL     |          $17{,}734{,}475 \text{ Hz}$          |        17.734475        | $\dfrac{14}{5}$ |          $49{,}656{,}530 \text{ Hz}$          |       49.65653
+| PAL-M    | $\dfrac{2{,}045{,}250{,}000}{143} \text{ Hz}$ |      14.3024475524      | $\dfrac{17}{5}$ | $\dfrac{6{,}953{,}850{,}000}{143} \text{ Hz}$ |     48.6283216783
 
 ### X2 
 
@@ -31,6 +31,8 @@ This document ([README.md]) serves as quick reference for N64 clock rates and vi
 
 ## Video Timing
 
+VI configuration values cover retail software. For configurations not listed here (e.g. Libdragon PAL60), please refer to the [N64 VI Timing Calculator](https://meauxdal.neocities.org/n64-vi-calculator).
+
 | Standard |  Scan Type  | Resolution | $L$  | $S$ |                      $f_H$ (Hz)                      |    $f_H$ (Hz)     |                   $f_V$ (Hz)                    |  $f_V$ (Hz)
 | :------: | :---------: | :--------: | :--: | :-: | :--------------------------------------------------: | :---------------: | :---------------------------------------------: | :-----------:
 |   NTSC   | Progressive |  640×240p  | 3094 | 526 |             $\dfrac{2{,}250{,}000}{143}$             | 15,734.2657342657 |        $\dfrac{2{,}250{,}000}{37{,}609}$        | 59.8261054535
@@ -39,8 +41,6 @@ This document ([README.md]) serves as quick reference for N64 clock rates and vi
 |   PAL    | Interlaced  |  640×576i  | 3178 | 625 |                     ${15{,}625}$                     |      15,625       |                     ${50}$                      |      50
 |  PAL-M   | Progressive |  640×240p  | 3090 | 526 | $\dfrac{4{,}572{,}156{,}375{,}000}{290{,}532{,}671}$ | 15,737.1505217050 | $\dfrac{17{,}384{,}625{,}000}{290{,}532{,}671}$ | 59.8370742270
 |  PAL-M   | Interlaced  |  640×480i  | 3089 | 525 |    $\dfrac{71{,}583{,}750{,}000}{4{,}547{,}257}$     | 15,742.1825949138 |    $\dfrac{272{,}700{,}000}{4{,}547{,}257}$     | 59.9702194092
-
-See [Note](/N64_Timing_Reference.md#note).
 
 $L$: VI clocks per line (effective). $S$: half-lines per vertical scan (effective).
 
@@ -60,18 +60,16 @@ $L$: VI clocks per line (effective). $S$: half-lines per vertical scan (effectiv
 
 $L$ and $S$ are effective values (register + 1). LEAP(A, B) values are effective.
 
-| Mode              | `VI_V_TOTAL`        | $L$  | LEAP pattern   | LEAP (A, B) | Notes
+| Mode              | `VI_V_TOTAL`        | $L$  | Leap pattern   | LEAP (A, B) | Notes
 | :---------------- | :------------------ | :--- | :------------- | :---------- | :--------------------------
-| NTSC Progressive  | `0x20D` ($S$ = 526) | 3094 | `0b00000` (0)  | 3094, 3094  | No LEAP compensation
-| NTSC Interlaced   | `0x20C` ($S$ = 525) | 3094 | `0b00000` (0)  | 3094, 3094  | No LEAP compensation
-| PAL Progressive   | `0x271` ($S$ = 626) | 3178 | `0b10101` (21) | 3183, 3184  | SGI 1996 / pre-OS2.0H
-| PAL Interlaced    | `0x270` ($S$ = 625) | 3178 | `0b10101` (21) | 3183, 3184  | SGI 1996 / pre-OS2.0H
-| PAL Progressive   | `0x271` ($S$ = 626) | 3178 | `0b10111` (23) | 3182, 3184  | OS2.0H+ (from Feb 24, 1997)
-| PAL Interlaced    | `0x270` ($S$ = 625) | 3178 | `0b10111` (23) | 3182, 3184  | OS2.0H+ (from Feb 24, 1997)
+| NTSC Progressive  | `0x20D` ($S$ = 526) | 3094 | `0b00000` (0)  | 3094, 3094  | 
+| NTSC Interlaced   | `0x20C` ($S$ = 525) | 3094 | `0b00000` (0)  | 3094, 3094  | 
+| PAL Progressive   | `0x271` ($S$ = 626) | 3178 | `0b10101` (21) | 3183, 3184  | pre-OS2.0H (1996)
+| PAL Interlaced    | `0x270` ($S$ = 625) | 3178 | `0b10101` (21) | 3183, 3184  | pre-OS2.0H (1996)
+| PAL Progressive   | `0x271` ($S$ = 626) | 3178 | `0b10111` (23) | 3182, 3184  | OS2.0H+ (1997)
+| PAL Interlaced    | `0x270` ($S$ = 625) | 3178 | `0b10111` (23) | 3182, 3184  | OS2.0H+ (1997)
 | PAL-M Progressive | `0x20D` ($S$ = 526) | 3090 | `0b00100` (4)  | 3099, 3098  |
 | PAL-M Interlaced  | `0x20C` ($S$ = 525) | 3089 | `0b00000` (0)  | 3101, 3101  |
-
-See [Note](/N64_Timing_Reference.md#note).
 
 ---
 
@@ -90,20 +88,16 @@ Multipliers convert a time recorded on the *row* hardware to equivalent time on 
 | PAL-M-P   | 1.00018 | 0.99828 | 1.19866 | 1.19674 | 1.00000 | 0.99778
 | PAL-M-I   | 1.00241 | 1.00050 | 1.20132 | 1.19940 | 1.00223 | 1.00000
 
-See [Note](/N64_Timing_Reference.md#note).
-
 ### Fraction
 
-| From \ To | NTSC-P                     | NTSC-I                     | PAL-P                          | PAL-I                          | PAL-M-P                        | PAL-M-I
+| From \ To | NTSC Progressive           | NTSC Interlaced            | PAL Progressive                | PAL Interlaced                 | PAL-M Progressive              | PAL-M Interlaced
 | :-------: | :-----------------------:  | :-----------------------:  | :---------------------------:  | :---------------------------:  | :---------------------------:  | :-------------------------:
-| NTSC-P    | $1$                        | $\dfrac{525}{526}$         | $\dfrac{31973130000}{26679034811}$ | $\dfrac{45000}{37609}$         | $\dfrac{4063394}{4064139}$     | $\dfrac{158995}{159378}$
+| NTSC-P    | $1$                        | $\dfrac{525}{526}$         | $\dfrac{31973130000}{26679034811}$ | $\dfrac{45000}{37609}$     | $\dfrac{4063394}{4064139}$     | $\dfrac{158995}{159378}$
 | NTSC-I    | $\dfrac{526}{525}$         | $1$                        | $\dfrac{121802400}{101441197}$ | $\dfrac{1200}{1001}$           | $\dfrac{8126788}{8112825}$     | $\dfrac{31799}{31815}$
-| PAL-P     | $\dfrac{26679034811}{31973130000}$ | $\dfrac{101441197}{121802400}$ | $1$                            | $\dfrac{709379}{710514}$        | $\dfrac{206097775621309}{247040388945000}$ | $\dfrac{3225728623403}{3875143356000}$
+| PAL-P     | $\dfrac{26679034811}{31973130000}$ | $\dfrac{101441197}{121802400}$ | $1$                | $\dfrac{709379}{710514}$       | $\dfrac{206097775621309}{247040388945000}$ | $\dfrac{3225728623403}{3875143356000}$
 | PAL-I     | $\dfrac{37609}{45000}$     | $\dfrac{1001}{1200}$       | $\dfrac{710514}{709379}$       | $1$                            | $\dfrac{290532671}{347692500}$ | $\dfrac{4547257}{5454000}$
-| PAL-M-P   | $\dfrac{4064139}{4063394}$ | $\dfrac{8112825}{8126788}$ | $\dfrac{247040388945000}{206097775621309}$ | $\dfrac{347692500}{290532671}$ | $1$                            | $\dfrac{8108745}{8126788}$
-| PAL-M-I   | $\dfrac{159378}{158995}$   | $\dfrac{31815}{31799}$     | $\dfrac{3875143356000}{3225728623403}$ | $\dfrac{5454000}{4547257}$     | $\dfrac{8126788}{8108745}$     | $1$
-
-See [Note](/N64_Timing_Reference.md#note).
+| PAL-M-P   | $\dfrac{4064139}{4063394}$ | $\dfrac{8112825}{8126788}$ | $\dfrac{247040388945000}{206097775621309}$ | $\dfrac{347692500}{290532671}$ | $1$                | $\dfrac{8108745}{8126788}$
+| PAL-M-I   | $\dfrac{159378}{158995}$   | $\dfrac{31815}{31799}$     | $\dfrac{3875143356000}{3225728623403}$ | $\dfrac{5454000}{4547257}$ | $\dfrac{8126788}{8108745}$ | $1$
 
 ---
 
@@ -114,7 +108,7 @@ See [Note](/N64_Timing_Reference.md#note).
 
 ## External Links
 
-* [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Extensive rewrite of the Video DAC article for the N64brew.dev wiki
-* [N64brew.dev Clock Timing DAC page](https://n64brew.dev/wiki/Clock_Timing) - New article on N64 Clock Timing for the N64brew.dev wiki
-* [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes
+* [N64brew.dev Wiki Video DAC page](https://n64brew.dev/wiki/Video_DAC) - Rewrite of the Video DAC article for the N64brew.dev wiki
+* [N64brew.dev Wiki Clock Timing page](https://n64brew.dev/wiki/Clock_Timing) - Article on N64 Clock Timing for the N64brew.dev wiki
 * [N64 VI Timing Calculator](https://meauxdal.neocities.org/n64-vi-calculator) - Calculate horizontal and vertical scan frequencies, given clock constants and register configuration. 
+* [N64 Refresh Rate Conversion Tool](https://meauxdal.neocities.org/n64-converter) - Convert run times between different N64 regions and video modes
