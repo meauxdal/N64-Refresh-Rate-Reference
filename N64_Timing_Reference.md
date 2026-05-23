@@ -303,18 +303,19 @@ The following table lists confirmed and provisional X1 and X2 stamp codes organi
 
 #### 3.5.2 X1 Oscillator Tolerance  
 
-Tolerance at 25°C is given at ±30 ppm, yielding a range of ±0.0018 Hz around the target values in [§2](#2-n64-video-output-summary) (e.g. NTSC progressive: [59.8243, 59.8279] Hz). Author-measured GBS-C telemetry from two available NTSC N64 units corroborates:  
+Tolerance at 25°C is given at ±30 ppm, yielding a range of ±0.0018 Hz around the target values in [§2](#2-n64-video-output-summary) (e.g. NTSC progressive: [59.8243, 59.8279] Hz). GBS-C telemetry from three NTSC N64 units corroborates:  
 
-| Unit                             | Nickname     | Progressive (Hz)    | Interlaced (Hz)   | Offset (P)    | Offset (I)    |  
-| :---                             | :---         | :---                | :---              | :---          | :---          |  
-| Unit #1 (NUS-CPU-03, RGB-modded) | Daily driver | 59.82771            | 59.94166          | +26.8 ppm     | +26.7 ppm     |  
-| Unit #2 (NUS-CPU-04, RGB-modded) | Junk unit    | 59.82731            | 59.94126          | +20.1 ppm     | +20.0 ppm     |  
+| Unit                   | Source         | Progressive (Hz) | Interlaced (Hz) | Offset (P) | Offset (I) |  
+| :---                   | :---           | :---             | :---            | :---       | :---       |  
+| NUS-CPU-03, RGB-modded | Author #1 (DD) | 59.82771         | 59.94166        | +26.8 ppm  | +26.7 ppm  |  
+| NUS-CPU-04, RGB-modded | Author #2 (JU) | 59.82731         | 59.94126        | +20.1 ppm  | +20.0 ppm  |  
+| NUS-CPU-03, RGB-modded | gobbledygoober | 59.82522         | 59.93917        | −14.9 ppm  | −14.8 ppm  |  
 
-Both fall within the predicted tolerance window. The ppm offset within each unit is essentially identical across progressive and interlaced modes, as expected: both rates derive from the same crystal. The differing offsets between units reflect normal unit-to-unit crystal variance. Aggregate second-order variance factors (temperature, aging, supply voltage) require a larger sample to characterize effectively.[^gbs-c]
+All three fall within the predicted tolerance window. The ppm offset within each unit is essentially identical across progressive and interlaced modes, as expected: both rates derive from the same crystal. Units #1 and #2 run above nominal; Unit #3 runs below, consistent with a distribution centered on the target value. The differing offsets between units reflect normal unit-to-unit crystal variance. Aggregate second-order variance factors (temperature, aging, supply voltage) require a larger sample to characterize effectively.[^gbs-c]
 
 The exact rational values derived in [§5](#5-mathematical-derivations) represent the nominal frequencies produced by standard N64 video timing configurations. Measured hardware frequencies instead reflect the tolerance bounds of the physical oscillator implementation, yielding the small but expected variance between units observed here.
 
-[^gbs-c]:Additional GBS-C telemetry from Sony PlayStation (1994) and Sega Saturn (1994) hardware (gathered by the author) returns progressive values consistent with 2,250,000/37,609 Hz within crystal tolerance, indicating the over-determined nature of standards-compliant NTSC progressive timing: independent clock architectures converge on the same value.  
+[^gbs-c]:Additional GBS-C telemetry from Sony PlayStation (1994) and Sega Saturn (1994) hardware (gathered by the author) returns progressive values consistent with 2,250,000/37,609 Hz within crystal tolerance, indicating the over-determined nature of standards-compliant NTSC progressive timing: independent clock architectures converge on the same value.
 
 #### 3.5.3 Initialization Transient Behavior  
 
@@ -398,7 +399,7 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 
 ### 4.2 Mode-Specific Notes  
 
-*Following Libultra VI macro convention (as seen in the [Animal Forest decompilation source code](https://github.com/zeldaret/af/blob/main/lib/ultralib/src/vimodes/vimodepallan1.c)), $L$ (base) and leap values are terminal-counted and leap patterns are described in (B, A) order. See [Appendix B](#appendix-b-vi-modes) for effective values.*
+Following standard reverse-engineered Libultra VI macro convention (as seen in the [Animal Forest decompilation source code](https://github.com/zeldaret/af/blob/main/lib/ultralib/src/vimodes/vimodepallan1.c)), $L$ (base) and leap values are terminal-counted and leap patterns are described in (B, A) order. See [Appendix B](#appendix-b-vi-modes) for effective values.
 
 #### NTSC (Progressive and Interlaced)
 
@@ -457,7 +458,7 @@ Diagram by eb1560 tracing clock generation, modulation, and distribution for an 
 3. Pattern: 0 = `0x00` = `0b00000` = `12-12-12-12-12` = 60
 4. 60/5 = 12 additional clocks per VSYNC
 
-[^leap_mk64]: The  contains both leap patterns. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are observed in osViModeTable.c in the decompiled *Mario Kart 64* (1996/1997) source code, European-specific (`VERSION_EU`) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This revised leap pattern appears in later titles, including *Star Fox 64* (1997) and *The Legend of Zelda: Ocarina of Time* (1998). See also footnote[^leap_os20h].
+[^leap_mk64]: The  contains both leap patterns. While PAL configurations utilizing the original SGI leap pattern (`0b10101`, LEAP(`3183`, `3182`)) are observed in osViModeTable.c in the decompiled *Mario Kart 64* (1996/1997) source code, European-specific (gated in the decompilation by a `VERSION_EU` flag) modes use the revised pattern (`0b10111`, LEAP(`3183`, `3181`)). This revised leap pattern appears in later titles, including *Star Fox 64* (1997) and *The Legend of Zelda: Ocarina of Time* (1998). See also footnote[^leap_os20h].
 
 *Leap sums are divided by 5 (the 5-stage leap cycle) to produce the fractional increment added to $L$. See [§5.2.1](#521-pal-leap-adjustment) for details on PAL leap compensation.*
 
